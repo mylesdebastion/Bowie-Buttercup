@@ -496,6 +496,7 @@
                 this.sitting = false;
                 this.crouching = false;
                 this.dead = false;
+                this.prevY = 300;
             }
             
             update(dt) {
@@ -531,6 +532,7 @@
                 
                 this.vy += physics.gravity * dt / 1000;
                 
+                this.prevY = this.y;
                 this.x += this.vx * dt / 1000;
                 this.y += this.vy * dt / 1000;
                 
@@ -658,16 +660,91 @@
             }
             
             checkGrounded() {
-                return this.y >= 400 - this.height;
+                // Check floor
+                if (this.y >= 400 - this.height) {
+                    return true;
+                }
+                
+                // Check if standing on a platform tile
+                const tileX = Math.floor((this.x + this.width/2) / 16);
+                const tileY = Math.floor((this.y + this.height + 2) / 16);
+                
+                if (game && game.level[tileY] && game.level[tileY][tileX] === 1) {
+                    return true;
+                }
+                
+                return false;
             }
             
             checkCollisions() {
+                // Floor collision
                 if (this.y > 400 - this.height) {
                     this.y = 400 - this.height;
                     this.vy = 0;
                     this.grounded = true;
                 }
                 
+                // Platform tile collisions
+                if (game) {
+                    // Check multiple points along the player's bottom edge
+                    for (let xOffset = 2; xOffset < this.width - 2; xOffset += 4) {
+                        const checkX = this.x + xOffset;
+                        const tileX = Math.floor(checkX / 16);
+                        const tileY = Math.floor((this.y + this.height) / 16);
+                        
+                        if (game.level[tileY] && game.level[tileY][tileX] === 1) {
+                            // Check if we're falling onto the platform (not jumping through)
+                            if (this.vy > 0 && this.prevY + this.height <= tileY * 16 + 4) {
+                                this.y = tileY * 16 - this.height;
+                                this.vy = 0;
+                                this.grounded = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // Side collisions with platforms
+                    const leftTileX = Math.floor(this.x / 16);
+                    const rightTileX = Math.floor((this.x + this.width) / 16);
+                    const centerTileY = Math.floor((this.y + this.height/2) / 16);
+                    
+                    // Left collision
+                    if (game.level[centerTileY] && game.level[centerTileY][leftTileX] === 1) {
+                        if (this.vx < 0) {
+                            this.x = (leftTileX + 1) * 16;
+                            this.vx = 0;
+                        }
+                    }
+                    
+                    // Right collision
+                    if (game.level[centerTileY] && game.level[centerTileY][rightTileX] === 1) {
+                        if (this.vx > 0) {
+                            this.x = rightTileX * 16 - this.width;
+                            this.vx = 0;
+                        }
+                    }
+                    
+                    // Head collision
+                    const headTileY = Math.floor(this.y / 16);
+                    const headTileX = Math.floor((this.x + this.width/2) / 16);
+                    
+                    if (game.level[headTileY] && game.level[headTileY][headTileX] === 1) {
+                        if (this.vy < 0) {
+                            this.y = (headTileY + 1) * 16;
+                            this.vy = 0;
+                        }
+                    }
+                    
+                    // Lava collision
+                    const lavaCheckY = Math.floor((this.y + this.height - 2) / 16);
+                    const lavaCheckX = Math.floor((this.x + this.width/2) / 16);
+                    
+                    if (game.level[lavaCheckY] && game.level[lavaCheckY][lavaCheckX] === 2) {
+                        this.hurt();
+                    }
+                }
+                
+                // World bounds
                 if (this.x < 0) this.x = 0;
                 if (this.x > 800 - this.width) this.x = 800 - this.width;
             }
@@ -785,10 +862,29 @@
                 this.y += this.vy * dt / 1000;
                 this.vy += 200 * dt / 1000;
                 
-                if (this.y > 450) {
-                    this.y = -50;
-                    this.x = Math.random() * 800;
+                // Check collision with platform tiles
+                if (game) {
+                    const tileX = Math.floor((this.x + this.width/2) / 16);
+                    const tileY = Math.floor((this.y + this.height/2) / 16);
+                    
+                    if (game.level[tileY] && game.level[tileY][tileX] === 1) {
+                        // Fireball hits platform, reset it
+                        this.reset();
+                        return;
+                    }
                 }
+                
+                // Reset if falls off screen
+                if (this.y > 450) {
+                    this.reset();
+                }
+            }
+            
+            reset() {
+                this.y = -50;
+                this.x = 100 + Math.random() * 600;
+                this.vx = (Math.random() - 0.5) * 100;
+                this.vy = 0;
             }
             
             draw(ctx) {
@@ -864,14 +960,25 @@
                     level[y] = [];
                     for (let x = 0; x < 50; x++) {
                         if (y === 25) {
+                            // Main ground
                             level[y][x] = 1;
-                        } else if (y === 20 && x > 10 && x < 15) {
+                        } else if (y === 20 && x >= 10 && x <= 14) {
+                            // Platform 1
                             level[y][x] = 1;
-                        } else if (y === 18 && x > 20 && x < 25) {
+                        } else if (y === 18 && x >= 20 && x <= 24) {
+                            // Platform 2
                             level[y][x] = 1;
-                        } else if (y === 22 && x > 30 && x < 35) {
+                        } else if (y === 22 && x >= 30 && x <= 34) {
+                            // Platform 3
                             level[y][x] = 1;
-                        } else if (y > 26 && x > 15 && x < 20) {
+                        } else if (y === 15 && x >= 25 && x <= 29) {
+                            // Higher platform
+                            level[y][x] = 1;
+                        } else if (y === 16 && x >= 40 && x <= 44) {
+                            // Another platform
+                            level[y][x] = 1;
+                        } else if (y > 26 && x >= 15 && x <= 19) {
+                            // Lava pit
                             level[y][x] = 2;
                         } else {
                             level[y][x] = 0;
