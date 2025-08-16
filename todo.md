@@ -14,12 +14,42 @@
   - Mix of moving platforms and static ones
   - Tighter jumps required
 
+- [ ] **Rain Level**
+  - Outdoor level with falling raindrops
+  - Raindrops fall from top of screen at varying speeds
+  - Cat automatically jumps away when hit by raindrop
+  - Puddles form where drops land (visual effect)
+  - Thunder and lightning background effects
+  - Wet cat particle effects when hit multiple times
+  - Umbrella platforms that provide shelter and rain can't pass through.
+
+- [ ] **Indoor Cozy Level**
+  - Interior house setting with warm atmosphere
+  - Climbable stairs (step-by-step jumping)
+  - Cat trees positioned near windows
+  - Sunshine beams through windows (volumetric light effect)
+  - Cat heals/gains energy when sitting in sunbeams
+  - Purr animation when basking in sun
+  - Furniture obstacles (sofas, tables, shelves)
+  - Books and plants on windowsills
+  - Carpeted floors with paw print trails
+
 ## Sprite Integration
 - [ ] **Default Sprite Sheets**
   - Load `bowie_cat_3x3.png` automatically on startup
   - Load second PNG file if available
   - Ensure proper default mappings for all animations
   - Auto-detect fireball sprite between cells
+
+- [ ] **Sprite Cropping Guide**
+  - Document how to properly crop sprite sheets
+  - Test cropping with different sprite dimensions
+  - Create visual guide showing grid overlay
+  - Include common pitfalls (border pixels, transparency)
+  - Provide example crops for 3x3, 4x4, and custom grids
+  - Add debugging mode to show crop boundaries in-game
+  - Test with various image formats (PNG, GIF)
+  - Validate proper alignment after cropping
 
 ## Environmental Objects
 - [ ] **Cozy Bed Goal**
@@ -41,6 +71,16 @@
   - Climbing animation state
   - Can jump from any height while climbing
   - Carpeted texture in beige/brown
+
+## NPCs & Interactions
+- [ ] **Cute Dog NPC**
+  - Friendly dog that roams around certain levels
+  - Pathfinding AI to wander and search for treats
+  - Eats treats if it gets to them first
+  - Cat gets scared sprite when dog is nearby
+  - Cat automatically jumps away from dog (fear response)
+  - Dog has happy tail wag animation
+  - Different dog breeds for variety
 
 ## Additional Features (Future)
 - [ ] **Power-ups**
