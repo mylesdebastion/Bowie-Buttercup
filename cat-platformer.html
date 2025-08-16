@@ -497,6 +497,10 @@
                 this.crouching = false;
                 this.dead = false;
                 this.prevY = 300;
+                this.respawnX = 100;
+                this.respawnY = 300;
+                this.climbing = false;
+                this.climbX = 0;
             }
             
             update(dt) {
@@ -547,6 +551,44 @@
             }
             
             handleInput(dt) {
+                // Check for cat tree climbing
+                if (game) {
+                    const tileX = Math.floor((this.x + this.width/2) / 16);
+                    const tileY = Math.floor((this.y + this.height/2) / 16);
+                    const nearTree = game.level[tileY] && (game.level[tileY][tileX] === 4 || 
+                                     game.level[tileY][tileX + 1] === 4 || game.level[tileY][tileX - 1] === 4);
+                    
+                    if (nearTree && isKeyPressed('jump') && isKeyPressed('jump')) {
+                        this.climbing = true;
+                        this.climbX = Math.floor(tileX) * 16 + 8;
+                        this.vx = 0;
+                    }
+                }
+                
+                if (this.climbing) {
+                    this.x = this.climbX;
+                    this.vx = 0;
+                    
+                    if (isKeyPressed('jump')) {
+                        // Climb up
+                        this.vy = -100;
+                    } else if (isKeyPressed('crouch')) {
+                        // Climb down
+                        this.vy = 100;
+                    } else {
+                        this.vy = 0;
+                    }
+                    
+                    if (isKeyPressed('left') || isKeyPressed('right')) {
+                        // Jump off tree
+                        this.climbing = false;
+                        this.vy = -physics.jumpForce * 0.8;
+                        this.vx = isKeyPressed('left') ? -physics.moveSpeed : physics.moveSpeed;
+                    }
+                    
+                    return;
+                }
+                
                 if (isKeyPressed('left')) {
                     this.vx = -physics.moveSpeed;
                     this.facing = -1;
@@ -677,6 +719,12 @@
             }
             
             checkCollisions() {
+                // Check for falling into pit (Level 3)
+                if (game && game.currentLevel === 3 && this.y > 420) {
+                    this.respawnAtCheckpoint();
+                    return;
+                }
+                
                 // Floor collision
                 if (this.y > 400 - this.height) {
                     this.y = 400 - this.height;
@@ -692,12 +740,32 @@
                         const tileX = Math.floor(checkX / 16);
                         const tileY = Math.floor((this.y + this.height) / 16);
                         
-                        if (game.level[tileY] && game.level[tileY][tileX] === 1) {
-                            // Check if we're falling onto the platform (not jumping through)
+                        const tile = game.level[tileY] && game.level[tileY][tileX];
+                        
+                        if (tile === 1) {
+                            // Regular platform
                             if (this.vy > 0 && this.prevY + this.height <= tileY * 16 + 4) {
                                 this.y = tileY * 16 - this.height;
                                 this.vy = 0;
                                 this.grounded = true;
+                                // Update respawn point when on safe ground
+                                if (this.grounded && !this.climbing) {
+                                    this.respawnX = this.x;
+                                    this.respawnY = this.y;
+                                }
+                                break;
+                            }
+                        } else if (tile === 3) {
+                            // Red couch trampoline
+                            if (this.vy > 0 && this.prevY + this.height <= tileY * 16 + 4) {
+                                this.y = tileY * 16 - this.height;
+                                this.vy = -physics.jumpForce * 1.5; // Bounce higher!
+                                this.grounded = false;
+                                game.playSound('jump');
+                                // Create bounce particles
+                                if (!reducedMotion) {
+                                    game.createParticles(this.x + this.width/2, this.y + this.height, 10);
+                                }
                                 break;
                             }
                         }
@@ -716,7 +784,7 @@
                         }
                     }
                     
-                    // Right collision
+                    // Right collision  
                     if (game.level[centerTileY] && game.level[centerTileY][rightTileX] === 1) {
                         if (this.vx > 0) {
                             this.x = rightTileX * 16 - this.width;
@@ -747,6 +815,15 @@
                 // World bounds
                 if (this.x < 0) this.x = 0;
                 if (this.x > 800 - this.width) this.x = 800 - this.width;
+            }
+            
+            respawnAtCheckpoint() {
+                this.x = this.respawnX;
+                this.y = this.respawnY;
+                this.vx = 0;
+                this.vy = 0;
+                this.climbing = false;
+                game.createParticles(this.x + this.width/2, this.y, 20);
             }
             
             hurt() {
@@ -1137,6 +1214,9 @@
                             } else if (y > 26 && x >= 15 && x <= 19) {
                                 // Lava pit
                                 level[y][x] = 2;
+                            } else if (y === 23 && x >= 12 && x <= 13) {
+                                // Red couch trampoline
+                                level[y][x] = 3;
                             } else {
                                 level[y][x] = 0;
                             }
@@ -1162,14 +1242,81 @@
                             } else if (y === 18 && x >= 38 && x <= 42) {
                                 // High platform
                                 level[y][x] = 1;
+                            } else if (y === 24 && x >= 15 && x <= 16) {
+                                // Red couch
+                                level[y][x] = 3;
                             } else {
                                 level[y][x] = 0;
                             }
                         }
                     }
+                } else if (this.currentLevel === 3) {
+                    // Level 3 - Challenge arena with pits
+                    for (let y = 0; y < 30; y++) {
+                        level[y] = [];
+                        for (let x = 0; x < 50; x++) {
+                            if (y === 25) {
+                                // Ground with gaps (pits)
+                                if (x < 8 || (x >= 12 && x <= 18) || (x >= 23 && x <= 30) || x >= 35) {
+                                    level[y][x] = 1;
+                                } else {
+                                    level[y][x] = 0; // Pits
+                                }
+                            } else if (y === 22 && x >= 5 && x <= 7) {
+                                // Small safe platform before first pit
+                                level[y][x] = 1;
+                            } else if (y === 20 && x >= 9 && x <= 11) {
+                                // Floating platform over first pit
+                                level[y][x] = 1;
+                            } else if (y === 19 && x >= 20 && x <= 22) {
+                                // Floating platform over second pit
+                                level[y][x] = 1;
+                            } else if (y === 17 && x >= 26 && x <= 28) {
+                                // Higher platform
+                                level[y][x] = 1;
+                            } else if (y === 21 && x >= 32 && x <= 34) {
+                                // Platform over third pit
+                                level[y][x] = 1;
+                            } else if (y === 15 && x >= 15 && x <= 17) {
+                                // High challenge platform
+                                level[y][x] = 1;
+                            } else if (y === 23 && x === 25) {
+                                // Red couch for big jump
+                                level[y][x] = 3;
+                            } else if (y === 24 && x === 6) {
+                                // Another couch
+                                level[y][x] = 3;
+                            } else {
+                                level[y][x] = 0;
+                            }
+                        }
+                    }
+                    
+                    // Add cat tree at x=40
+                    this.addCatTree(level, 40, 25, 5);
                 }
                 
                 return level;
+            }
+            
+            addCatTree(level, x, groundY, height) {
+                // Cat tree trunk (climbable)
+                for (let y = groundY - height; y < groundY; y++) {
+                    if (level[y]) {
+                        level[y][x] = 4; // Cat tree tile
+                        level[y][x + 1] = 4;
+                    }
+                }
+                
+                // Platform on top
+                const topY = groundY - height - 1;
+                if (level[topY]) {
+                    for (let px = x - 1; px <= x + 2; px++) {
+                        if (px >= 0 && px < 50) {
+                            level[topY][px] = 1;
+                        }
+                    }
+                }
             }
             
             createFishTreats() {
@@ -1233,7 +1380,7 @@
                             // Check win condition
                             const uncaughtMice = this.mice.filter(m => !m.caught).length;
                             if (uncaughtMice === 0) {
-                                this.showWinScreen();
+                                this.nextLevel();
                             }
                         }
                         
@@ -1246,6 +1393,15 @@
                             }
                         }
                     });
+                }
+                
+                // Level 3 - Challenge with pits
+                if (this.currentLevel === 3) {
+                    // Check goal (bed)
+                    if (this.player.x > 740 && !this.goalReached) {
+                        this.goalReached = true;
+                        this.showWinScreen();
+                    }
                 }
                 
                 // Collect treats
@@ -1302,9 +1458,18 @@
             }
             
             nextLevel() {
-                this.currentLevel = 2;
+                this.currentLevel++;
+                if (this.currentLevel > 3) {
+                    // Game complete!
+                    this.showWinScreen();
+                    return;
+                }
+                
                 this.player.x = 100;
                 this.player.y = 300;
+                this.player.respawnX = 100;
+                this.player.respawnY = 300;
+                this.player.climbing = false;
                 this.level = this.createLevel();
                 this.fishTreats = this.createFishTreats();
                 this.initLevel();
@@ -1386,12 +1551,9 @@
                     }
                 });
                 
-                // Level 1 goal flag
-                if (this.currentLevel === 1) {
-                    ctx.fillStyle = '#00FF00';
-                    ctx.fillRect(760, 350, 30, 50);
-                    ctx.fillStyle = '#FF0000';
-                    ctx.fillRect(770, 340, 10, 20);
+                // Goal bed for levels 1 and 3
+                if (this.currentLevel === 1 || this.currentLevel === 3) {
+                    this.drawBed(750, 350);
                 }
                 
                 // Draw mice for level 2
@@ -1442,17 +1604,94 @@
                     for (let x = 0; x < this.level[y].length; x++) {
                         const tile = this.level[y][x];
                         if (tile === 1) {
+                            // Regular platform
                             ctx.fillStyle = '#8B4513';
                             ctx.fillRect(x * 16, y * 16, 16, 16);
                             ctx.fillStyle = '#654321';
                             ctx.fillRect(x * 16 + 2, y * 16 + 2, 12, 12);
                         } else if (tile === 2) {
+                            // Lava
                             ctx.fillStyle = '#FF4500';
                             ctx.fillRect(x * 16, y * 16, 16, 16);
                             ctx.fillStyle = '#FF6347';
                             ctx.fillRect(x * 16 + 4, y * 16 + 4, 8, 8);
+                        } else if (tile === 3) {
+                            // Red couch trampoline
+                            this.drawCouch(x * 16, y * 16);
+                        } else if (tile === 4) {
+                            // Cat tree trunk
+                            this.drawCatTree(x * 16, y * 16);
                         }
                     }
+                }
+            }
+            
+            drawCouch(x, y) {
+                // Couch base
+                ctx.fillStyle = '#8B0000';
+                ctx.fillRect(x, y + 4, 16, 12);
+                
+                // Cushion
+                ctx.fillStyle = '#DC143C';
+                ctx.fillRect(x + 1, y + 2, 14, 10);
+                
+                // Cushion detail
+                ctx.fillStyle = '#FF1493';
+                ctx.fillRect(x + 3, y + 4, 10, 6);
+                
+                // Legs
+                ctx.fillStyle = '#4B2F20';
+                ctx.fillRect(x + 2, y + 14, 2, 2);
+                ctx.fillRect(x + 12, y + 14, 2, 2);
+            }
+            
+            drawCatTree(x, y) {
+                // Tree trunk texture
+                ctx.fillStyle = '#8B7355';
+                ctx.fillRect(x, y, 16, 16);
+                
+                // Carpet texture
+                ctx.fillStyle = '#D2B48C';
+                for (let i = 0; i < 4; i++) {
+                    ctx.fillRect(x + 2, y + i * 4, 12, 2);
+                }
+                
+                // Scratching post lines
+                ctx.strokeStyle = '#654321';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(x + 4, y);
+                ctx.lineTo(x + 4, y + 16);
+                ctx.moveTo(x + 12, y);
+                ctx.lineTo(x + 12, y + 16);
+                ctx.stroke();
+            }
+            
+            drawBed(x, y) {
+                // Bed base
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(x, y + 20, 40, 10);
+                
+                // Mattress
+                ctx.fillStyle = '#F5DEB3';
+                ctx.fillRect(x + 2, y + 15, 36, 12);
+                
+                // Pillow
+                ctx.fillStyle = '#FFB6C1';
+                ctx.fillRect(x + 5, y + 12, 12, 8);
+                ctx.fillRect(x + 23, y + 12, 12, 8);
+                
+                // Blanket
+                ctx.fillStyle = '#DEB887';
+                ctx.fillRect(x + 3, y + 18, 34, 8);
+                
+                // Z's for sleeping (animated)
+                if (Date.now() % 2000 < 1000) {
+                    ctx.fillStyle = '#4169E1';
+                    ctx.font = '12px monospace';
+                    ctx.fillText('Z', x + 10, y + 5 - (Date.now() % 1000) / 50);
+                    ctx.fillText('z', x + 20, y + 8 - (Date.now() % 1000) / 40);
+                    ctx.fillText('Z', x + 30, y + 3 - (Date.now() % 1000) / 45);
                 }
             }
             
@@ -2091,14 +2330,43 @@
         resizeCanvas();
         renderGridEditor();
         
-        const defaultSheetData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAB1BJREFUeF7tnT1sVUcQhR+JEEIgIYRAQkghpXtKp6RLSZeO0l06SneUlE5Jl5IuHaW7lJTu0qWkS0mXEiEQAglBBBICCQQS4vvm7F35+fl57+7szOy9u3ekI9vPz3fuzJm9e/funZ37zszMzMzMzFbBNTiCN/AZfsBv+BN/4Rf8iG/wEZ7BMVyz/6kGbuI5fIXfkfs6xnt4CHs70fC7eIFLKHvxpbF8jOv2VTc5iNdYxuJL4yni1n111RLNvoC6Fl8azxO4Zl9dlaQJR5AqniqG1+yrqooc/HeYLp7ahlftr6osn7GuL3+ZWOzrqvATTO/1JNjPViEp5xGM8xnOmu2iZxibyiQFbWMKYtzI6NcJ/0I6YZSPbXuDl/B3+BzMsjJBOOEJJFz1DGRwANI5uyGv4cjGtkPIsIBXaA+iAZ/gHlyEzA+sQj7DzQxn7YUPMHQzDvEawqTGZ7jb0dZN5OiJ+RLHcRSSCfEy7PUE8g6K5gK24TjchRwD5WDfwzGfQQ5fOgdNJBOQxXGQLMJFcDg5irxBjiHEGORQIoerj5BJ0F1Ir2w6sjqUF5BJ0Lfo0OQ2LCCTYCEJvJGk24cwQ0mjuItsA3kNsQo8jvdRdSJdJO5CMOcge3I2Hblo6DQntyF4ZkVyGRU3sALvZP7chhC4KoqiE1o6QzbiKqiCYsOT2xDE9IqhCxs2pCdtMkYnCJ+2RCcI5UQGBdgywVE4fRaUW8QQOm2Qb5i8EJw+CwqEz4LOC8g8CcJMz8SQbkdMzxQIgdNG+ZQlG7EENUQnvdGJPJPgvJjNF4RTRCdt1pV9CCZVKy8o79wQLpoTN/M5CnuQ3EYMgac5OU0LJ1a0F8JnP0nQCHKakE5bQs6BZAW6MJ9hISlqTvhJUBRu4lkT2Fvdxcu2gUyCLszrBEnIOLYJzoNswdkJvFfRCU46r7K+mZf9KEAayJOUO5E8TuiJqBRMOj+zD5Cf0cQcQKA5yI6YYQEfQCa5CZ/VpJxOkGQkBW3Hb1u2DPTDV6nKGJLTMN+JdQ12MKvQJJxykRnRJUi8C4BDEi+eoiEXnJJOgtx9QDQX4LYKFkGUlxCYFESTYJ8aJfhKH/cgzlvJOyUTJp8qC3AO0lGeSMlZzBKkc9iBQLpJL4Z0QNcSIq8TepKwhyC+Ybj8GJZ3jTJJVdCNQkkHdNk2kJcUksQQ7SJBgzCRcgrioJZcOQRFCy+WnNiB+EIl8BLMi/LuHE7CBP4Kx7sjvuHxMCyJtJy3wN9D8lBCkHKaH7TnNvgfhg8hHRgS05gWaBLGzJf8SRnGbp05N/IG4TgPJl8Ax8/OlkRh7Eb79vQJ8oGqxnBJJfhJEGiFlRZ8knCJsQQ/TggVT6iTdJaAFwklKjvNHjvfQd5KFdK5bklI2DhxQvhJzJNrNilOlGLvQBYiJTm8VCDXMqWJ1QVUo5cRJKJqQqBVeSHy0oeqHkbdJoXvCyKBJrwMu8gK+SkxJOkUJ9KhLhgjGlTyFEMQJ9AzIgqg4aMOiSSd4r2nEyWJtIBgC3A0QJNCkkR4CtHy3xHJsC8hdBQFbQTf1fBdJJ1ikNMu0smwb9qnJRnrBOJOQRU38ySRJlnVrHBdJHNyfyQgqz8SQQNyOsGxAUcBMw+qRlqA+xJyOqFyA7jf8n5VGzNu3Ln5p1aSDQCsQzrBnZzQhQF1cQJxhNg3qpMqJAekdT1eQo8kCOfNvOwryNsOhpJ5IaRzKpoQfwTxqOcD+pD5kQnOPcmKcGJFcQH+kJdCJj7D0Y9hCGfxTFSqBdY/I2nMhqScTqhkQnQCcdPuTZmQP7kROoqC5qOLjhgHqRJJP+EpRFWrITKROoG4x88dCHY+YuznQ+gE4TIJnBG9gy4NIH8ZhTKxXMLWYpGcuXTOSTCJlqfBNahvRtRmU6ZuZkT4SRAmkyAq0sSNOAr6HH52JY1bIRkD8Yq4Y5CJAa2SvlLyJiGQbJMAM++Rb7yHOAW9QBdJX5HgqGjBxRCXCGK1F3zZiCr2GzRTRIBn8oOQRU3iyMsm1kNqxkCOxuxNNhGSrGNLI7qx9M0JBzN6TRTqLETQlqLMLUoSvW8cJYM6yEEdhLwQ+QJydBJPhyfJJmXKPFu5oGxlAbmGLIsw1RPnI29QJIdXJcTD5PUy8xDEVDOioQxXNz4j6wRiaIuTz5Ad9iEfzOQKmOtZaExQBu1D5AuaKBLDJdxB8mCZ5HRfznLJbkKhG2MvoyB3pJ9tQ6Hfz7Cd4CxkEDYJ/Rt5+TtQ7jBCdRCRl9WXiQxOlUIXtC9B3O8/R/5g3qCKCUFO6vY9lJPcnhTyKZKi+zMsT7KECZORYTRlZhJOcrwrD7NJK3JENAcQdJJjQgR5KN+YOa0Mk0HV3rz7+y2TNRwXyKUAAAAASUVORK5CYII=';
-        
-        const img = new Image();
-        img.onload = () => {
-            sheets.A.img = img;
-            analyzeAndSetupGrid(img, 'A');
+        // Load default sprite sheets from files
+        function loadDefaultSheets() {
+            // Try to load bowie_cat_3x3.png
+            fetch('bowie_cat_3x3.png')
+                .then(response => response.blob())
+                .then(blob => {
+                    const img = new Image();
+                    img.onload = () => {
+                        sheets.A.img = img;
+                        analyzeAndSetupGrid(img, 'A');
+                        updateSheetThumbnail('A', img);
+                    };
+                    img.src = URL.createObjectURL(blob);
+                })
+                .catch(() => {
+                    console.log('Could not load bowie_cat_3x3.png, using embedded default');
+                    loadEmbeddedDefault();
+                });
             
-            const thumbContainer = document.getElementById('sheetAThumb');
+            // Try to load a second sheet if available
+            fetch('cat_sheet_2.png')
+                .then(response => response.blob())
+                .then(blob => {
+                    const img = new Image();
+                    img.onload = () => {
+                        sheets.B.img = img;
+                        updateSheetThumbnail('B', img);
+                    };
+                    img.src = URL.createObjectURL(blob);
+                })
+                .catch(() => {
+                    console.log('No second sheet found');
+                });
+        }
+        
+        function updateSheetThumbnail(sheetId, img) {
+            const thumbContainer = document.getElementById(`sheet${sheetId}Thumb`);
             thumbContainer.innerHTML = '';
             const thumbCanvas = document.createElement('canvas');
             thumbCanvas.width = 96;
@@ -2107,8 +2375,22 @@
             thumbCtx.imageSmoothingEnabled = false;
             thumbCtx.drawImage(img, 0, 0, 96, 96);
             thumbContainer.appendChild(thumbCanvas);
-        };
-        img.src = defaultSheetData;
+        }
+        
+        function loadEmbeddedDefault() {
+            const defaultSheetData = 'data:image/png;base64,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';
+            
+            const img = new Image();
+            img.onload = () => {
+                sheets.A.img = img;
+                analyzeAndSetupGrid(img, 'A');
+                updateSheetThumbnail('A', img);
+            };
+            img.src = defaultSheetData;
+        }
+        
+        // Load sheets on startup
+        loadDefaultSheets();
     </script>
 </body>
 </html>
