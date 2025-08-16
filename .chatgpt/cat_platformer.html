@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cat Platformer + Sprite Cropper (Single File)</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --ink:#c9d1d9; --muted:#8b949e; --accent:#58a6ff; --warn:#ffae00; --ok:#2ea043; --bad:#f85149;
+    --grid:#30363d; --hl:#6e7681;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font:14px/1.4 system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif; }
+  #topbar{
+    display:flex; gap:.75rem; align-items:center; padding:.5rem .75rem; background:#0a0f14; border-bottom:1px solid var(--grid); position:sticky; top:0; z-index:10;
+  }
+  #topbar h1{ font-size:14px; margin:0; color:var(--muted); font-weight:600; letter-spacing:.2px;}
+  button, select, input[type="number"], input[type="text"]{
+    background:var(--panel); color:var(--ink); border:1px solid var(--grid); padding:.4rem .55rem; border-radius:6px; outline:none;
+  }
+  button.primary{ background:var(--accent); color:#081019; border-color:#2f81f7; }
+  button.ghost{ background:transparent; }
+  button:disabled{ opacity:.5; }
+  .pill{ padding:.35rem .6rem; border:1px solid var(--grid); border-radius:999px; }
+  #app{
+    display:grid; grid-template-columns: 360px 1fr; gap:0; height:calc(100% - 46px);
+  }
+  #sidebar{ border-right:1px solid var(--grid); overflow:auto; background:var(--panel); }
+  #main{ position:relative; overflow:hidden; }
+  .section{ padding:12px; border-bottom:1px solid var(--grid); }
+  .section h2{ font-size:12px; text-transform:uppercase; letter-spacing:.12em; margin:0 0 10px; color:var(--muted); }
+  .row{ display:flex; align-items:center; gap:8px; margin:.4rem 0; }
+  .grid3{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+  canvas.preview{ width:100%; height:auto; background:#0a0f14; border:1px solid var(--grid); border-radius:8px; image-rendering: pixelated; }
+  .tiny{ font-size:12px; color:var(--muted); }
+  .warn{ color:var(--warn); }
+  .ok{ color:var(--ok); }
+  label.small{ font-size:12px; color:var(--muted); }
+  input[type="range"]{ width:100%; }
+  .kv{ display:grid; grid-template-columns: 1fr 80px; gap:8px; }
+  table.assign{ width:100%; border-collapse:collapse; }
+  table.assign td, table.assign th{ border:1px solid var(--grid); padding:4px; }
+  table.assign th{ font-size:12px; color:var(--muted); }
+  .controls{ display:flex; gap:8px; flex-wrap:wrap; }
+  #gameCanvas{ width:100%; height:100%; display:block; background:#20262e; image-rendering: pixelated; }
+  #overlay{
+    position:absolute; left:0; top:0; right:0; pointer-events:none; color:#b3c5ff; text-shadow:0 1px 0 #000;
+    font:12px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .panel{ padding:10px; background:#0a0f14aa; border:1px solid var(--grid); border-radius:8px; backdrop-filter: blur(4px); }
+  #hud{ position:absolute; left:8px; top:8px; }
+  #help{ position:absolute; right:8px; top:8px; text-align:right; }
+  .tabbar{ display:flex; gap:8px; }
+  .toggle{ cursor:pointer; }
+  .code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color:#a6e3a1; background:#0a0f14; padding:2px 6px; border-radius:6px; }
+  .divider{ height:1px; background:var(--grid); margin:8px 0; }
+  .btn-row{ display:flex; gap:6px; }
+</style>
+</head>
+<body>
+  <div id="topbar">
+    <h1>Cat Platformer + Sprite Cropper</h1>
+    <span class="pill" id="modePill">Mode: Editor</span>
+    <div class="btn-row">
+      <button id="toggleMode" class="primary">Play ▶</button>
+      <button id="resetDefaults" class="ghost">Reset defaults</button>
+      <button id="exportBtn">Export JSON</button>
+      <label class="small toggle"><input type="file" id="importFile" hidden accept=".json"><span class="pill" id="importBtn">Import JSON</span></label>
+    </div>
+  </div>
+
+  <div id="app">
+    <!-- SIDEBAR / EDITOR -->
+    <div id="sidebar" role="complementary" aria-label="Editor Sidebar">
+      <!-- Visual description (seed mapping) -->
+      <div class="section">
+        <h2>Visual Read (Your 3×3 cat sheet)</h2>
+        <div class="tiny">
+          Row1 Col1 = curled/roll (good for <span class="code">dodge_roll</span>), Row1 Col2 = side step (<span class="code">run_1</span>),
+          in-between a small orange/yellow fireball sprite, Row1 Col3 = tall side sit (<span class="code">idle_sit</span>).<br/>
+          Row2 Col1 = step alt (<span class="code">run_2</span>), Row2 Col2 = step alt (<span class="code">run_3</span>), Row2 Col3 = front sit (<span class="code">idle_sit_front</span>).<br/>
+          Row3 Col1 = side sit low (<span class="code">crouch</span>), Row3 Col2 = compact front (<span class="code">idle_sit_front</span>), Row3 Col3 = side sit firm (land/crouch).
+        </div>
+      </div>
+
+      <!-- Sheets -->
+      <div class="section">
+        <h2>Sprite Sheets (3×3)</h2>
+        <div class="row">
+          <label class="small">Sheet A:</label>
+          <input type="file" id="fileA" accept="image/*">
+        </div>
+        <canvas id="sheetCanvasA" class="preview" width="320" height="320" title="Click to select a cell, drag to define fireball when 'Fireball: custom' is on"></canvas>
+        <div class="row">
+          <label class="small">Sheet B:</label>
+          <input type="file" id="fileB" accept="image/*">
+        </div>
+        <canvas id="sheetCanvasB" class="preview" width="320" height="320"></canvas>
+        <div class="tiny">Tip: click a cell to edit its crop; use arrow keys to nudge (Shift = 5px). “Auto-trim” finds non-transparent bounds inside the default grid cell.</div>
+      </div>
+
+      <!-- Active sheet + animation mapping -->
+      <div class="section">
+        <h2>Player Uses Sheet</h2>
+        <div class="row">
+          <select id="activeSheet">
+            <option value="A">A (default)</option>
+            <option value="B">B</option>
+          </select>
+          <label class="small"><input type="checkbox" id="flipForLeft"> Mirror for left</label>
+        </div>
+        <div class="divider"></div>
+        <h2>Assignments</h2>
+        <table class="assign">
+          <thead><tr><th>Cell</th><th>Assign</th><th>FlipX</th></tr></thead>
+          <tbody id="assignBodyA"></tbody>
+        </table>
+        <div class="divider"></div>
+        <div class="row">
+          <label class="small">Fireball sprite:</label>
+          <select id="fireballSource">
+            <option value="none">None (drawn circle)</option>
+            <option value="custom">Custom crop (drag on sheet)</option>
+            <option value="A:0">Sheet A cell… (pick below)</option>
+            <option value="B:0">Sheet B cell… (pick below)</option>
+          </select>
+        </div>
+        <div class="row">
+          <label class="small">When “Sheet cell” is chosen:</label>
+          <select id="fireballCell">
+            <option value="0">r1c1</option><option value="1">r1c2</option><option value="2">r1c3</option>
+            <option value="3">r2c1</option><option value="4">r2c2</option><option value="5">r2c3</option>
+            <option value="6">r3c1</option><option value="7">r3c2</option><option value="8">r3c3</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Per-cell crop -->
+      <div class="section">
+        <h2>Selected Cell Crop</h2>
+        <div class="row tiny">Sheet: <span id="selSheet">A</span> &nbsp; Cell: <span id="selCell">r1c1</span></div>
+        <div class="kv"><label class="small">x</label><input type="number" id="cx" step="1"></div>
+        <div class="kv"><label class="small">y</label><input type="number" id="cy" step="1"></div>
+        <div class="kv"><label class="small">w</label><input type="number" id="cw" step="1"></div>
+        <div class="kv"><label class="small">h</label><input type="number" id="ch" step="1"></div>
+        <div class="row">
+          <label class="small">Pivot X</label><input type="number" id="pvx" step="0.05" min="0" max="1" value="0.5" style="width:80px;">
+          <label class="small">Pivot Y</label><input type="number" id="pvy" step="0.05" min="0" max="1" value="1" style="width:80px;">
+        </div>
+        <div class="row">
+          <button id="autoTrim">Auto-trim</button>
+          <button id="padBtn">Pad 2px</button>
+          <label class="small"><input type="checkbox" id="snap8"> Snap 8px</label>
+        </div>
+      </div>
+
+      <!-- Physics & tuning -->
+      <div class="section">
+        <h2>Physics</h2>
+        <div class="kv"><label class="small">Gravity</label><input type="range" id="grav" min="300" max="1600" value="900"></div>
+        <div class="kv"><label class="small">Run Accel</label><input type="range" id="acc" min="500" max="3000" value="1800"></div>
+        <div class="kv"><label class="small">Friction</label><input type="range" id="fric" min="0" max="1500" value="900"></div>
+        <div class="kv"><label class="small">Max Speed</label><input type="range" id="maxv" min="60" max="320" value="180"></div>
+        <div class="kv"><label class="small">Jump Power</label><input type="range" id="jmp" min="180" max="520" value="360"></div>
+        <div class="kv"><label class="small">Coyote (ms)</label><input type="range" id="coyote" min="0" max="200" value="80"></div>
+        <div class="kv"><label class="small">Jump Buffer (ms)</label><input type="range" id="jbuf" min="0" max="200" value="100"></div>
+      </div>
+
+      <div class="section">
+        <h2>Persistence</h2>
+        <div class="row">
+          <button id="saveLocal">Save to localStorage</button>
+          <button id="loadLocal">Load from localStorage</button>
+          <button id="clearLocal">Clear</button>
+        </div>
+        <div class="tiny">Config key: <span class="code">catPlatformerConfigV1</span></div>
+      </div>
+    </div>
+
+    <!-- MAIN / GAME -->
+    <div id="main" role="main" aria-label="Game Area">
+      <canvas id="gameCanvas" width="960" height="540"></canvas>
+      <div id="overlay">
+        <div id="hud" class="panel"></div>
+        <div id="help" class="panel">
+          <div><b>Keyboard</b> A/D or ←/→ move · Space/W/↑ jump (hold) · S/↓ crouch · Q sit · Shift dodge · R restart · Tab toggle Editor/Play</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  // ===== Utilities =====
+  const $ = sel => document.querySelector(sel);
+  const clamp = (v,min,max)=>Math.max(min,Math.min(max,v));
+  const lerp = (a,b,t)=>a+(b-a)*t;
+  const now = ()=>performance.now();
+
+  // ===== Sprite Sheet Model =====
+  class Sheet {
+    constructor(name, canvasEl){
+      this.name = name;            // 'A' or 'B'
+      this.img = null;             // Image
+      this.canvas = canvasEl;
+      this.ctx = this.canvas.getContext('2d');
+      this.w = 0; this.h = 0;
+      this.cells = [];             // 9 objects: {x,y,w,h, pivotX, pivotY, flipX, assign}
+      this.selected = 0;
+      this.customFireball = null;  // {x,y,w,h} freeform (drag)
+      this.dragFB = false;
+
+      // default empty cells
+      for(let i=0;i<9;i++){
+        this.cells.push({x:0,y:0,w:0,h:0, pivotX:.5, pivotY:1, flipX:false, assign:""});
+      }
+      this.canvas.addEventListener('mousedown', (e)=>this.onMouseDown(e));
+      this.canvas.addEventListener('mousemove', (e)=>this.onMouseMove(e));
+      window.addEventListener('mouseup', ()=>this.dragFB=false);
+      this.canvas.addEventListener('click', (e)=>this.onClick(e));
+    }
+    loadFromFile(file){
+      return new Promise((res,rej)=>{
+        if(!file) return res();
+        const img = new Image();
+        img.onload = ()=>{
+          this.img = img;
+          this.w = img.naturalWidth; this.h = img.naturalHeight;
+          // set default thirds
+          const cw = Math.floor(this.w/3), ch = Math.floor(this.h/3);
+          for(let r=0;r<3;r++) for(let c=0;c<3;c++){
+            const i = r*3+c;
+            this.cells[i].x = c*cw; this.cells[i].y = r*ch; this.cells[i].w = cw; this.cells[i].h = ch;
+            if(this.cells[i].pivotX==null) this.cells[i].pivotX=.5;
+            if(this.cells[i].pivotY==null) this.cells[i].pivotY=1;
+          }
+          // defaults mapping based on visual read for Sheet A only
+          if(this.name==='A'){
+            const map = ["dodge_roll","run_1","idle_sit","run_2","run_3","idle_sit_front","crouch","idle_sit_front","crouch"];
+            for(let i=0;i<9;i++) this.cells[i].assign = map[i];
+          }
+          this.draw();
+          res();
+        };
+        img.onerror = rej;
+        img.src = URL.createObjectURL(file);
+      });
+    }
+    defaultRect(i){
+      const cw = Math.floor(this.w/3), ch = Math.floor(this.h/3);
+      const r=Math.floor(i/3), c=i%3; return {x:c*cw,y:r*ch,w:cw,h:ch};
+    }
+    cellRect(i){ const c=this.cells[i]; return {x:c.x,y:c.y,w:c.w,h:c.h}; }
+    setCell(i, rect){ Object.assign(this.cells[i], rect); this.draw(); }
+    assign(i, name){ this.cells[i].assign=name; }
+    draw(){
+      const ctx=this.ctx, W=this.canvas.width, H=this.canvas.height;
+      ctx.imageSmoothingEnabled=false;
+      ctx.clearRect(0,0,W,H);
+      ctx.fillStyle="#06090d"; ctx.fillRect(0,0,W,H);
+      if(this.img){
+        // Fit image
+        const scale = Math.min(W/this.w, H/this.h);
+        const ox = (W - this.w*scale)/2, oy=(H - this.h*scale)/2;
+        ctx.save();
+        ctx.translate(ox,oy);
+        ctx.scale(scale,scale);
+        ctx.drawImage(this.img,0,0);
+        // grid thirds
+        ctx.strokeStyle="#334"; ctx.lineWidth=1/scale;
+        for(let i=1;i<3;i++){
+          ctx.beginPath(); ctx.moveTo(this.w*i/3,0); ctx.lineTo(this.w*i/3,this.h); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(0,this.h*i/3); ctx.lineTo(this.w,this.h*i/3); ctx.stroke();
+        }
+        // cell crops
+        for(let i=0;i<9;i++){
+          const {x,y,w,h}=this.cells[i];
+          ctx.strokeStyle = (i===this.selected) ? "#58a6ff" : "#666";
+          ctx.strokeRect(x,y,w,h);
+          // pivot
+          const px=this.cells[i].pivotX, py=this.cells[i].pivotY;
+          ctx.fillStyle="#58a6ff"; ctx.fillRect(x + w*px - 1.5, y + h*py - 1.5, 3, 3);
+        }
+        // custom fireball
+        if(this.customFireball){
+          const fb=this.customFireball;
+          ctx.strokeStyle="#ffae00"; ctx.setLineDash([4,3]); ctx.strokeRect(fb.x,fb.y,fb.w,fb.h); ctx.setLineDash([]);
+        }
+        ctx.restore();
+      } else {
+        ctx.fillStyle="#334"; ctx.fillRect(8,8,W-16,H-16);
+        ctx.fillStyle="#6e7681"; ctx.fillText("Upload an image", 10,20);
+      }
+    }
+    canvasToImageCoords(e){
+      const rect=this.canvas.getBoundingClientRect();
+      const mx=e.clientX-rect.left, my=e.clientY-rect.top;
+      const scale = this.img ? Math.min(this.canvas.width/this.w, this.canvas.height/this.h) : 1;
+      const ox=(this.canvas.width-(this.w*scale))/2, oy=(this.canvas.height-(this.h*scale))/2;
+      const x=(mx-ox)/scale, y=(my-oy)/scale;
+      return {x,y, scale, ox, oy};
+    }
+    onClick(e){
+      const p=this.canvasToImageCoords(e);
+      if(!this.img) return;
+      // If fireball custom is selected, click-drag handled separately; simple click selects nearest cell
+      const r=Math.floor(clamp(p.y,0,this.h-1)/(this.h/3));
+      const c=Math.floor(clamp(p.x,0,this.w-1)/(this.w/3));
+      this.selected = r*3+c;
+      updateSelectedUI();
+      this.draw();
+    }
+    onMouseDown(e){
+      if(!this.img) return;
+      // start custom fireball drag if that mode is active
+      if($("#fireballSource").value==="custom"){
+        const p=this.canvasToImageCoords(e);
+        this.customFireball = {x:p.x, y:p.y, w:1, h:1};
+        this.dragFB = true;
+      }
+    }
+    onMouseMove(e){
+      if(this.dragFB){
+        const p=this.canvasToImageCoords(e);
+        const fb=this.customFireball;
+        fb.w = (p.x - fb.x); fb.h = (p.y - fb.y);
+        this.draw();
+      }
+    }
+    autoTrim(i){
+      if(!this.img) return;
+      const def=this.defaultRect(i);
+      const r=def; // search in the default grid cell
+      const off=document.createElement('canvas');
+      off.width=r.w; off.height=r.h;
+      const octx=off.getContext('2d',{willReadFrequently:true});
+      octx.imageSmoothingEnabled=false;
+      octx.drawImage(this.img, r.x, r.y, r.w, r.h, 0, 0, r.w, r.h);
+      const data=octx.getImageData(0,0,r.w,r.h).data;
+      let minX=r.w, minY=r.h, maxX=-1, maxY=-1;
+      for(let y=0;y<r.h;y++){
+        for(let x=0;x<r.w;x++){
+          const a=data[(y*r.w+x)*4+3];
+          if(a>0){ if(x<minX)minX=x; if(y<minY)minY=y; if(x>maxX)maxX=x; if(y>maxY)maxY=y; }
+        }
+      }
+      if(maxX>=minX && maxY>=minY){
+        const pad=1;
+        const nx = r.x + Math.max(0,minX-pad);
+        const ny = r.y + Math.max(0,minY-pad);
+        const nw = Math.min(this.w - nx, (maxX-minX+1) + pad*2);
+        const nh = Math.min(this.h - ny, (maxY-minY+1) + pad*2);
+        this.setCell(i,{x:nx,y:ny,w:nw,h:nh});
+      }
+    }
+  }
+
+  // ===== Global State =====
+  const sheetA = new Sheet('A', $('#sheetCanvasA'));
+  const sheetB = new Sheet('B', $('#sheetCanvasB'));
+  const sheets = {A:sheetA, B:sheetB};
+  let active = 'A';
+
+  // ===== UI: Assignment Table =====
+  const ASSIGNS = ["","run_1","run_2","run_3","jump_up","fall_down","idle_sit","idle_sit_front","crouch","dodge_roll","misc"];
+  function buildAssignTable(){
+    const tbody = $('#assignBodyA'); tbody.innerHTML='';
+    for(const name of ['A','B']){
+      const trh = document.createElement('tr');
+      trh.innerHTML = `<th colspan="3" style="text-align:left;color:#9da7b1">Sheet ${name}</th>`;
+      tbody.appendChild(trh);
+      for(let i=0;i<9;i++){
+        const tr=document.createElement('tr');
+        const label = `r${Math.floor(i/3)+1}c${i%3+1}`;
+        tr.innerHTML = `<td>${label}</td>
+          <td><select data-s="${name}" data-i="${i}" class="assignSel"></select></td>
+          <td style="text-align:center"><input type="checkbox" data-s="${name}" data-i="${i}" class="flipChk"></td>`;
+        tbody.appendChild(tr);
+      }
+    }
+    for(const sel of document.querySelectorAll('.assignSel')){
+      ASSIGNS.forEach(a=>{
+        const opt=document.createElement('option'); opt.value=a; opt.textContent=a||"(none)"; sel.appendChild(opt);
+      });
+      const s=sel.dataset.s, i=+sel.dataset.i; sel.value=sheets[s].cells[i].assign||"";
+      sel.addEventListener('change', ()=>{ sheets[s].cells[i].assign=sel.value; });
+    }
+    for(const chk of document.querySelectorAll('.flipChk')){
+      const s=chk.dataset.s, i=+chk.dataset.i; chk.checked=!!sheets[s].cells[i].flipX;
+      chk.addEventListener('change', ()=>{ sheets[s].cells[i].flipX=chk.checked; });
+    }
+  }
+
+  // ===== Selected Cell Controls =====
+  function updateSelectedUI(){
+    const S = sheets[active], i=S.selected, c=S.cells[i];
+    $('#selSheet').textContent=active;
+    $('#selCell').textContent=`r${Math.floor(i/3)+1}c${i%3+1}`;
+    ['cx','cy','cw','ch'].forEach((id,idx)=>{
+      const v = [c.x,c.y,c.w,c.h][idx]; const el = $('#'+id); el.value=Math.round(v);
+    });
+    $('#pvx').value = c.pivotX ?? .5; $('#pvy').value = c.pivotY ?? 1;
+  }
+  function applySelectedFromInputs(){
+    const S=sheets[active], i=S.selected, c=S.cells[i];
+    let nx=+$('#cx').value, ny=+$('#cy').value, nw=+$('#cw').value, nh=+$('#ch').value;
+    if($('#snap8').checked){
+      const snap = v=>Math.round(v/8)*8;
+      nx=snap(nx); ny=snap(ny); nw=snap(nw); nh=snap(nh);
+    }
+    nx=clamp(nx,0,S.w-1); ny=clamp(ny,0,S.h-1);
+    nw=clamp(nw,1,S.w-nx); nh=clamp(nh,1,S.h-ny);
+    c.x=nx; c.y=ny; c.w=nw; c.h=nh; c.pivotX=+$('#pvx').value; c.pivotY=+$('#pvy').value;
+    S.draw();
+  }
+  ['cx','cy','cw','ch','pvx','pvy'].forEach(id=>$('#'+id).addEventListener('input', applySelectedFromInputs));
+  $('#autoTrim').addEventListener('click', ()=>{ sheets[active].autoTrim(sheets[active].selected); updateSelectedUI(); });
+  $('#padBtn').addEventListener('click', ()=>{
+    const S=sheets[active], i=S.selected, c=S.cells[i];
+    S.setCell(i,{x:Math.max(0,c.x-2), y:Math.max(0,c.y-2), w:Math.min(S.w-(c.x-2),c.w+4), h:Math.min(S.h-(c.y-2),c.h+4)});
+    updateSelectedUI();
+  });
+
+  // ===== Files =====
+  $('#fileA').addEventListener('change', async (e)=>{ await sheetA.loadFromFile(e.target.files[0]); buildAssignTable(); updateSelectedUI(); });
+  $('#fileB').addEventListener('change', async (e)=>{ await sheetB.loadFromFile(e.target.files[0]); buildAssignTable(); updateSelectedUI(); });
+
+  // Active sheet
+  $('#activeSheet').addEventListener('change', e=>{ active = e.target.value; updateSelectedUI(); });
+  $('#flipForLeft').addEventListener('change', ()=>{}); // just read later
+
+  // Fireball source
+  $('#fireballSource').addEventListener('change', ()=>{
+    sheetA.draw(); sheetB.draw();
+  });
+
+  // ===== Persistence (Import/Export/Local) =====
+  function exportJSON(){
+    const j = {
+      active: $('#activeSheet').value,
+      flipForLeft: $('#flipForLeft').checked,
+      fireballSource: $('#fireballSource').value,
+      fireballCell: +$('#fireballCell').value,
+      A: { w:sheetA.w, h:sheetA.h, cells: sheetA.cells, customFireball: sheetA.customFireball },
+      B: { w:sheetB.w, h:sheetB.h, cells: sheetB.cells, customFireball: sheetB.customFireball },
+      physics: getPhysics()
+    };
+    const blob=new Blob([JSON.stringify(j,null,2)],{type:"application/json"});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download="cat-platformer-config.json"; a.click();
+  }
+  function importJSON(obj){
+    try{
+      $('#activeSheet').value=obj.active||'A'; $('#flipForLeft').checked=!!obj.flipForLeft;
+      $('#fireballSource').value=obj.fireballSource||'none'; $('#fireballCell').value=obj.fireballCell??0;
+      if(obj.A){ sheetA.cells=obj.A.cells||sheetA.cells; sheetA.customFireball=obj.A.customFireball||null; sheetA.draw(); }
+      if(obj.B){ sheetB.cells=obj.B.cells||sheetB.cells; sheetB.customFireball=obj.B.customFireball||null; sheetB.draw(); }
+      setPhysics(obj.physics||{});
+      buildAssignTable(); updateSelectedUI();
+    }catch(e){ alert("Import failed: "+e.message); }
+  }
+  $('#exportBtn').addEventListener('click', exportJSON);
+  $('#importBtn').addEventListener('click', ()=>$('#importFile').click());
+  $('#importFile').addEventListener('change', async (e)=>{
+    const f=e.target.files[0]; if(!f) return;
+    const txt = await f.text(); importJSON(JSON.parse(txt));
+    e.target.value='';
+  });
+
+  // LocalStorage
+  const LKEY = 'catPlatformerConfigV1';
+  $('#saveLocal').addEventListener('click', ()=>{ const obj = {
+      active: $('#activeSheet').value, flipForLeft: $('#flipForLeft').checked,
+      fireballSource: $('#fireballSource').value, fireballCell:+$('#fireballCell').value,
+      A:{cells:sheetA.cells, customFireball:sheetA.customFireball},
+      B:{cells:sheetB.cells, customFireball:sheetB.customFireball},
+      physics:getPhysics()
+    }; localStorage.setItem(LKEY, JSON.stringify(obj)); });
+  $('#loadLocal').addEventListener('click', ()=>{ const t=localStorage.getItem(LKEY); if(t) importJSON(JSON.parse(t)); else alert("No saved config");});
+  $('#clearLocal').addEventListener('click', ()=>{ localStorage.removeItem(LKEY); });
+
+  $('#resetDefaults').addEventListener('click', ()=>{
+    // Reapply default assignment mapping for A
+    if(sheetA.img){
+      const map = ["dodge_roll","run_1","idle_sit","run_2","run_3","idle_sit_front","crouch","idle_sit_front","crouch"];
+      for(let i=0;i<9;i++) sheetA.cells[i].assign = map[i];
+      sheetA.draw(); buildAssignTable(); updateSelectedUI();
+    }
+  });
+
+  // ===== Physics controls =====
+  function getPhysics(){
+    return {
+      gravity:+$('#grav').value, accel:+$('#acc').value, friction:+$('#fric').value,
+      maxSpeed:+$('#maxv').value, jump:+$('#jmp').value, coyote:+$('#coyote').value, jbuf:+$('#jbuf').value
+    };
+  }
+  function setPhysics(p){
+    if(p.gravity!=null) $('#grav').value=p.gravity;
+    if(p.accel!=null) $('#acc').value=p.accel;
+    if(p.friction!=null) $('#fric').value=p.friction;
+    if(p.maxSpeed!=null) $('#maxv').value=p.maxSpeed;
+    if(p.jump!=null) $('#jmp').value=p.jump;
+    if(p.coyote!=null) $('#coyote').value=p.coyote;
+    if(p.jbuf!=null) $('#jbuf').value=p.jbuf;
+  }
+
+  // ===== Game =====
+  const canvas = $('#gameCanvas'); const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled=false;
+
+  // Tilemap (16x16)
+  const TILE = 16;
+  const map = [
+    "........................................................................",
+    "........................................................................",
+    "........................................................................",
+    ".................................................#####..................",
+    "..............................................................#.........",
+    ".....................###................................................",
+    "...............................###............................#####.....",
+    "...................##...................................................",
+    "#####..............##....................o......................##......",
+    "#####.....o....................................................##......",
+    "#####..........................###......................o...............",
+    "########.................#############...........###############........",
+    "########################################################################"
+  ];
+  const W = map[0].length*TILE, H = map.length*TILE;
+
+  // Entities
+  const keys={}; window.addEventListener('keydown',e=>{ if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Tab"].includes(e.code)) e.preventDefault(); keys[e.code]=true; });
+  window.addEventListener('keyup',e=>{ keys[e.code]=false; });
+
+  const player = {
+    x:64, y:0, vx:0, vy:0, w:12, h:14, dir:1,
+    onGround:false, crouching:false, state:'idle_sit',
+    coyoteLeft:0, jumpBufLeft:0, invulnLeft:0, rollLeft:0, dead:false
+  };
+
+  const camera={x:0,y:0};
+  const hazards = []; // {x,y,vx,vy,alive}
+  function spawnFireball(x,y,vx){ hazards.push({x,y,vx,vy:0,alive:true,t:0}); }
+
+  // Sample cannons
+  const cannons = [{x: 24*TILE, y: 10*TILE}, {x: 62*TILE, y: 6*TILE}];
+  let lastSpawn=0;
+
+  // Collision helpers
+  function solidAt(px,py){
+    const tx=Math.floor(px/TILE), ty=Math.floor(py/TILE);
+    if(ty<0 || ty>=map.length || tx<0 || tx>=map[0].length) return true;
+    return map[ty][tx]==='#';
+  }
+  function rectVsMap(x,y,w,h){
+    const step=4; // sampling step
+    // floor & ceiling
+    let ox=0, oy=0, onGround=false;
+    // Horizontal
+    if(w>0){
+      if(player.vx>0){
+        for(let yy=y; yy<y+h; yy+=step){ if(solidAt(x+w, yy)){ ox = Math.floor((x+w)/TILE)*TILE - (x+w) - 0.01; break; } }
+      } else if(player.vx<0){
+        for(let yy=y; yy<y+h; yy+=step){ if(solidAt(x, yy)){ ox = Math.floor(x/TILE+1)*TILE - x + 0.01; break; } }
+      }
+    }
+    x += ox;
+    // Vertical
+    if(player.vy>0){
+      for(let xx=x; xx<x+w; xx+=step){ if(solidAt(xx, y+h)){ oy = Math.floor((y+h)/TILE)*TILE - (y+h) - 0.01; onGround=true; break; } }
+    } else if(player.vy<0){
+      for(let xx=x; xx<x+w; xx+=step){ if(solidAt(xx, y)){ oy = Math.floor(y/TILE+1)*TILE - y + 0.01; break; } }
+    }
+    y += oy;
+    return {x,y,onGround};
+  }
+
+  // Animator
+  function compileFrames(){
+    const use = $('#activeSheet').value;
+    const S = sheets[use], other = sheets[use==='A'?'B':'A'];
+    const allStates = {
+      run: pickFrames(S,['run_1','run_2','run_3']),
+      idle_sit: pickFrames(S,['idle_sit','idle_sit_front']),
+      crouch: pickFrames(S,['crouch']),
+      jump_up: pickFrames(S,['jump_up','idle_sit_front']),
+      fall_down: pickFrames(S,['fall_down','idle_sit_front']),
+      dodge_roll: pickFrames(S,['dodge_roll'])
+    };
+    return allStates;
+  }
+  function pickFrames(sheet, tags){
+    const arr=[];
+    for(const t of tags){
+      for(let i=0;i<9;i++){
+        if(sheet.cells[i].assign===t){
+          arr.push(frameFrom(sheet,i, 100)); // 100ms default per frame
+        }
+      }
+      if(arr.length) break;
+    }
+    // fallback placeholder
+    if(!arr.length){ arr.push({sheet:null, rect:null, color:"#fff", dur:150}); }
+    return arr;
+  }
+  function frameFrom(sheet,i,dur){
+    return {sheet, rect: sheet.cellRect(i), pivotX: sheet.cells[i].pivotX??.5, pivotY: sheet.cells[i].pivotY??1, flipX: !!sheet.cells[i].flipX, dur};
+  }
+
+  function currentFireballFrame(){
+    const src = $('#fireballSource').value;
+    if(src==='custom' && sheetA.customFireball && sheetA.img) return {sheet:sheetA, rect:sheetA.customFireball};
+    if(src.startsWith('A:')) return {sheet:sheetA, rect: sheetA.cellRect(+$('#fireballCell').value)};
+    if(src.startsWith('B:')) return {sheet:sheetB, rect: sheetB.cellRect(+$('#fireballCell').value)};
+    return null;
+  }
+
+  const anim = { states: compileFrames(), t:0, idx:0, name:"idle_sit" };
+  function switchState(name){
+    if(anim.name===name) return;
+    anim.name=name; anim.idx=0; anim.t=0;
+  }
+  function advanceAnim(dt){
+    const frames=anim.states[anim.name]||[{dur:200}];
+    anim.t += dt;
+    if(anim.t > frames[anim.idx].dur){ anim.t=0; anim.idx=(anim.idx+1)%frames.length; }
+  }
+
+  // Draw sprite frame
+  function drawFrame(x,y,dir,frame,scale=1){
+    ctx.save();
+    if(frame.sheet && frame.sheet.img){
+      const {sheet, rect, pivotX=.5, pivotY=1, flipX=false} = frame;
+      const mir = (dir<0) ^ (flipX && $('#flipForLeft').checked);
+      const px = x, py = y;
+      ctx.translate(Math.floor(px), Math.floor(py));
+      if(mir){ ctx.scale(-1,1); }
+      const w = rect.w*scale, h=rect.h*scale;
+      const ox = Math.floor(-rect.w*pivotX*scale), oy = Math.floor(-rect.h*pivotY*scale);
+      ctx.drawImage(sheet.img, rect.x, rect.y, rect.w, rect.h, ox, oy, w, h);
+    } else {
+      // placeholder box
+      ctx.fillStyle="#ddd"; ctx.fillRect(x-6,y-14,12,14);
+      ctx.strokeStyle="#222"; ctx.strokeRect(x-6,y-14,12,14);
+    }
+    ctx.restore();
+  }
+
+  // Game loop
+  let last = now(), playMode=false, fps=0, accFPST=0, accFPSC=0;
+  function loop(){
+    const t=now(); let dt=(t-last)/1000; last=t; if(dt>0.05) dt=0.05;
+    if(playMode) update(dt);
+    render();
+    requestAnimationFrame(loop);
+    accFPST+=dt; accFPSC++; if(accFPST>=0.5){ fps=Math.round(accFPSC/accFPST); accFPST=0; accFPSC=0; }
+  }
+  function update(dt){
+    const phys = getPhysics();
+    // spawn fireballs
+    if(t-lastSpawn>800){ lastSpawn=t; for(const c of cannons){ spawnFireball(c.x, c.y, (Math.random()<.5?-1:1)*80); } }
+
+    // input
+    const left = keys['ArrowLeft']||keys['KeyA'];
+    const right = keys['ArrowRight']||keys['KeyD'];
+    const up = keys['Space']||keys['KeyW']||keys['ArrowUp'];
+    const down = keys['ArrowDown']||keys['KeyS'];
+
+    player.crouching = down && player.onGround;
+    player.dir = right ? 1 : (left ? -1 : player.dir);
+
+    // accel/friction
+    if(!player.crouching){
+      if(left) player.vx = clamp(player.vx - phys.accel*dt, -phys.maxSpeed, phys.maxSpeed);
+      else if(right) player.vx = clamp(player.vx + phys.accel*dt, -phys.maxSpeed, phys.maxSpeed);
+      else {
+        // friction
+        const s = Math.sign(player.vx); const m = Math.max(0, Math.abs(player.vx) - phys.friction*dt);
+        player.vx = m*s;
+      }
+    } else { player.vx *= 0.8; }
+
+    // coyote & jump buffer
+    player.coyoteLeft = player.onGround ? phys.coyote/1000 : Math.max(0, player.coyoteLeft - dt);
+    player.jumpBufLeft = up ? 0.15 : Math.max(0, player.jumpBufLeft - dt);
+    if(up && !player.onGround) player.jumpBufLeft = Math.max(player.jumpBufLeft, phys.jbuf/1000);
+
+    // roll/dodge
+    if((keys['ShiftLeft']||keys['ShiftRight']) && player.rollLeft<=0 && !player.crouching){
+      player.rollLeft = 0.25; player.invulnLeft = 0.25; player.vx += player.dir*120;
+    }
+    player.rollLeft -= dt; player.invulnLeft -= dt;
+
+    // gravity
+    player.vy += phys.gravity * dt;
+
+    // jump
+    if(player.jumpBufLeft>0 && player.coyoteLeft>0){
+      player.vy = -phys.jump; player.jumpBufLeft=0; player.coyoteLeft=0;
+    }
+    // variable jump height: if releasing early while going up
+    if(!up && player.vy<0) player.vy += phys.gravity*0.6*dt;
+
+    // integrate
+    player.x += player.vx*dt; let col = rectVsMap(player.x, player.y, player.w, player.h); player.x=col.x;
+    player.y += player.vy*dt; col = rectVsMap(player.x, player.y, player.w, player.h); player.y=col.y; player.onGround = col.onGround;
+    if(player.onGround) player.vy=0;
+
+    // bounds
+    player.x = clamp(player.x, 0, W-1); player.y = clamp(player.y, 0, H-1);
+
+    // states
+    if(player.rollLeft>0){ switchState('dodge_roll'); }
+    else if(!player.onGround){ switchState(player.vy<0 ? 'jump_up' : 'fall_down'); }
+    else if(player.crouching){ switchState('crouch'); }
+    else if(Math.abs(player.vx)>15){ switchState('run'); }
+    else { switchState('idle_sit'); }
+
+    advanceAnim(dt);
+
+    // hazards update
+    for(const h of hazards){
+      if(!h.alive) continue;
+      h.t += dt; h.x += h.vx*dt; h.y += h.vy*dt;
+      if(solidAt(h.x, h.y) || h.x<0 || h.x>W) h.alive=false;
+      // collide with player
+      if(player.invulnLeft<=0 && rectOverlap(h.x-6,h.y-6,12,12, player.x-6,player.y-14,12,14)){
+        player.invulnLeft=1; // hurt
+      }
+    }
+
+    // camera follow
+    const sx = player.x - canvas.width/2; camera.x = clamp(lerp(camera.x, sx, 0.1), 0, W - canvas.width);
+    const sy = player.y - canvas.height/2; camera.y = clamp(lerp(camera.y, sy, 0.1), 0, H - canvas.height);
+
+    // win/lose simple
+    if(player.y > H-4){ player.x=64; player.y=0; player.vx=0; player.vy=0; }
+  }
+
+  function rectOverlap(ax,ay,aw,ah, bx,by,bw,bh){
+    return ax<bx+bw && ax+aw>bx && ay<by+bh && ay+ah>by;
+  }
+
+  function render(){
+    // background
+    ctx.save(); ctx.translate(-camera.x,-camera.y);
+    ctx.fillStyle = '#1a2028'; ctx.fillRect(camera.x,camera.y,canvas.width,canvas.height);
+    // parallax
+    ctx.fillStyle = '#0e1216'; ctx.fillRect(0, H-80, W, 80);
+    // map
+    for(let y=0;y<map.length;y++){
+      for(let x=0;x<map[0].length;x++){
+        if(map[y][x]==='#'){
+          ctx.fillStyle='#2b3340'; ctx.fillRect(x*TILE,y*TILE,TILE,TILE);
+          ctx.fillStyle='#11161c'; ctx.fillRect(x*TILE,y*TILE+TILE-3,TILE,3);
+        } else if(map[y][x]==='o'){
+          // decorative coin/fish treat
+          ctx.fillStyle='#ffd166'; ctx.fillRect(x*TILE+6,y*TILE+6,4,4);
+        }
+      }
+    }
+
+    // hazards
+    const fbFrame = currentFireballFrame();
+    for(const h of hazards){
+      if(!h.alive) continue;
+      if(fbFrame && fbFrame.sheet && fbFrame.sheet.img){
+        drawFrame(h.x, h.y, 1, {sheet:fbFrame.sheet, rect:fbFrame.rect, pivotX:.5, pivotY:.5}, 0.6);
+      } else {
+        ctx.fillStyle='#ffb703'; ctx.fillRect(h.x-4,h.y-4,8,8);
+        ctx.fillStyle='#fb8500'; ctx.fillRect(h.x-3,h.y-3,6,6);
+      }
+    }
+
+    // player
+    const frames = anim.states[anim.name]; const frame = frames[anim.idx]||frames[0];
+    drawFrame(player.x, player.y, player.dir, frame, 0.6);
+    // invuln blink overlay
+    if(player.invulnLeft>0 && Math.floor(now()/80)%2===0){
+      ctx.globalAlpha=0.35; ctx.fillStyle='#fff'; ctx.fillRect(player.x-8, player.y-16, 16,16); ctx.globalAlpha=1;
+    }
+
+    ctx.restore();
+
+    // HUD
+    $('#hud').innerHTML = `
+      <div><b>State:</b> ${anim.name} · <b>FPS:</b> ${fps}</div>
+      <div><b>Pos:</b> ${player.x|0}, ${player.y|0} · <b>Vel:</b> ${(player.vx|0)}, ${(player.vy|0)}</div>
+      <div class="tiny ${fbFrame?'ok':'warn'}">Fireball: ${fbFrame?'sprite':'fallback circle'}</div>
+    `;
+  }
+
+  // ===== Mode toggle =====
+  function setMode(play){
+    playMode = play;
+    $('#modePill').textContent = 'Mode: ' + (play?'Play':'Editor');
+    $('#toggleMode').textContent = play? 'Back to Editor ⏹' : 'Play ▶';
+    if(play){
+      anim.states = compileFrames();
+      last = now();
+    }
+  }
+  $('#toggleMode').addEventListener('click', ()=>setMode(!playMode));
+  window.addEventListener('keydown',(e)=>{
+    if(e.code==='Tab'){ e.preventDefault(); setMode(!playMode); }
+    if(e.code==='KeyQ'){ /* sit toggle forces idle */ if(playMode) switchState('idle_sit'); }
+    if(e.code==='KeyR'){ if(playMode){ player.x=64; player.y=0; player.vx=0; player.vy=0; } }
+  });
+
+  // Build initial UI
+  buildAssignTable(); updateSelectedUI(); setMode(false);
+  loop();
+
+})();
+</script>
+</body>
+</html>
