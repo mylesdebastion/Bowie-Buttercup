@@ -77,19 +77,38 @@ if eye_positions:
     
     aligned_frames = []
     
+    # Define jump arc - up for first half, down for second half
+    jump_heights = [0, -10, -15, -15, -10, 0]  # Negative values move up
+    
     for i, (frame, (eye_x, eye_y)) in enumerate(zip(frames, eye_positions)):
         # Create a new transparent canvas
         canvas = Image.new('RGBA', (canvas_width, canvas_height), (0, 0, 0, 0))
         
         # Calculate offset to align eye to reference position
         offset_x = max_offset_left + (ref_x - eye_x)
-        offset_y = max_offset_top + (ref_y - eye_y)
+        offset_y = max_offset_top + (ref_y - eye_y) + jump_heights[i]  # Add jump offset
         
-        print(f"Frame {i}: Offset ({offset_x}, {offset_y})")
+        print(f"Frame {i}: Offset ({offset_x}, {offset_y}) with jump offset {jump_heights[i]}")
         
         # Paste frame at calculated offset
         canvas.paste(frame, (offset_x, offset_y), frame)
         aligned_frames.append(canvas)
+    
+    # Crop 5% from all sides
+    cropped_frames = []
+    for frame in aligned_frames:
+        frame_width, frame_height = frame.size
+        crop_amount = int(min(frame_width, frame_height) * 0.05)
+        
+        cropped = frame.crop((
+            crop_amount,                    # 5% from left
+            crop_amount,                    # 5% from top
+            frame_width - crop_amount,      # 5% from right
+            frame_height - crop_amount      # 5% from bottom
+        ))
+        cropped_frames.append(cropped)
+    
+    aligned_frames = cropped_frames
     
     # Save as GIF
     aligned_frames[0].save(
