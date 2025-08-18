@@ -1,5 +1,66 @@
 # Cat Platformer - Feature Todo List
 
+## Mobile & Fullscreen Support (Epic)
+
+### Fullscreen Mode
+- [ ] **Fullscreen API Implementation**
+  - Add fullscreen toggle button (F11 or click)
+  - Maintain aspect ratio with letterboxing
+  - Center canvas with black bars if needed
+  - Hide UI panels in fullscreen mode
+  - Smooth transition animations
+
+- [ ] **Responsive Canvas Scaling**
+  - Auto-detect window size changes
+  - Scale canvas to fit available space
+  - Maintain pixel-perfect rendering
+  - Handle different aspect ratios
+
+### Mobile-Friendly Version
+- [ ] **Touch Controls Implementation**
+  - Virtual D-pad on left side (movement)
+  - Action buttons on right (Jump, Dodge, Sit)
+  - Minimum 44x44px touch targets
+  - Semi-transparent overlays
+  - Haptic feedback support
+
+- [ ] **Mobile UI/UX**
+  - Auto-detect mobile devices
+  - Landscape orientation recommendation
+  - Prevent page scroll during gameplay
+  - Touch-to-start screen
+  - Larger HUD text for readability
+  - Simplified menu system
+
+- [ ] **Gesture Support**
+  - Swipe up to jump
+  - Swipe down to crouch
+  - Double tap to dodge
+  - Pinch to zoom (in editor mode)
+  - Long press for special actions
+
+- [ ] **Mobile Performance**
+  - 30 FPS power-saving mode
+  - Reduced particle effects option
+  - Simplified graphics toggle
+  - Audio optimization
+  - Battery usage considerations
+
+### Editor Dev Mode
+- [ ] **Move Editor to Debug Mode**
+  - Hide editor tab by default
+  - Show only when debug mode active (`)
+  - Ctrl+E shortcut to toggle editor
+  - Collapsible dev tools panel
+  - Preserve all editor functionality
+
+- [ ] **Dev Mode Features**
+  - Level select dropdown
+  - Sprite reload button
+  - Performance stats overlay
+  - Touch control visualization
+  - Console log viewer
+
 ## Visual Improvements
 - [x] **Goldfish Crackers** - Make yellow treats look like goldfish crackers instead of simple squares
   - Orange/golden color gradient
