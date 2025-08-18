@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Cat Platformer</title>
     <style>
         * {
@@ -20,12 +23,19 @@
             padding: 0;
             width: 100vw;
             height: 100vh;
+            position: fixed;
+            touch-action: none;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
         
         #gameContainer {
             display: flex;
             height: 100vh;
+            height: 100dvh; /* Dynamic viewport height for mobile */
             transition: all 0.3s ease;
+            position: relative;
         }
         
         #gameContainer.fullscreen #leftPanel {
@@ -63,6 +73,15 @@
             image-rendering: -moz-crisp-edges;
             image-rendering: crisp-edges;
             border: 2px solid #0f3460;
+            display: block;
+            touch-action: none;
+        }
+        
+        /* Remove border on mobile for full viewport usage */
+        @media (max-width: 768px) {
+            canvas {
+                border: none;
+            }
         }
         
         .tab-buttons {
@@ -314,25 +333,41 @@
             border-color: #666;
         }
         
+        /* Hide fullscreen button on mobile */
+        @media (max-width: 768px) {
+            #fullscreenBtn {
+                display: none;
+            }
+        }
+        
         #mobileControls {
             display: none;
-            position: absolute;
+            position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
             top: 0;
             pointer-events: none;
             z-index: 110;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
         
         .touch-button {
-            position: absolute;
             background: rgba(255, 255, 255, 0.2);
             border: 2px solid rgba(255, 255, 255, 0.4);
             border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             pointer-events: auto;
             touch-action: none;
             user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .touch-button.pressed {
@@ -349,6 +384,18 @@
             border-radius: 10px;
             background: rgba(0, 0, 0, 0.3);
             pointer-events: auto;
+            transition: all 0.3s ease;
+        }
+        
+        #actionButtons {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: auto;
+            transition: all 0.3s ease;
         }
         
         .dpad-button {
@@ -525,8 +572,10 @@
                     <div class="dpad-button" style="top: 50px; left: 10px; height: 50px;" data-key="ArrowLeft">◄</div>
                     <div class="dpad-button" style="top: 50px; right: 10px; height: 50px;" data-key="ArrowRight">►</div>
                 </div>
-                <button class="touch-button" id="jumpBtn" data-key=" ">Jump</button>
-                <button class="touch-button" id="dodgeBtn" data-key="Shift">Dodge</button>
+                <div id="actionButtons">
+                    <button class="touch-button" id="jumpBtn" data-key=" ">Jump</button>
+                    <button class="touch-button" id="dodgeBtn" data-key="Shift">Dodge</button>
+                </div>
             </div>
             <div id="hud">
                 <div>Score: <span id="score">0</span></div>
@@ -2408,15 +2457,87 @@
             hideWinScreen();
         }
         
-        // Mobile detection
+        // Mobile detection and orientation handling
+        let currentOrientation = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
+        
         function detectMobile() {
             isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
-                      || window.innerWidth < 768;
+                      || ('ontouchstart' in window)
+                      || (navigator.maxTouchPoints > 0);
             
             if (isMobile) {
                 document.getElementById('mobileControls').style.display = 'block';
                 document.getElementById('leftPanel').classList.add('hidden');
                 setupTouchControls();
+                autoFullscreenMobile();
+                handleOrientationChange();
+            }
+        }
+        
+        // Auto-fullscreen for mobile
+        function autoFullscreenMobile() {
+            if (isMobile) {
+                // Try to go fullscreen automatically on first user interaction
+                const tryFullscreen = () => {
+                    const container = document.getElementById('gameContainer');
+                    
+                    // Request fullscreen
+                    if (container.requestFullscreen) {
+                        container.requestFullscreen().catch(() => {});
+                    } else if (container.webkitRequestFullscreen) {
+                        container.webkitRequestFullscreen();
+                    } else if (container.webkitRequestFullScreen) {
+                        container.webkitRequestFullScreen();
+                    }
+                    
+                    // Remove listener after first attempt
+                    document.removeEventListener('touchstart', tryFullscreen);
+                    document.removeEventListener('click', tryFullscreen);
+                };
+                
+                // Add listeners for first user interaction
+                document.addEventListener('touchstart', tryFullscreen, { once: true });
+                document.addEventListener('click', tryFullscreen, { once: true });
+            }
+        }
+        
+        // Handle orientation changes
+        function handleOrientationChange() {
+            const newOrientation = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
+            
+            if (newOrientation !== currentOrientation) {
+                currentOrientation = newOrientation;
+                updateMobileControlsLayout();
+            }
+            
+            resizeCanvas();
+        }
+        
+        // Update mobile controls based on orientation
+        function updateMobileControlsLayout() {
+            const dpad = document.getElementById('dpad');
+            const actionButtons = document.getElementById('actionButtons');
+            
+            if (currentOrientation === 'portrait') {
+                // Portrait: controls at bottom with more spacing
+                if (dpad) {
+                    dpad.style.left = '20px';
+                    dpad.style.bottom = '120px';
+                }
+                if (actionButtons) {
+                    actionButtons.style.right = '20px';
+                    actionButtons.style.bottom = '120px';
+                }
+            } else {
+                // Landscape: controls at corners
+                if (dpad) {
+                    dpad.style.left = '20px';
+                    dpad.style.bottom = '20px';
+                }
+                if (actionButtons) {
+                    actionButtons.style.right = '20px';
+                    actionButtons.style.bottom = '20px';
+                }
             }
         }
         
@@ -2503,12 +2624,22 @@
                 });
             });
             
-            // Prevent scrolling on mobile
+            // Prevent scrolling and zooming on mobile
             document.addEventListener('touchmove', (e) => {
                 if (e.target.closest('#gameArea')) {
                     e.preventDefault();
                 }
             }, { passive: false });
+            
+            // Prevent double-tap zoom
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', (e) => {
+                const now = Date.now();
+                if (now - lastTouchEnd <= 300) {
+                    e.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
         }
         
         window.addEventListener('keydown', (e) => {
@@ -3027,38 +3158,87 @@
         });
         
         function resizeCanvas() {
-            const leftPanelWidth = document.getElementById('leftPanel').classList.contains('hidden') ? 0 : 370;
-            const maxWidth = window.innerWidth - leftPanelWidth - (isFullscreen ? 0 : 40);
-            const maxHeight = window.innerHeight - (isFullscreen ? 0 : 40);
-            
-            // Base game dimensions
-            const baseWidth = 400;
-            const baseHeight = 240;
-            
-            // Calculate scale to fit screen
-            let fitScale = Math.min(maxWidth / baseWidth, maxHeight / baseHeight);
-            
-            // Use integer scaling for pixel-perfect rendering
-            if (!isMobile && !isFullscreen) {
-                fitScale = Math.floor(fitScale);
-                fitScale = Math.max(1, Math.min(fitScale, scale));
-            }
-            
-            let width = baseWidth * fitScale;
-            let height = baseHeight * fitScale;
-            
-            canvas.width = baseWidth;
-            canvas.height = baseHeight;
-            canvas.style.width = width + 'px';
-            canvas.style.height = height + 'px';
-            
-            // Update global scale
-            if (isFullscreen || isMobile) {
+            // For mobile, use full viewport
+            if (isMobile) {
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+                
+                // Base game dimensions
+                const baseWidth = 400;
+                const baseHeight = 240;
+                
+                // Calculate scale to fit full screen
+                const scaleX = viewportWidth / baseWidth;
+                const scaleY = viewportHeight / baseHeight;
+                
+                // Use contain scaling (fit within viewport maintaining aspect ratio)
+                const fitScale = Math.min(scaleX, scaleY);
+                
+                // Set canvas dimensions
+                const width = baseWidth * fitScale;
+                const height = baseHeight * fitScale;
+                
+                canvas.width = baseWidth;
+                canvas.height = baseHeight;
+                canvas.style.width = Math.floor(width) + 'px';
+                canvas.style.height = Math.floor(height) + 'px';
+                
+                // Center canvas if needed
+                canvas.style.position = 'absolute';
+                canvas.style.left = '50%';
+                canvas.style.top = '50%';
+                canvas.style.transform = 'translate(-50%, -50%)';
+                
+                // Update global scale
                 scale = fitScale;
+            } else {
+                // Desktop sizing logic
+                const leftPanelWidth = document.getElementById('leftPanel').classList.contains('hidden') ? 0 : 370;
+                const maxWidth = window.innerWidth - leftPanelWidth - (isFullscreen ? 0 : 40);
+                const maxHeight = window.innerHeight - (isFullscreen ? 0 : 40);
+                
+                // Base game dimensions
+                const baseWidth = 400;
+                const baseHeight = 240;
+                
+                // Calculate scale to fit screen
+                let fitScale = Math.min(maxWidth / baseWidth, maxHeight / baseHeight);
+                
+                // Use integer scaling for pixel-perfect rendering on desktop
+                if (!isFullscreen) {
+                    fitScale = Math.floor(fitScale);
+                    fitScale = Math.max(1, Math.min(fitScale, scale));
+                }
+                
+                let width = baseWidth * fitScale;
+                let height = baseHeight * fitScale;
+                
+                canvas.width = baseWidth;
+                canvas.height = baseHeight;
+                canvas.style.width = width + 'px';
+                canvas.style.height = height + 'px';
+                canvas.style.position = '';
+                canvas.style.left = '';
+                canvas.style.top = '';
+                canvas.style.transform = '';
+                
+                // Update global scale
+                if (isFullscreen) {
+                    scale = fitScale;
+                }
             }
         }
         
-        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('resize', () => {
+            if (isMobile) {
+                handleOrientationChange();
+            } else {
+                resizeCanvas();
+            }
+        });
+        
+        // Add orientation change listener
+        window.addEventListener('orientationchange', handleOrientationChange);
         
         loadFromLocalStorage();
         detectMobile();
