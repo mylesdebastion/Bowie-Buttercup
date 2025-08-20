@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pit Collision Test - Level 3</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #1a1a2e;
+            color: #eee;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #f39c12;
+            text-align: center;
+        }
+        
+        .test-info {
+            background: #16213e;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            border: 2px solid #0f3460;
+        }
+        
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #0f3460;
+        }
+        
+        .success {
+            background: #34a853;
+        }
+        
+        .error {
+            background: #e94560;
+        }
+        
+        .warning {
+            background: #f39c12;
+            color: #000;
+        }
+        
+        button {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 5px;
+            font-family: monospace;
+        }
+        
+        button:hover {
+            background: #ff6b6b;
+        }
+        
+        #gameFrame {
+            width: 100%;
+            height: 500px;
+            border: 2px solid #f39c12;
+            border-radius: 5px;
+        }
+        
+        #log {
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            height: 200px;
+            overflow-y: auto;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>🕳️ Pit Collision Test - Level 3</h1>
+    
+    <div class="test-info">
+        <h2>📋 Test Description</h2>
+        <p>This test verifies that the cat properly falls into pits (tile value 0) in Level 3 instead of walking over them.</p>
+        
+        <div class="warning">
+            <strong>Expected Behavior:</strong>
+            <ul>
+                <li>Cat should fall through tiles with value 0 (pits)</li>
+                <li>Cat should stand on tiles with value 1 (solid platforms)</li>
+                <li>Cat should respawn when falling below Y=420</li>
+                <li>Pits in Level 3 are at X positions: 8-11, 19-22, 31-34</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="test-info">
+        <h2>🎮 Test Controls</h2>
+        <button onclick="loadGame()">1. Load Game</button>
+        <button onclick="jumpToLevel3()">2. Jump to Level 3</button>
+        <button onclick="testPitCollision()">3. Test Pit Collision</button>
+        <button onclick="manualTest()">4. Manual Test Mode</button>
+    </div>
+    
+    <div class="test-info">
+        <h2>📊 Test Status</h2>
+        <div id="status" class="status">Ready to begin testing...</div>
+    </div>
+    
+    <div class="test-info">
+        <h2>🎮 Game</h2>
+        <iframe id="gameFrame" src=""></iframe>
+    </div>
+    
+    <div class="test-info">
+        <h2>📜 Test Log</h2>
+        <div id="log"></div>
+    </div>
+    
+    <script>
+        let gameWindow = null;
+        
+        function log(message, type = 'info') {
+            const logEl = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : '📝';
+            logEl.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = 'status ' + type;
+        }
+        
+        function loadGame() {
+            log('Loading game...');
+            const frame = document.getElementById('gameFrame');
+            frame.src = 'index.html';
+            
+            frame.onload = () => {
+                gameWindow = frame.contentWindow;
+                log('Game loaded', 'success');
+                updateStatus('Game loaded - ready to jump to Level 3');
+            };
+        }
+        
+        function jumpToLevel3() {
+            if (!gameWindow || !gameWindow.game) {
+                log('Game not loaded!', 'error');
+                return;
+            }
+            
+            log('Jumping to Level 3...');
+            gameWindow.game.currentLevel = 3;
+            gameWindow.game.level = gameWindow.game.createLevel();
+            gameWindow.game.initLevel();
+            
+            log('Now on Level 3', 'success');
+            updateStatus('Level 3 loaded - ready to test pit collision');
+            
+            // Log pit locations
+            log('Pit locations in Level 3:');
+            const level = gameWindow.game.level;
+            for (let x = 0; x < 50; x++) {
+                if (level[25] && level[25][x] === 0) {
+                    log(`  Pit at X=${x} (${x * 16}px)`);
+                }
+            }
+        }
+        
+        function testPitCollision() {
+            if (!gameWindow || !gameWindow.game) {
+                log('Game not loaded!', 'error');
+                return;
+            }
+            
+            log('Starting automated pit collision test...');
+            updateStatus('Running automated test...', 'warning');
+            
+            const player = gameWindow.game.player;
+            const startY = player.y;
+            
+            // Test 1: Position player over first pit
+            log('Test 1: Positioning player over first pit (X=9)');
+            player.x = 9 * 16; // Middle of first pit
+            player.y = 380; // Just above ground level
+            player.vy = 10; // Falling
+            
+            // Check after physics update
+            setTimeout(() => {
+                const grounded1 = player.grounded;
+                const y1 = player.y;
+                
+                if (!grounded1 && y1 > 400) {
+                    log('Test 1 PASSED: Player is falling through pit', 'success');
+                } else {
+                    log(`Test 1 FAILED: Player grounded=${grounded1}, Y=${y1}`, 'error');
+                }
+                
+                // Test 2: Position player over solid ground
+                log('Test 2: Positioning player over solid ground (X=5)');
+                player.x = 5 * 16; // Solid ground
+                player.y = 380;
+                player.vy = 10;
+                
+                setTimeout(() => {
+                    const grounded2 = player.grounded;
+                    const y2 = player.y;
+                    
+                    if (grounded2 && Math.abs(y2 - (400 - player.height)) < 5) {
+                        log('Test 2 PASSED: Player landed on solid ground', 'success');
+                    } else {
+                        log(`Test 2 FAILED: Player grounded=${grounded2}, Y=${y2}`, 'error');
+                    }
+                    
+                    // Test 3: Check respawn trigger
+                    log('Test 3: Testing respawn when falling into pit');
+                    player.x = 20 * 16; // Another pit
+                    player.y = 430; // Below respawn threshold
+                    
+                    setTimeout(() => {
+                        if (player.y < 420) {
+                            log('Test 3 PASSED: Player respawned after falling', 'success');
+                        } else {
+                            log(`Test 3 FAILED: Player did not respawn, Y=${player.y}`, 'error');
+                        }
+                        
+                        updateStatus('Automated test complete', 'success');
+                    }, 100);
+                }, 100);
+            }, 100);
+        }
+        
+        function manualTest() {
+            if (!gameWindow || !gameWindow.game) {
+                log('Game not loaded!', 'error');
+                return;
+            }
+            
+            log('Manual test mode activated');
+            log('Use arrow keys to move the cat over the pits');
+            log('Watch the grounded state and Y position');
+            
+            // Start monitoring
+            let monitorInterval = setInterval(() => {
+                if (!gameWindow || !gameWindow.game || !gameWindow.game.player) {
+                    clearInterval(monitorInterval);
+                    return;
+                }
+                
+                const player = gameWindow.game.player;
+                const tileX = Math.floor((player.x + player.width/2) / 16);
+                const tileY = Math.floor((player.y + player.height) / 16);
+                const tile = gameWindow.game.level[tileY] && gameWindow.game.level[tileY][tileX];
+                
+                const status = `Player: X=${Math.round(player.x)}, Y=${Math.round(player.y)}, ` +
+                              `Grounded=${player.grounded}, TileX=${tileX}, TileValue=${tile}`;
+                
+                updateStatus(status);
+                
+                if (tile === 0 && player.grounded) {
+                    log('BUG DETECTED: Player is grounded on a pit tile!', 'error');
+                }
+            }, 100);
+            
+            log('Monitoring started. Check status bar for real-time info.');
+        }
+        
+        // Initialize
+        log('Pit Collision Test Tool initialized');
+        log('Click "Load Game" to begin');
+    </script>
+</body>
+</html>

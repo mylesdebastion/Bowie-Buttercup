@@ -898,8 +898,20 @@
                 const tileX = Math.floor((this.x + this.width/2) / 16);
                 const tileY = Math.floor((this.y + this.height + 2) / 16);
                 
-                if (game && game.level[tileY] && game.level[tileY][tileX] === 1) {
-                    return true;
+                // Check if the tile exists and is solid (value 1 or 3 for moving platforms)
+                if (game && game.level[tileY]) {
+                    const tileValue = game.level[tileY][tileX];
+                    
+                    // Solid tiles (1 = platform, 3 = moving platform)
+                    if (tileValue === 1 || tileValue === 3) {
+                        return true;
+                    }
+                    
+                    // IMPORTANT FIX: Explicitly handle pit tiles (value 0)
+                    // Player should fall through pits, not walk over them
+                    if (tileValue === 0) {
+                        return false;
+                    }
                 }
                 
                 return false;
@@ -912,8 +924,12 @@
                     return;
                 }
                 
-                // Floor collision
-                if (this.y > 400 - this.height) {
+                // Floor collision (skip for Level 3 which has pits)
+                if (game && game.currentLevel === 3) {
+                    // Level 3 uses tile-based collision only (has pits)
+                    // Don't apply generic floor collision
+                } else if (this.y > 400 - this.height) {
+                    // Other levels have a solid floor at y=400
                     this.y = 400 - this.height;
                     this.vy = 0;
                     this.grounded = true;
@@ -922,6 +938,9 @@
                 // Platform tile collisions
                 if (game) {
                     // Check multiple points along the player's bottom edge
+                    let foundPlatform = false;
+                    let overPit = false;
+                    
                     for (let xOffset = 2; xOffset < this.width - 2; xOffset += 4) {
                         const checkX = this.x + xOffset;
                         const tileX = Math.floor(checkX / 16);
@@ -929,14 +948,21 @@
                         
                         const tile = game.level[tileY] && game.level[tileY][tileX];
                         
+                        // IMPORTANT: Check for pit tiles FIRST
+                        if (tile === 0) {
+                            overPit = true;
+                            // Don't set grounded to true if over a pit!
+                            continue; // Keep checking other points
+                        }
+                        
                         if (tile === 1) {
                             // Regular platform
                             if (this.vy > 0 && this.prevY + this.height <= tileY * 16 + 4) {
                                 this.y = tileY * 16 - this.height;
                                 this.vy = 0;
-                                this.grounded = true;
+                                foundPlatform = true;
                                 // Update respawn point when on safe ground
-                                if (this.grounded && !this.climbing) {
+                                if (!this.climbing) {
                                     this.respawnX = this.x;
                                     this.respawnY = this.y;
                                 }
@@ -956,6 +982,14 @@
                                 break;
                             }
                         }
+                    }
+                    
+                    // Set grounded state based on what we found
+                    if (foundPlatform) {
+                        this.grounded = true;
+                    } else if (overPit) {
+                        // Explicitly NOT grounded when over a pit
+                        this.grounded = false;
                     }
                     
                     // Side collisions with platforms

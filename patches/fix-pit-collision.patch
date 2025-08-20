@@ -1,0 +1,20 @@
+--- a/index.html
++++ b/index.html
+@@ -898,8 +898,17 @@
+                 const tileX = Math.floor((this.x + this.width/2) / 16);
+                 const tileY = Math.floor((this.y + this.height + 2) / 16);
+                 
++                // Check if the tile exists and is solid (value 1)
+                 if (game && game.level[tileY] && game.level[tileY][tileX] === 1) {
+                     return true;
+                 }
++                
++                // IMPORTANT FIX: Check for pit tiles (value 0)
++                // If the tile is a pit, player is NOT on ground
++                if (game && game.level[tileY] && game.level[tileY][tileX] === 0) {
++                    return false; // Explicitly return false for pits
++                }
++                
++                // Return false for any other case (out of bounds, other tile types)
+                 return false;
+             },
