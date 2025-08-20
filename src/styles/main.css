@@ -1,0 +1,250 @@
+/**
+ * Cat Platformer - Main Styles
+ * 
+ * Modular CSS architecture for the cat platformer game.
+ * This replaces the embedded styles from the monolithic version.
+ */
+
+/* CSS Custom Properties (Variables) */
+:root {
+  /* Color Palette */
+  --primary-bg: #1a1a2e;
+  --secondary-bg: #16213e;
+  --accent-bg: #0f3460;
+  --highlight-bg: #1e5f8e;
+  --primary-color: #eee;
+  --accent-color: #f39c12;
+  --danger-color: #e94560;
+  --success-color: #34a853;
+  
+  /* Spacing */
+  --spacing-xs: 2px;
+  --spacing-sm: 5px;
+  --spacing-md: 10px;
+  --spacing-lg: 20px;
+  
+  /* Typography */
+  --font-family: monospace;
+  --font-size-xs: 10px;
+  --font-size-sm: 11px;
+  --font-size-md: 12px;
+  --font-size-lg: 14px;
+  --font-size-xl: 16px;
+  
+  /* Layout */
+  --panel-width: 350px;
+  --border-radius: 4px;
+  --transition: 0.3s ease;
+  
+  /* Z-Index Scale */
+  --z-hud: 100;
+  --z-debug: 100;
+  --z-controls: 110;
+  --z-fullscreen: 150;
+  --z-overlay: 200;
+}
+
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--primary-bg);
+  color: var(--primary-color);
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Game Container Layout */
+#gameContainer {
+  display: flex;
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height for mobile */
+  transition: var(--transition);
+  position: relative;
+}
+
+#gameArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Canvas Styles */
+canvas {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  border: 2px solid var(--accent-bg);
+  display: block;
+  touch-action: none;
+}
+
+/* Remove border on mobile for full viewport usage */
+@media (max-width: 768px) {
+  canvas {
+    border: none;
+  }
+}
+
+/* HUD Styles */
+#hud {
+  position: absolute;
+  top: var(--spacing-md);
+  left: var(--spacing-md);
+  background: rgba(0, 0, 0, 0.7);
+  padding: var(--spacing-md);
+  color: var(--primary-color);
+  font-size: var(--font-size-lg);
+  z-index: var(--z-hud);
+}
+
+/* Debug Overlay */
+#debugOverlay {
+  position: absolute;
+  bottom: var(--spacing-md);
+  right: var(--spacing-md);
+  background: rgba(0, 0, 0, 0.7);
+  padding: var(--spacing-md);
+  color: #0f0;
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family);
+  display: none;
+  z-index: var(--z-debug);
+}
+
+/* Button Styles */
+button {
+  padding: 6px 12px;
+  background: var(--danger-color);
+  color: var(--primary-color);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-size: var(--font-size-md);
+  margin: var(--spacing-xs);
+  transition: background var(--transition);
+  border-radius: var(--border-radius);
+}
+
+button:hover {
+  background: #ff6b6b;
+}
+
+button:disabled {
+  background: #666;
+  cursor: not-allowed;
+}
+
+/* Input Styles */
+input[type="range"],
+input[type="number"],
+input[type="text"],
+select {
+  width: 100%;
+  padding: 4px;
+  background: var(--primary-bg);
+  color: var(--primary-color);
+  border: 1px solid #333;
+  font-family: var(--font-family);
+  font-size: var(--font-size-md);
+  border-radius: var(--border-radius);
+}
+
+/* Utility Classes */
+.hidden {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* High Contrast Mode */
+.high-contrast {
+  filter: contrast(1.5);
+}
+
+.high-contrast canvas {
+  filter: drop-shadow(0 0 2px #000);
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Development Mode Indicator */
+.dev-mode::before {
+  content: "🛠️ DEV";
+  position: fixed;
+  top: 0;
+  right: 0;
+  background: var(--danger-color);
+  color: var(--primary-color);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-xs);
+  z-index: 9999;
+}
+
+/* Modular Architecture Indicator */
+.modular-architecture::after {
+  content: "🏗️ Modular";
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background: var(--success-color);
+  color: var(--primary-color);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-xs);
+  z-index: 9999;
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+  
+  #gameContainer {
+    height: auto;
+  }
+  
+  canvas {
+    border: 1px solid black;
+  }
+}
+
+/* Accessibility Focus Styles */
+*:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Cat Platformer - Modular</title>
+    
+    <!-- Development styles (will be bundled in production) -->
+    <link rel="stylesheet" href="./styles/main.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <!-- Game UI will be loaded by modules -->
+        <div id="gameArea">
+            <canvas id="gameCanvas"></canvas>
+            
+            <!-- HUD will be managed by UI module -->
+            <div id="hud">
+                <div>Score: <span id="score">0</span></div>
+                <div>Lives: <span id="lives">3</span></div>
+                <div>Time: <span id="time">0</span>s</div>
+            </div>
+            
+            <!-- Debug overlay managed by debug module -->
+            <div id="debugOverlay" style="display: none;">
+                <div>FPS: <span id="fps">0</span></div>
+                <div>Pos: <span id="playerPos">0,0</span></div>
+                <div>Vel: <span id="playerVel">0,0</span></div>
+                <div>State: <span id="playerState">idle</span></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main application entry point -->
+    <script type="module" src="./main.js"></script>
+</body>
+</html>

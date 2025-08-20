@@ -1,0 +1,19 @@
+{
+  "extends": "standard",
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2021,
+    "sourceType": "module"
+  },
+  "rules": {
+    "space-before-function-paren": ["error", "never"],
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "indent": ["error", 2],
+    "semi": ["error", "always"],
+    "quotes": ["error", "single"]
+  }
+}

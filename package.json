@@ -1,0 +1,71 @@
+{
+  "name": "cat-platformer-modularization",
+  "version": "2.0.0",
+  "description": "Cat Platformer Game - Modular Architecture Migration",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "test:physics": "vitest run physics",
+    "test:visual": "node test-visual/scripts/run-regression.js",
+    "test:integration": "vitest run integration",
+    "lint": "eslint src/**/*.js",
+    "lint:fix": "eslint src/**/*.js --fix",
+    "baseline:record": "node scripts/record-baselines.js",
+    "baseline:validate": "node scripts/validate-baselines.js",
+    "baseline:physics": "vitest run baseline-physics",
+    "baseline:visual": "vitest run baseline-visual",
+    "visual:capture-baseline": "node test-visual/scripts/capture-baseline.js",
+    "visual:capture-issue": "node test-visual/scripts/capture-issue.js",
+    "visual:regression": "node test-visual/scripts/run-regression.js",
+    "visual:report": "node test-visual/scripts/generate-report.js"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "vitest": "^1.0.0",
+    "@vitest/ui": "^1.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "eslint": "^8.55.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-n": "^16.4.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "puppeteer": "^21.6.0",
+    "jsdom": "^23.0.0",
+    "canvas": "^2.11.2",
+    "chalk": "^5.3.0",
+    "ora": "^7.0.1",
+    "pixelmatch": "^5.3.0",
+    "pngjs": "^7.0.0"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "keywords": [
+    "game",
+    "platformer",
+    "vanilla-javascript",
+    "modularization",
+    "bmad-method"
+  ],
+  "author": "Development Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mylesdebastion/Bowie-Buttercup.git"
+  },
+  "bmad": {
+    "projectType": "game",
+    "framework": "vanilla-js",
+    "architecture": "modular",
+    "version": "2.0.0"
+  }
+}
