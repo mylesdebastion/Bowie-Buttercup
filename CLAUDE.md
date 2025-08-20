@@ -1,259 +1,106 @@
-# CLAUDE.md - AI Assistant Context
+# PetPixel Games Platform - Claude Development Guide
 
 ## Project Overview
-Cat Platformer game undergoing modularization from monolithic architecture using the BMad Method.
+AI-powered platform where users upload pet photos → generates pixel art → creates personalized platformer games. Targeting $259k Year 1 revenue with $14.99-24.99 game purchases.
 
-## Current State
-- **Branch**: feature/bmad-modularization
-- **Architecture**: Transitioning from monolithic (index.html) to modular (src/)
-- **Game Engine**: Vanilla JavaScript with Canvas API
-- **Build System**: Vite
-- **Testing**: Vitest + Puppeteer
+## Current Status: Post-Planning, Pre-Implementation
+✅ **Planning Complete**: PRD, Architecture, Frontend Spec validated  
+🎯 **Next Phase**: Begin web platform development (manual pixel art for first 20 users)  
+📁 **All Planning**: See `/docs/planning/` for complete artifacts
 
-## Key Files and Locations
+## Architecture Decision
+**Lean Monorepo → Multi-Repo Evolution**
+- Start: Single repo for rapid MVP development
+- Games: Lightweight, single HTML file exports (<2MB, offline-capable)
+- Content: JSON-driven levels/themes separate from game code
+- Platform: Next.js web app + Node.js API + PostgreSQL
 
-### Core Game Files
-- `index.html` - Original monolithic game (3400+ lines)
-- `src/` - New modular architecture
-  - `src/core/game-loop.js` - Extracted game loop
-  - `src/core/game-state.js` - State management
-  - `src/entities/player.js` - Player entity
-  - `src/systems/collision.js` - Collision system
+## Development Priority Order
+1. **Web Platform Core** (apps/web + services/api) - User auth, basic UI, file uploads
+2. **Game Template Foundation** (game-templates/pet-platformer) - Lean game engine
+3. **Platform-Game Integration** - Generate personalized games
+4. **Content Pipeline** - Level/theme management (manual pixel art initially)
 
-### Documentation
-- `docs/prd-modularization.md` - Product Requirements Document
-- `docs/architecture/puppeteer-visual-testing-architecture.md` - Visual testing system
-- `docs/stories/` - User stories organized by epic
-- `docs/fixes/` - Bug fix documentation
+## Key Documentation Locations
 
-### Testing
-- `test-utils/` - Testing utilities
-- `test-visual/` - Visual regression testing system
-- `capture-baselines.html` - Baseline capture tool
+### Planning & Requirements
+- **Master PRD**: `/docs/planning/prd-web-platform.md` (comprehensive requirements)
+- **Architecture**: `/docs/planning/architecture-web-platform.md` (complete technical design)
+- **Frontend Spec**: `/docs/planning/frontend-spec-web-platform.md` (UX/UI specification)
 
-## Visual Testing System (Puppeteer)
+### Implementation Guidance
+- **Web Platform Epics**: `/docs/epics-web-platform/` (8 epics for platform development)
+- **Game Development Epics**: `/docs/epics-game-dev/` (6 epics for game engine)
+- **Repository Structure**: `/docs/architecture/repo-structure-guide.md`
+- **Integration Strategy**: `/docs/architecture/platform-game-integration.md`
 
-### Purpose
-Automated visual regression testing with timestamped screenshots for issue tracking and debugging.
+### Development Workflow
+- **Epic Stories**: `/docs/stories-web-platform/` and `/docs/stories-game-dev/`
+- **QA Guidelines**: `/docs/qa/` (testing strategies and risk assessments)
+- **BMad Methodology**: `/docs/bmad/` (AI-driven development process)
 
-### Directory Structure
-```
-test-visual/
-├── screenshots/
-│   ├── baseline/        # Reference screenshots
-│   ├── issues/          # Issue-specific screenshots
-│   │   └── issue-{n}/   # Organized by issue number
-│   ├── regression/      # Failed test comparisons
-│   └── archive/         # Historical screenshots
-├── reports/             # Test execution reports
-└── scripts/             # Automation scripts
-```
-
-### Screenshot Naming Convention
-Format: `{YYYY-MM-DD}_{HHMMSS}_{issue-number}_{description}_{status}.png`
-
-Status codes:
-- `before` - Issue reproduction
-- `investigating` - During debugging
-- `attempted` - Fix attempted
-- `fixed` - Issue resolved
-- `verified` - Fix verified
-- `regression` - Issue returned
-- `baseline` - Reference screenshot
-
-### Commands
+## Quick Start Commands
 ```bash
-# Capture issue screenshot (interactive)
-npm run visual:capture-issue
+# Start platform development
+pnpm dev --filter=web          # Next.js platform app
+pnpm dev --filter=api          # Node.js backend API
 
-# Capture baseline screenshots
-npm run visual:capture-baseline
+# Start game development  
+pnpm dev --filter=pet-platformer  # Game template development
 
-# Run visual regression tests
-npm run test:visual
-
-# Generate visual test report
-npm run visual:report
+# Run tests
+pnpm test                      # All tests
+pnpm test --filter=web         # Platform tests only
 ```
 
-### Usage Example
-When fixing a bug:
-1. Capture "before" state: `npm run visual:capture-issue` (select "before")
-2. Apply fix
-3. Capture "fixed" state: `npm run visual:capture-issue` (select "fixed")
-4. Run regression: `npm run test:visual`
+## Epic Development Order
 
-### Metadata
-Each screenshot includes metadata.json with:
-- Timestamp
-- Game state (level, player position, score)
-- Viewport dimensions
-- Browser errors captured
-- File hash and size
+### Phase 1: Web Platform Foundation (4-6 weeks)
+1. **E001-User-Auth**: Authentication system and user management
+2. **E002-File-Upload**: Photo upload with validation and storage
+3. **E003-Game-Generation**: Generate personalized games (manual pixel art)
+4. **E004-User-Dashboard**: User management and game library
 
-### GitHub Integration
-- PR comments: `/test visual` triggers tests
-- Actions workflow: `.github/workflows/visual-regression.yml`
-- Artifacts saved for 30 days
+### Phase 2: Game Engine & Integration (3-4 weeks)  
+5. **E005-Game-Template**: Lean platformer game template
+6. **E006-Platform-Integration**: Embed games in platform
+7. **E007-Content-Management**: Level/theme management system
 
-## Recent Fixes
+### Phase 3: Business Features (2-3 weeks)
+8. **E008-Payment-Processing**: Stripe integration and purchase flow
 
-### Pit Collision Bug (Issue #1)
-**Problem**: Cat walked over pits instead of falling through
-**Solution**: 
-- Check player center position over pit tiles
-- Skip floor collision for Level 3
-- Increase respawn depth to Y=450
-**Files Modified**: `index.html` lines 891-1031
+### Future Phases
+- **AI Image Processing**: Automated pixel art generation (post-MVP)
+- **Multi-Game Support**: Additional game templates
+- **Social Features**: Sharing, leaderboards, community
 
-### JavaScript Loading Error
-**Problem**: Duplicate variable declaration preventing game load
-**Solution**: Renamed `centerTileY` to `sideCenterTileY` in collision detection
-**Files Modified**: `index.html` line 1020
+## Development Guidelines
 
-## Game Levels
-1. **Level 1**: Tutorial - basic platforms
-2. **Level 2**: Moving platforms introduction
-3. **Level 3**: Challenge arena with pits (X: 8-11, 19-22, 31-34)
-4. **Level 4**: Dog bouncing mechanics
-5. **Level 5**: Victory feast
+### When Working on Web Platform
+- Reference `/docs/planning/prd-web-platform.md` for requirements
+- Follow architecture in `/docs/planning/architecture-web-platform.md`
+- Check epic breakdown in `/docs/epics-web-platform/epic-e00X-*.md`
+- Use stories in `/docs/stories-web-platform/` for implementation details
 
-## Testing Approach
+### When Working on Game Development
+- Reference game-specific epics in `/docs/epics-game-dev/`
+- Follow lean architecture in `/docs/architecture/lean-game-architecture.md`
+- Focus on single HTML file export capability
+- Ensure offline functionality and <2MB file size
 
-### Baseline Capture
-Before any code changes:
-1. Physics baseline - frame-by-frame physics recording
-2. Visual baseline - screenshots of all game states
-3. Store in `test-utils/baselines/`
+### Code Quality Standards
+- TypeScript strict mode for all new code
+- Jest tests for business logic
+- Playwright E2E tests for critical user flows
+- ESLint + Prettier for code formatting
+- Automated CI/CD with GitHub Actions
 
-### Regression Testing
-- Automated visual comparison using Puppeteer
-- Pixel-by-pixel diff with pixelmatch
-- Multi-viewport testing (desktop/tablet/mobile)
-
-### Issue Documentation
-- Screenshots timestamped and linked to GitHub issues
-- Metadata tracking for reproducibility
-- Visual proof of bugs and fixes
-
-## Development Workflow
-
-### Starting Development
-```bash
-npm install        # Install dependencies
-npm run dev        # Start Vite dev server (port 3000)
-python -m http.server 8080  # Alternative server for original game
-```
-
-### Testing Changes
-```bash
-npm run lint       # Check code style
-npm test          # Run unit tests
-npm run visual:capture-issue  # Document visual changes
-```
-
-### Committing Changes
-```bash
-git add .
-git commit -m "Fix: [description]
-
-[Extended description]
-
-Fixes #[issue-number]
-
-🤖 Generated with Claude Code
-Co-Authored-By: Claude <noreply@anthropic.com>"
-git push origin feature/bmad-modularization
-```
-
-## BMad Method Implementation
-
-### Current Epics
-1. **Core Infrastructure** (US-001 to US-006)
-2. **Entity Modularization** (US-007 to US-012)
-3. **Systems Extraction** (US-013 to US-018)
-4. **Asset Management** (US-019 to US-021)
-5. **Testing & Validation** (US-022 to US-027)
-6. **Bug Fixes** (US-028 to US-029)
-
-### Progress Tracking
-Use TodoWrite tool to track implementation progress
-Current focus: Modularization with 100% backward compatibility
-
-## Common Commands
-
-### Visual Testing
-```bash
-# Quick issue capture
-npm run visual:capture-issue
-# Enter: issue number, description, status
-
-# Full baseline refresh
-npm run visual:capture-baseline
-
-# Check for regressions
-npm run test:visual
-```
-
-### Debugging
-```bash
-# Visual debug with Puppeteer
-node debug-screenshot.js
-
-# Test game loads
-open http://localhost:8080/test-game-loads.html
-
-# Test pit collision
-open http://localhost:8080/test-pit-collision.html
-```
-
-## Important Notes
-
-### Code Style
-- ES6 modules (type: "module" in package.json)
-- No trailing spaces
-- Single quotes for strings
-- 2-space indentation
-- Always use semicolons
-
-### Git Workflow
-- Branch: feature/bmad-modularization
-- Main branch: main
-- Always include issue number in commits
-- Use Co-Authored-By for AI-assisted commits
-
-### Testing Requirements
-- Capture baselines before changes
-- Document issues with screenshots
-- Run regression tests after fixes
-- Maintain 100% backward compatibility
-
-## Contact & Repository
-- Repository: https://github.com/mylesdebastion/Bowie-Buttercup
-- Issues: Report via GitHub Issues
-- Visual artifacts: Stored in test-visual/screenshots/
-
-## Quick Reference
-
-### File Locations
-```
-/                       # Root game files
-├── index.html         # Original monolithic game
-├── src/               # Modular architecture
-├── test-visual/       # Visual testing system
-├── docs/              # Documentation
-└── CLAUDE.md          # This file
-```
-
-### Port Usage
-- 3000: Vite dev server (modular version)
-- 8080: Python HTTP server (original game)
-
-### Browser Testing
-- Desktop: 1920x1080
-- Tablet: 768x1024
-- Mobile: 375x667
+## Critical Success Factors
+1. **Speed to Market**: Manual pixel art for first 20 users to validate market
+2. **Lean Games**: Single file exports, offline-capable, <2MB size
+3. **User Experience**: Seamless upload → game generation → play flow
+4. **Business Model**: Clear path to $14.99-24.99 revenue per user
 
 ---
-*Last Updated: 2024-01-20*
-*Version: 2.0.0*
+*Last Updated: 2025-01-20*  
+*For detailed technical information, see planning documents in `/docs/planning/`*

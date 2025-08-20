@@ -1,0 +1,113 @@
+version: 1.13.0
+installed_at: '2025-08-18T17:01:32.162Z'
+install_type: expansion-pack
+expansion_pack_id: bmad-2d-phaser-game-dev
+expansion_pack_name: bmad-2d-phaser-game-dev
+ides_setup:
+  - claude-code
+files:
+  - path: .bmad-2d-phaser-game-dev\config.yaml
+    hash: 7e9b14e459136465
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\workflows\game-prototype.yaml
+    hash: fc965e41c33d74a4
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\workflows\game-dev-greenfield.yaml
+    hash: ae67e8e7756c3efa
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\templates\project-brief-tmpl.yaml
+    hash: d36f3e44324c8552
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\templates\market-research-tmpl.yaml
+    hash: ba59c87964055328
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\templates\level-design-doc-tmpl.yaml
+    hash: 117d5863c25cc0ce
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\templates\game-story-tmpl.yaml
+    hash: e50522fb15ea7b9e
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\templates\game-design-doc-tmpl.yaml
+    hash: ade66ca25bee3033
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\templates\game-brief-tmpl.yaml
+    hash: e4b0e6c76c816751
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\templates\game-architecture-tmpl.yaml
+    hash: d0bd68634fb1bfab
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\templates\competitor-analysis-tmpl.yaml
+    hash: 21cd998bd57411eb
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\templates\brainstorming-output-tmpl.yaml
+    hash: 6b0d78d85cd6fe6b
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\utils\workflow-management.md
+    hash: b148df3ebb1f9c61
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\utils\bmad-doc-template.md
+    hash: 7191989495b8c8fd
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\checklists\game-story-dod-checklist.md
+    hash: 1c04d3dac10a357a
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\checklists\game-design-checklist.md
+    hash: 0f802420a3e7f7ed
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\tasks\kb-mode-interaction.md
+    hash: 2c52751f40ae7ef0
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\tasks\game-design-brainstorming.md
+    hash: ea1bdcaebdb6d513
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\tasks\facilitate-brainstorming-session.md
+    hash: e6e70f13738c0728
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\tasks\execute-checklist.md
+    hash: 06a9849b1f11359f
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\tasks\document-project.md
+    hash: 32903527f7a25f21
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\tasks\create-game-story.md
+    hash: 0d5320a55108119a
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\tasks\create-doc.md
+    hash: 395719b8a002f7f9
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\tasks\create-deep-research-prompt.md
+    hash: a1592f421540e40e
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\tasks\advanced-elicitation.md
+    hash: 1ab304ac31d73c19
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\data\elicitation-methods.md
+    hash: 82d24b664e1a58ff
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\data\development-guidelines.md
+    hash: 5409959a26392cdc
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\data\brainstorming-techniques.md
+    hash: 2dae43f4464f1ad2
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\data\bmad-kb.md
+    hash: 26b3d1cf4727ffd0
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\agents\game-sm.md
+    hash: b4dae372c2b962e5
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\agents\game-developer.md
+    hash: 0b2f928770353d4e
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\agents\game-designer.md
+    hash: cc252f62bd99788b
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\agents\bmad-orchestrator.md
+    hash: 0205deaa05df1e56
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\agents\analyst.md
+    hash: 7b4295f5c5cf7e5b
+    modified: false
+  - path: .bmad-2d-phaser-game-dev\agent-teams\phaser-2d-nodejs-game-team.yaml
+    hash: abc777bfc19aff14
+    modified: false
