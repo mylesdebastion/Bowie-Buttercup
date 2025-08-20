@@ -889,8 +889,12 @@
             }
             
             checkGrounded() {
-                // Check floor
-                if (this.y >= 400 - this.height) {
+                // Check floor (but not for Level 3 which has pits)
+                // Use typeof check to ensure game exists before accessing properties
+                const isLevel3 = (typeof game !== 'undefined' && game && game.currentLevel === 3);
+                
+                if (!isLevel3 && this.y >= 400 - this.height) {
+                    // Other levels have a solid floor at y=400
                     return true;
                 }
                 
@@ -899,7 +903,7 @@
                 const tileY = Math.floor((this.y + this.height + 2) / 16);
                 
                 // Check if the tile exists and is solid (value 1 or 3 for moving platforms)
-                if (game && game.level[tileY]) {
+                if (typeof game !== 'undefined' && game && game.level && game.level[tileY]) {
                     const tileValue = game.level[tileY][tileX];
                     
                     // Solid tiles (1 = platform, 3 = moving platform)
@@ -919,16 +923,16 @@
             
             checkCollisions() {
                 // Check for falling into pit (Level 3)
-                if (game && game.currentLevel === 3 && this.y > 420) {
+                // Increased depth from 420 to 450 so cat falls deeper into pit
+                if (typeof game !== 'undefined' && game && game.currentLevel === 3 && this.y > 450) {
                     this.respawnAtCheckpoint();
                     return;
                 }
                 
                 // Floor collision (skip for Level 3 which has pits)
-                if (game && game.currentLevel === 3) {
-                    // Level 3 uses tile-based collision only (has pits)
-                    // Don't apply generic floor collision
-                } else if (this.y > 400 - this.height) {
+                const isLevel3 = (typeof game !== 'undefined' && game && game.currentLevel === 3);
+                
+                if (!isLevel3 && this.y > 400 - this.height) {
                     // Other levels have a solid floor at y=400
                     this.y = 400 - this.height;
                     this.vy = 0;
@@ -936,50 +940,68 @@
                 }
                 
                 // Platform tile collisions
-                if (game) {
+                if (typeof game !== 'undefined' && game && game.level) {
                     // Check multiple points along the player's bottom edge
                     let foundPlatform = false;
                     let overPit = false;
+                    let centerOverPit = false;
                     
-                    for (let xOffset = 2; xOffset < this.width - 2; xOffset += 4) {
-                        const checkX = this.x + xOffset;
-                        const tileX = Math.floor(checkX / 16);
-                        const tileY = Math.floor((this.y + this.height) / 16);
-                        
-                        const tile = game.level[tileY] && game.level[tileY][tileX];
-                        
-                        // IMPORTANT: Check for pit tiles FIRST
-                        if (tile === 0) {
-                            overPit = true;
-                            // Don't set grounded to true if over a pit!
-                            continue; // Keep checking other points
-                        }
-                        
-                        if (tile === 1) {
-                            // Regular platform
-                            if (this.vy > 0 && this.prevY + this.height <= tileY * 16 + 4) {
-                                this.y = tileY * 16 - this.height;
-                                this.vy = 0;
-                                foundPlatform = true;
-                                // Update respawn point when on safe ground
-                                if (!this.climbing) {
-                                    this.respawnX = this.x;
-                                    this.respawnY = this.y;
-                                }
-                                break;
+                    // First pass: Check if center of player is over a pit
+                    const centerX = this.x + this.width / 2;
+                    const centerTileX = Math.floor(centerX / 16);
+                    const centerTileY = Math.floor((this.y + this.height) / 16);
+                    const centerTile = game.level[centerTileY] && game.level[centerTileY][centerTileX];
+                    
+                    if (centerTile === 0) {
+                        centerOverPit = true;
+                    }
+                    
+                    // If center is over pit, don't allow landing at all
+                    if (centerOverPit) {
+                        overPit = true;
+                        // Force falling - no platform collision when center is over pit
+                        this.grounded = false;
+                    } else {
+                        // Only check for platform collisions if center is NOT over a pit
+                        for (let xOffset = 2; xOffset < this.width - 2; xOffset += 4) {
+                            const checkX = this.x + xOffset;
+                            const tileX = Math.floor(checkX / 16);
+                            const tileY = Math.floor((this.y + this.height) / 16);
+                            
+                            const tile = game.level[tileY] && game.level[tileY][tileX];
+                            
+                            // Check for pit tiles
+                            if (tile === 0) {
+                                overPit = true;
+                                continue; // Keep checking other points
                             }
-                        } else if (tile === 3) {
-                            // Red couch trampoline
-                            if (this.vy > 0 && this.prevY + this.height <= tileY * 16 + 4) {
-                                this.y = tileY * 16 - this.height;
-                                this.vy = -physics.jumpForce * 1.5; // Bounce higher!
-                                this.grounded = false;
-                                game.playSound('jump');
-                                // Create bounce particles
-                                if (!reducedMotion) {
-                                    game.createParticles(this.x + this.width/2, this.y + this.height, 10);
+                            
+                            if (tile === 1) {
+                                // Regular platform
+                                if (this.vy > 0 && this.prevY + this.height <= tileY * 16 + 4) {
+                                    this.y = tileY * 16 - this.height;
+                                    this.vy = 0;
+                                    foundPlatform = true;
+                                    // Update respawn point when on safe ground
+                                    if (!this.climbing) {
+                                        this.respawnX = this.x;
+                                        this.respawnY = this.y;
+                                    }
+                                    break;
                                 }
-                                break;
+                            } else if (tile === 3) {
+                                // Red couch trampoline
+                                if (this.vy > 0 && this.prevY + this.height <= tileY * 16 + 4) {
+                                    this.y = tileY * 16 - this.height;
+                                    this.vy = -physics.jumpForce * 1.5; // Bounce higher!
+                                    this.grounded = false;
+                                    game.playSound('jump');
+                                    // Create bounce particles
+                                    if (!reducedMotion) {
+                                        game.createParticles(this.x + this.width/2, this.y + this.height, 10);
+                                    }
+                                    break;
+                                }
                             }
                         }
                     }
@@ -995,10 +1017,10 @@
                     // Side collisions with platforms
                     const leftTileX = Math.floor(this.x / 16);
                     const rightTileX = Math.floor((this.x + this.width) / 16);
-                    const centerTileY = Math.floor((this.y + this.height/2) / 16);
+                    const sideCenterTileY = Math.floor((this.y + this.height/2) / 16);
                     
                     // Left collision
-                    if (game.level[centerTileY] && game.level[centerTileY][leftTileX] === 1) {
+                    if (game.level[sideCenterTileY] && game.level[sideCenterTileY][leftTileX] === 1) {
                         if (this.vx < 0) {
                             this.x = (leftTileX + 1) * 16;
                             this.vx = 0;
@@ -1006,7 +1028,7 @@
                     }
                     
                     // Right collision  
-                    if (game.level[centerTileY] && game.level[centerTileY][rightTileX] === 1) {
+                    if (game.level[sideCenterTileY] && game.level[sideCenterTileY][rightTileX] === 1) {
                         if (this.vx > 0) {
                             this.x = rightTileX * 16 - this.width;
                             this.vx = 0;

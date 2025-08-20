@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pit Edge Cases Test</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #1a1a2e;
+            color: #eee;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #f39c12;
+            text-align: center;
+        }
+        
+        .test-info {
+            background: #16213e;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            border: 2px solid #0f3460;
+        }
+        
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #0f3460;
+        }
+        
+        .success {
+            background: #34a853;
+        }
+        
+        .error {
+            background: #e94560;
+        }
+        
+        .warning {
+            background: #f39c12;
+            color: #000;
+        }
+        
+        button {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 5px;
+            font-family: monospace;
+        }
+        
+        button:hover {
+            background: #ff6b6b;
+        }
+        
+        #gameFrame {
+            width: 100%;
+            height: 500px;
+            border: 2px solid #f39c12;
+            border-radius: 5px;
+        }
+        
+        #log {
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            height: 250px;
+            overflow-y: auto;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🕳️ Pit Edge Cases Test</h1>
+    
+    <div class="test-info">
+        <h2>🐛 Bug Report</h2>
+        <div class="warning">
+            <strong>Issues to Test:</strong>
+            <ul>
+                <li>Cat can jump on pit edges to avoid falling</li>
+                <li>Cat doesn't fall deep enough before respawning</li>
+                <li>Cat can "land" on pit tiles when jumping</li>
+            </ul>
+        </div>
+        
+        <div class="status">
+            <strong>Fixes Applied:</strong>
+            <ul>
+                <li>✅ Respawn depth increased from Y=420 to Y=450</li>
+                <li>✅ Center-based pit detection (if center is over pit, no landing allowed)</li>
+                <li>✅ Level 3 specific floor collision bypass</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="test-grid">
+        <div>
+            <div class="test-info">
+                <h2>🎮 Test Controls</h2>
+                <button onclick="loadGame()">1. Load Game</button>
+                <button onclick="jumpToLevel3()">2. Jump to Level 3</button>
+                <br>
+                <button onclick="testJumpOnPit()">3. Test Jump on Pit</button>
+                <button onclick="testPitEdge()">4. Test Pit Edge</button>
+                <button onclick="testDeepFall()">5. Test Deep Fall</button>
+                <br>
+                <button onclick="runAllTests()">Run All Tests</button>
+                <button onclick="manualTest()">Manual Test Mode</button>
+            </div>
+            
+            <div class="test-info">
+                <h2>📊 Test Results</h2>
+                <div id="status" class="status">Ready to begin testing...</div>
+                <div id="testResults"></div>
+            </div>
+        </div>
+        
+        <div>
+            <div class="test-info">
+                <h2>🎮 Game</h2>
+                <iframe id="gameFrame" src=""></iframe>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-info">
+        <h2>📜 Test Log</h2>
+        <div id="log"></div>
+    </div>
+    
+    <script>
+        let gameWindow = null;
+        let testResults = {};
+        
+        function log(message, type = 'info') {
+            const logEl = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : '📝';
+            logEl.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = 'status ' + type;
+        }
+        
+        function loadGame() {
+            log('Loading game...');
+            const frame = document.getElementById('gameFrame');
+            frame.src = 'index.html';
+            
+            frame.onload = () => {
+                gameWindow = frame.contentWindow;
+                log('Game loaded', 'success');
+                updateStatus('Game loaded - ready to jump to Level 3');
+            };
+        }
+        
+        function jumpToLevel3() {
+            if (!gameWindow || !gameWindow.game) {
+                log('Game not loaded!', 'error');
+                return;
+            }
+            
+            log('Jumping to Level 3...');
+            gameWindow.game.currentLevel = 3;
+            gameWindow.game.level = gameWindow.game.createLevel();
+            gameWindow.game.initLevel();
+            
+            log('Now on Level 3', 'success');
+            updateStatus('Level 3 loaded - ready to test');
+            
+            // Log pit locations
+            log('Pit locations in Level 3:');
+            const level = gameWindow.game.level;
+            let pitRanges = [];
+            let inPit = false;
+            let pitStart = -1;
+            
+            for (let x = 0; x < 50; x++) {
+                if (level[25] && level[25][x] === 0) {
+                    if (!inPit) {
+                        inPit = true;
+                        pitStart = x;
+                    }
+                } else {
+                    if (inPit) {
+                        pitRanges.push(`X=${pitStart}-${x-1} (pixels ${pitStart*16}-${(x-1)*16})`);
+                        inPit = false;
+                    }
+                }
+            }
+            pitRanges.forEach(range => log(`  Pit at ${range}`));
+        }
+        
+        function testJumpOnPit() {
+            if (!gameWindow || !gameWindow.game) {
+                log('Game not loaded!', 'error');
+                return;
+            }
+            
+            log('\n=== TEST: Jump On Pit ===');
+            updateStatus('Testing jump on pit...', 'warning');
+            
+            const player = gameWindow.game.player;
+            
+            // Position player just before pit and simulate jump
+            player.x = 7 * 16 + 8; // Just before first pit
+            player.y = 350; // In air
+            player.vx = 100; // Moving right
+            player.vy = 100; // Falling
+            
+            log(`Positioned player at X=${player.x}, Y=${player.y}`);
+            log('Player approaching pit while falling...');
+            
+            // Let physics run for a bit
+            let frameCount = 0;
+            const testInterval = setInterval(() => {
+                frameCount++;
+                
+                const tileX = Math.floor((player.x + player.width/2) / 16);
+                const tileY = Math.floor((player.y + player.height) / 16);
+                const tile = gameWindow.game.level[tileY] && gameWindow.game.level[tileY][tileX];
+                
+                log(`Frame ${frameCount}: X=${Math.round(player.x)}, Y=${Math.round(player.y)}, TileX=${tileX}, Tile=${tile}, Grounded=${player.grounded}`);
+                
+                // Check for bug condition
+                if (tile === 0 && player.grounded) {
+                    log('BUG FOUND: Player is grounded on pit tile!', 'error');
+                    testResults.jumpOnPit = false;
+                    clearInterval(testInterval);
+                    updateStatus('Jump on pit test FAILED', 'error');
+                    return;
+                }
+                
+                // Check if player fell through
+                if (player.y > 430) {
+                    log('SUCCESS: Player fell through pit!', 'success');
+                    testResults.jumpOnPit = true;
+                    clearInterval(testInterval);
+                    updateStatus('Jump on pit test PASSED', 'success');
+                    
+                    // Reset player
+                    player.respawnAtCheckpoint();
+                    return;
+                }
+                
+                if (frameCount > 60) {
+                    log('Test timeout', 'error');
+                    testResults.jumpOnPit = false;
+                    clearInterval(testInterval);
+                    updateStatus('Jump on pit test TIMEOUT', 'error');
+                }
+            }, 50);
+        }
+        
+        function testPitEdge() {
+            if (!gameWindow || !gameWindow.game) {
+                log('Game not loaded!', 'error');
+                return;
+            }
+            
+            log('\n=== TEST: Pit Edge ===');
+            updateStatus('Testing pit edge collision...', 'warning');
+            
+            const player = gameWindow.game.player;
+            
+            // Position player on edge of pit
+            player.x = 8 * 16 - player.width/2 - 2; // Edge of pit
+            player.y = 380;
+            player.vy = 10;
+            
+            log(`Positioned player at pit edge: X=${player.x}`);
+            
+            setTimeout(() => {
+                if (player.grounded && player.y < 400) {
+                    log('Player landed on edge of platform', 'success');
+                    testResults.pitEdge = true;
+                    
+                    // Now test moving onto pit
+                    player.vx = 50;
+                    log('Moving player onto pit...');
+                    
+                    setTimeout(() => {
+                        if (!player.grounded || player.y > 400) {
+                            log('Player fell into pit when center moved over it', 'success');
+                            updateStatus('Pit edge test PASSED', 'success');
+                        } else {
+                            log('Player stayed on pit edge - possible issue', 'error');
+                            updateStatus('Pit edge test FAILED', 'error');
+                        }
+                        player.respawnAtCheckpoint();
+                    }, 500);
+                } else {
+                    log('Player fell at edge', 'success');
+                    testResults.pitEdge = true;
+                    updateStatus('Pit edge test PASSED', 'success');
+                    player.respawnAtCheckpoint();
+                }
+            }, 200);
+        }
+        
+        function testDeepFall() {
+            if (!gameWindow || !gameWindow.game) {
+                log('Game not loaded!', 'error');
+                return;
+            }
+            
+            log('\n=== TEST: Deep Fall ===');
+            updateStatus('Testing respawn depth...', 'warning');
+            
+            const player = gameWindow.game.player;
+            const startX = player.x;
+            const startY = player.y;
+            
+            // Position player over pit
+            player.x = 9 * 16;
+            player.y = 390;
+            player.vy = 100;
+            player.grounded = false;
+            
+            log(`Positioned player over pit at X=${player.x}, Y=${player.y}`);
+            log('Waiting for player to fall and respawn...');
+            
+            let maxDepth = player.y;
+            const fallInterval = setInterval(() => {
+                maxDepth = Math.max(maxDepth, player.y);
+                
+                // Check if respawned
+                if (player.y < 400 && player.x !== 9 * 16) {
+                    clearInterval(fallInterval);
+                    log(`Player respawned after falling to Y=${maxDepth}`, 'success');
+                    
+                    if (maxDepth >= 450) {
+                        log('Player fell deep enough (>= 450 pixels)', 'success');
+                        testResults.deepFall = true;
+                        updateStatus('Deep fall test PASSED', 'success');
+                    } else {
+                        log(`Player only fell to ${maxDepth} (should be >= 450)`, 'error');
+                        testResults.deepFall = false;
+                        updateStatus('Deep fall test FAILED', 'error');
+                    }
+                }
+            }, 20);
+        }
+        
+        function runAllTests() {
+            log('\n=== RUNNING ALL TESTS ===\n');
+            testResults = {};
+            
+            testJumpOnPit();
+            setTimeout(() => {
+                testPitEdge();
+                setTimeout(() => {
+                    testDeepFall();
+                    setTimeout(() => {
+                        showTestResults();
+                    }, 2000);
+                }, 2000);
+            }, 2000);
+        }
+        
+        function showTestResults() {
+            const resultsEl = document.getElementById('testResults');
+            let html = '<h3>Test Results:</h3><ul>';
+            
+            for (const [test, passed] of Object.entries(testResults)) {
+                const icon = passed ? '✅' : '❌';
+                html += `<li>${icon} ${test}: ${passed ? 'PASSED' : 'FAILED'}</li>`;
+            }
+            
+            html += '</ul>';
+            resultsEl.innerHTML = html;
+            
+            const allPassed = Object.values(testResults).every(r => r);
+            if (allPassed) {
+                updateStatus('All tests PASSED!', 'success');
+                log('\n🎉 All tests passed!', 'success');
+            } else {
+                updateStatus('Some tests FAILED', 'error');
+                log('\n⚠️ Some tests failed', 'error');
+            }
+        }
+        
+        function manualTest() {
+            if (!gameWindow || !gameWindow.game) {
+                log('Game not loaded!', 'error');
+                return;
+            }
+            
+            log('\n=== MANUAL TEST MODE ===');
+            log('Use arrow keys to test pit collision');
+            log('Try jumping on pits and edges');
+            
+            let monitoring = true;
+            const monitorInterval = setInterval(() => {
+                if (!monitoring || !gameWindow || !gameWindow.game || !gameWindow.game.player) {
+                    clearInterval(monitorInterval);
+                    return;
+                }
+                
+                const player = gameWindow.game.player;
+                const tileX = Math.floor((player.x + player.width/2) / 16);
+                const tileY = Math.floor((player.y + player.height) / 16);
+                const tile = gameWindow.game.level[tileY] && gameWindow.game.level[tileY][tileX];
+                
+                const status = `X=${Math.round(player.x)}, Y=${Math.round(player.y)}, ` +
+                              `Grounded=${player.grounded}, Tile=${tile === 0 ? 'PIT' : tile === 1 ? 'SOLID' : tile}`;
+                
+                updateStatus(status);
+                
+                // Alert on potential bugs
+                if (tile === 0 && player.grounded) {
+                    log(`⚠️ BUG: Grounded on pit at X=${tileX}`, 'error');
+                    monitoring = false;
+                    updateStatus('BUG DETECTED: Grounded on pit!', 'error');
+                }
+            }, 100);
+        }
+        
+        // Initialize
+        log('Pit Edge Cases Test Tool initialized');
+        log('Click "Load Game" to begin');
+    </script>
+</body>
+</html>

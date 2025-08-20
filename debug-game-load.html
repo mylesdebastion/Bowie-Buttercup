@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Debug Game Load</title>
+    <style>
+        body { font-family: monospace; background: #1a1a2e; color: #eee; padding: 20px; }
+        #log { background: #000; color: #0f0; padding: 10px; height: 400px; overflow-y: auto; white-space: pre-wrap; }
+        .error { color: #f00; }
+        .success { color: #0f0; }
+    </style>
+</head>
+<body>
+    <h1>Debug Game Load</h1>
+    <iframe id="gameFrame" src="index.html" width="800" height="400"></iframe>
+    <h2>Console Log:</h2>
+    <div id="log"></div>
+    
+    <script>
+        const log = document.getElementById('log');
+        
+        function addLog(msg, type = '') {
+            const time = new Date().toLocaleTimeString();
+            log.innerHTML += `<span class="${type}">[${time}] ${msg}</span>\n`;
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        const frame = document.getElementById('gameFrame');
+        
+        frame.onload = () => {
+            addLog('Frame loaded', 'success');
+            const gameWindow = frame.contentWindow;
+            
+            // Intercept console errors
+            const originalError = gameWindow.console.error;
+            gameWindow.console.error = function(...args) {
+                addLog('ERROR: ' + args.join(' '), 'error');
+                originalError.apply(gameWindow.console, args);
+            };
+            
+            // Check for game object
+            setTimeout(() => {
+                if (gameWindow.game) {
+                    addLog('Game object exists', 'success');
+                    addLog('Current level: ' + gameWindow.game.currentLevel);
+                    addLog('Player exists: ' + (gameWindow.game.player ? 'yes' : 'no'));
+                } else {
+                    addLog('Game object not found!', 'error');
+                }
+            }, 1000);
+        };
+        
+        frame.onerror = (e) => {
+            addLog('Frame error: ' + e, 'error');
+        };
+        
+        // Also catch any errors in main window
+        window.onerror = function(msg, url, line, col, error) {
+            addLog(`Error: ${msg} at line ${line}`, 'error');
+            return false;
+        };
+    </script>
+</body>
+</html>

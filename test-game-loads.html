@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Game Loads</title>
+    <style>
+        body { font-family: monospace; background: #1a1a2e; color: #eee; padding: 20px; }
+        .success { color: #0f0; }
+        .error { color: #f00; }
+        .info { color: #ff0; }
+    </style>
+</head>
+<body>
+    <h1>Testing Game Load...</h1>
+    <iframe id="game" src="index.html" width="800" height="400"></iframe>
+    <div id="status"></div>
+    
+    <script>
+        const status = document.getElementById('status');
+        const frame = document.getElementById('game');
+        
+        function log(msg, className = '') {
+            status.innerHTML += `<div class="${className}">${msg}</div>`;
+        }
+        
+        window.onerror = function(msg, url, line) {
+            log(`❌ Main window error: ${msg} at line ${line}`, 'error');
+        };
+        
+        frame.onload = function() {
+            log('✅ Frame loaded', 'success');
+            
+            const win = frame.contentWindow;
+            
+            // Override console.error in iframe
+            const originalError = win.console.error;
+            win.console.error = function(...args) {
+                log(`❌ Game error: ${args.join(' ')}`, 'error');
+                originalError.apply(win.console, args);
+            };
+            
+            // Check game initialization
+            setTimeout(() => {
+                try {
+                    if (win.game) {
+                        log('✅ Game object exists', 'success');
+                        log(`📍 Current level: ${win.game.currentLevel}`, 'info');
+                        
+                        if (win.game.player) {
+                            log('✅ Player exists', 'success');
+                            log(`📍 Player position: (${Math.round(win.game.player.x)}, ${Math.round(win.game.player.y)})`, 'info');
+                            log(`📍 Player grounded: ${win.game.player.grounded}`, 'info');
+                        } else {
+                            log('❌ Player not found', 'error');
+                        }
+                        
+                        if (win.game.level) {
+                            log('✅ Level loaded', 'success');
+                        } else {
+                            log('❌ Level not loaded', 'error');
+                        }
+                        
+                        // Test player movement
+                        if (win.game.player && win.game.player.update) {
+                            win.game.player.update(16);
+                            log('✅ Player update works', 'success');
+                        }
+                        
+                        log('<br><strong>🎮 GAME LOADS SUCCESSFULLY!</strong>', 'success');
+                    } else {
+                        log('❌ Game object not found!', 'error');
+                    }
+                } catch (e) {
+                    log(`❌ Error checking game: ${e.message}`, 'error');
+                }
+            }, 1000);
+        };
+    </script>
+</body>
+</html>
