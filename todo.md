@@ -1,182 +1,133 @@
-# Cat Platformer - Feature Todo List
+# PetPixel Games Platform - Development Todo
 
-## Mobile & Fullscreen Support (Epic)
+## 🎯 Current Strategic Focus: Internal Tool-First Development
 
-### Fullscreen Mode
-- [ ] **Fullscreen API Implementation**
-  - Add fullscreen toggle button (F11 or click)
-  - Maintain aspect ratio with letterboxing
-  - Center canvas with black bars if needed
-  - Hide UI panels in fullscreen mode
-  - Smooth transition animations
-
-- [ ] **Responsive Canvas Scaling**
-  - Auto-detect window size changes
-  - Scale canvas to fit available space
-  - Maintain pixel-perfect rendering
-  - Handle different aspect ratios
-
-### Mobile-Friendly Version
-- [ ] **Touch Controls Implementation**
-  - Virtual D-pad on left side (movement)
-  - Action buttons on right (Jump, Dodge, Sit)
-  - Minimum 44x44px touch targets
-  - Semi-transparent overlays
-  - Haptic feedback support
-
-- [ ] **Mobile UI/UX**
-  - Auto-detect mobile devices
-  - Landscape orientation recommendation
-  - Prevent page scroll during gameplay
-  - Touch-to-start screen
-  - Larger HUD text for readability
-  - Simplified menu system
-
-- [ ] **Gesture Support**
-  - Swipe up to jump
-  - Swipe down to crouch
-  - Double tap to dodge
-  - Pinch to zoom (in editor mode)
-  - Long press for special actions
-
-- [ ] **Mobile Performance**
-  - 30 FPS power-saving mode
-  - Reduced particle effects option
-  - Simplified graphics toggle
-  - Audio optimization
-  - Battery usage considerations
-
-### Editor Dev Mode
-- [ ] **Move Editor to Debug Mode**
-  - Hide editor tab by default
-  - Show only when debug mode active (`)
-  - Ctrl+E shortcut to toggle editor
-  - Collapsible dev tools panel
-  - Preserve all editor functionality
-
-- [ ] **Dev Mode Features**
-  - Level select dropdown
-  - Sprite reload button
-  - Performance stats overlay
-  - Touch control visualization
-  - Console log viewer
-
-## Visual Improvements
-- [x] **Goldfish Crackers** - Make yellow treats look like goldfish crackers instead of simple squares
-  - Orange/golden color gradient
-  - Fish shape with smile and eye
-  - Slight rotation animation when floating
-
-## Level Design
-- [ ] **Level 3 - Challenge Arena**
-  - More complex platform layout
-  - Bottomless pits with respawn mechanic
-  - When cat falls in pit, respawn at last safe platform position
-  - Mix of moving platforms and static ones
-  - Tighter jumps required
-
-- [ ] **Rain Level**
-  - Outdoor level with falling raindrops
-  - Raindrops fall from top of screen at varying speeds
-  - Cat automatically jumps away when hit by raindrop
-  - Puddles form where drops land (visual effect)
-  - Thunder and lightning background effects
-  - Wet cat particle effects when hit multiple times
-  - Umbrella platforms that provide shelter and rain can't pass through.
-
-- [ ] **Indoor Cozy Level**
-  - Interior house setting with warm atmosphere
-  - Climbable stairs (step-by-step jumping)
-  - Cat trees positioned near windows
-  - Sunshine beams through windows (volumetric light effect)
-  - Cat heals/gains energy when sitting in sunbeams
-  - Purr animation when basking in sun
-  - Furniture obstacles (sofas, tables, shelves)
-  - Books and plants on windowsills
-  - Carpeted floors with paw print trails
-
-## Sprite Integration
-- [ ] **Default Sprite Sheets**
-  - Load `bowie_cat_3x3.png` automatically on startup
-  - Load second PNG file if available
-  - Ensure proper default mappings for all animations
-  - Auto-detect fireball sprite between cells
-
-- [ ] **Sprite Cropping Guide**
-  - Document how to properly crop sprite sheets
-  - Test cropping with different sprite dimensions
-  - Create visual guide showing grid overlay
-  - Include common pitfalls (border pixels, transparency)
-  - Provide example crops for 3x3, 4x4, and custom grids
-  - Add debugging mode to show crop boundaries in-game
-  - Test with various image formats (PNG, GIF)
-  - Validate proper alignment after cropping
-
-## Environmental Objects
-- [ ] **Cozy Bed Goal**
-  - Replace green flag with pixel art cat bed
-  - Add Z's floating animation when reached
-  - Warm color palette (browns, creams, soft pink pillow)
-  - Size: ~40x30 pixels
-
-- [ ] **Red Couch Trampolines**
-  - Replace some platforms with red couches
-  - Bounce player higher when landed on (1.5x jump force)
-  - Squash animation on impact
-  - Pixel art style with visible cushions
-
-- [ ] **Climbable Cat Trees**
-  - Procedurally generated heights (3-6 segments tall)
-  - Different platform configurations at top
-  - Hold up near tree to climb
-  - Climbing animation state
-  - Can jump from any height while climbing
-  - Carpeted texture in beige/brown
-
-## NPCs & Interactions
-- [ ] **Cute Dog NPC**
-  - Friendly dog that roams around certain levels
-  - Pathfinding AI to wander and search for treats
-  - Eats treats if it gets to them first
-  - Cat gets scared sprite when dog is nearby
-  - Cat automatically jumps away from dog (fear response)
-  - Dog has happy tail wag animation
-  - Different dog breeds for variety
-
-## Additional Features (Future)
-- [ ] **Power-ups**
-  - Catnip - temporary invincibility
-  - Yarn ball - projectile to stun mice
-  - Feather toy - double jump
-
-- [ ] **Sound Effects**
-  - Meow on jump
-  - Purr when collecting treats
-  - Hiss when hurt
-  - Victory purr at bed
-
-- [ ] **Particle Effects**  
-  - Fish bones when eating treats
-  - Fur puffs when landing
-  - Hearts when reaching bed
-
-## Bug Fixes & Polish
-- [ ] Ensure all animations properly mirror when facing left
-- [ ] Add coyote time to platform edges
-- [ ] Smooth camera transitions between levels
-- [ ] Save high scores to localStorage
-- [ ] Add level select menu after beating game once
-
-## Performance
-- [ ] Optimize collision detection for multiple mice
-- [ ] Add sprite batching for particles
-- [ ] Implement view culling for off-screen objects
-
-## Accessibility
-- [ ] Add colorblind mode for treats/hazards
-- [ ] Larger UI text option
-- [ ] Sound cue alternatives for visual effects
-- [ ] Speed run timer with splits
+**Phase 2: Internal Tool Development (Months 2-4)**  
+**Goal**: Create polished admin interface for artists and operators
 
 ---
-*Priority: Focus on visual improvements and Level 3 first, then environmental objects*
+
+## ✅ Completed (2025-01-21)
+
+### Planning & Architecture
+- [x] **Internal Tool-First Roadmap** - 4-phase evolution strategy
+- [x] **Epic IT001**: Admin Dashboard Foundation - Complete epic specification
+- [x] **Epic IT002**: Game Template Engine - Complete epic specification  
+- [x] **Epic IT003**: URL Management & Hosting - Complete epic specification
+- [x] **Epic IT004**: Workflow Integration - Complete epic specification
+- [x] **Internal Tool Architecture** - Next.js/tRPC/PostgreSQL technical foundation
+
+### User Stories Created
+- [x] **IT001.1**: Project Management Dashboard - Kanban interface with real-time updates
+- [x] **IT001.2**: Customer Order Intake - Multi-step form with file upload
+- [x] **IT001.3**: Asset Management System - File processing and organization
+- [x] **IT001.4**: Game URL Generator - Smart URL generation with collision handling
+- [x] **IT001.5**: Team Authentication & Roles - Security and permissions
+- [x] **IT003.1-5**: URL Management Stories - Complete URL workflow (5 stories)
+
+---
+
+## 🔄 In Progress
+
+### Phase 2 Development Priority
+**Next Epic to Implement**: IT001 - Admin Dashboard Foundation
+
+**Story Implementation Order**:
+1. **IT001.5** - Team Authentication & Roles (Security foundation first)
+2. **IT001.1** - Project Management Dashboard (Core workflow)
+3. **IT001.2** - Customer Order Intake (Business process)
+4. **IT001.3** - Asset Management System (File handling)
+5. **IT001.4** - Game URL Generator (Customer delivery)
+
+---
+
+## 📋 Phase 2 Remaining Tasks
+
+### Epic Story Creation (Week 2 Priority)
+- [ ] **Epic IT002 Stories** - Game Template Engine (5 stories)
+  - [ ] IT002.1: Master Game Template
+  - [ ] IT002.2: JSON Configuration System
+  - [ ] IT002.3: Dynamic Asset Loading
+  - [ ] IT002.4: Build Pipeline for Single HTML
+  - [ ] IT002.5: Game Preview and Testing
+
+- [ ] **Epic IT004 Stories** - Workflow Integration (4 stories)
+  - [ ] IT004.1: Order-to-Project Automation
+  - [ ] IT004.2: Progress Tracking and Notifications
+  - [ ] IT004.3: Quality Review and Approval System
+  - [ ] IT004.4: Customer Communication Integration
+
+### Technical Setup
+- [ ] **Project Initialization**
+  - [ ] Set up Next.js 14 project with TypeScript
+  - [ ] Configure tRPC with Prisma ORM
+  - [ ] Set up PostgreSQL database (Supabase)
+  - [ ] Configure AWS S3 + CloudFront for file storage
+  - [ ] Set up Shadcn/ui component library
+
+### Infrastructure
+- [ ] **Development Environment**
+  - [ ] Docker compose for local PostgreSQL + Redis
+  - [ ] Environment variable configuration
+  - [ ] Database migration system
+  - [ ] Seed data for development
+
+---
+
+## 🎮 Cat Platformer Game Status
+
+### Current State
+- [x] **Core Game Complete** - 5 levels with diverse mechanics
+- [x] **Mobile Support** - Touch controls and responsive design
+- [x] **Visual Polish** - Goldfish crackers, cozy bed, red couches
+- [x] **NPC System** - Dog AI with pathfinding
+- [x] **Sprite Integration** - Auto-loading sprite sheets
+
+### Future Enhancements (Lower Priority)
+- [ ] **Level 3 Improvements** - Bottomless pits with respawn
+- [ ] **Weather Effects** - Rain level with shelters
+- [ ] **Indoor Levels** - Cozy house with furniture
+- [ ] **Sound System** - Meows, purrs, ambient sounds
+- [ ] **Editor Improvements** - Move to debug mode
+
+---
+
+## 🚀 Phase 3-4 Future Planning
+
+### Phase 3: AI Integration (Months 4-6)
+- [ ] **Epic AI001**: Automated Pixel Art Generation
+- [ ] **Epic AI002**: Intelligent Game Customization
+
+### Phase 4: Customer Platform (Months 6-9)  
+- [ ] **Epic CP001**: Customer Self-Service Portal
+- [ ] **Epic CP002**: Advanced Platform Features
+
+---
+
+## 🎯 Success Metrics - Phase 2
+
+**Technical KPIs**:
+- Performance: <2s page load, <500ms API response
+- Reliability: 99.9% uptime, <0.1% error rate
+- Security: Zero security incidents
+
+**Business KPIs**:
+- Adoption: 100% team adoption within 1 week
+- Productivity: 3x improvement in project throughput
+- Quality: 95% first-time approval rate
+- Revenue: $15k monthly capacity by end of Phase 2
+
+---
+
+## 📝 Development Notes
+
+**BMad Methodology**: Using Scrum Master → Dev Agent workflow
+**Architecture Decision**: Internal tool-first to validate automation before customer platform
+**Technology Stack**: Next.js 14, tRPC, Prisma, PostgreSQL, AWS S3, Tailwind CSS
+
+**Current Branch**: `feature/bmad-modularization`
+**Last Commit**: Phase 2 epics and user stories (16 files, 6,430 insertions)
+
+---
+
+*Priority: Complete IT001 implementation first - this provides immediate operational value while building the foundation for automation*
