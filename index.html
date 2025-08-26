@@ -2283,28 +2283,10 @@
                 // Draw water bowl and food plate in level 5
                 if (this.currentLevel === 5) {
                     // Draw water bowl
-                    ctx.fillStyle = '#4169E1';
-                    ctx.fillRect(this.waterBowl.x, this.waterBowl.y, this.waterBowl.width, this.waterBowl.height);
-                    ctx.fillStyle = '#87CEEB';
-                    ctx.fillRect(this.waterBowl.x + 4, this.waterBowl.y + 2, this.waterBowl.width - 8, this.waterBowl.height - 6);
-                    if (this.catHasDrunk) {
-                        ctx.fillStyle = '#32CD32';
-                        ctx.fillText('✓', this.waterBowl.x + 15, this.waterBowl.y - 5);
-                    }
+                    this.drawWaterBowl(this.waterBowl.x, this.waterBowl.y, !this.catHasDrunk);
                     
-                    // Draw food plate
-                    ctx.fillStyle = '#CD853F';
-                    ctx.fillRect(this.foodPlate.x, this.foodPlate.y, this.foodPlate.width, this.foodPlate.height);
-                    if (!this.catHasEaten) {
-                        // Draw wet food
-                        ctx.fillStyle = '#8B4513';
-                        ctx.fillRect(this.foodPlate.x + 8, this.foodPlate.y - 5, 24, 15);
-                        ctx.fillStyle = '#D2691E';
-                        ctx.fillRect(this.foodPlate.x + 10, this.foodPlate.y - 3, 20, 11);
-                    } else {
-                        ctx.fillStyle = '#32CD32';
-                        ctx.fillText('✓', this.foodPlate.x + 15, this.foodPlate.y - 5);
-                    }
+                    // Draw food bowl
+                    this.drawFoodBowl(this.foodPlate.x, this.foodPlate.y, !this.catHasEaten);
                 }
             }
             
@@ -2325,6 +2307,65 @@
                 ctx.fillStyle = '#4B2F20';
                 ctx.fillRect(x + 2, y + 14, 2, 2);
                 ctx.fillRect(x + 12, y + 14, 2, 2);
+            }
+            
+            drawFoodBowl(x, y, isFull) {
+                if (this.foodBowlImg && this.foodBowlImg.complete) {
+                    // The image is 1024x1024 with two bowls side by side
+                    // Full bowl on left half (0-512), empty bowl on right half (512-1024)
+                    const sourceX = isFull ? 0 : 512; // Full bowl on left, empty on right
+                    const sourceY = 0;
+                    const sourceWidth = 512;  // Half the image width
+                    const sourceHeight = 1024; // Full image height
+                    
+                    // Draw the appropriate bowl state, scaled down to fit game
+                    // Fix: not stretched, 1/4 cat size, adjust height
+                    ctx.drawImage(
+                        this.foodBowlImg,
+                        sourceX, sourceY, sourceWidth, sourceHeight, // source rectangle
+                        x - 6, y + 15, 12, 24      // destination rectangle (not stretched, proper aspect ratio)
+                    );
+                } else {
+                    // Fallback to simple rectangle if image didn't load
+                    // Debug: log the image status
+                    if (this.foodBowlImg) {
+                        console.log('Food bowl image exists but not complete:', this.foodBowlImg.complete, this.foodBowlImg.src);
+                    } else {
+                        console.log('Food bowl image not loaded');
+                    }
+                    ctx.fillStyle = '#CD853F';
+                    ctx.fillRect(x, y, 40, 20);
+                    if (isFull) {
+                        ctx.fillStyle = '#8B4513';
+                        ctx.fillRect(x + 8, y - 5, 24, 15);
+                    }
+                }
+            }
+            
+            drawWaterBowl(x, y, isFull) {
+                if (this.waterBowlImg && this.waterBowlImg.complete) {
+                    // The image is 1024x1024 with two bowls side by side
+                    // Full bowl on left half (0-512), empty bowl on right half (512-1024)
+                    const sourceX = isFull ? 0 : 512; // Full bowl on left, empty on right
+                    const sourceY = 0;
+                    const sourceWidth = 512;  // Half the image width
+                    const sourceHeight = 1024; // Full image height
+                    
+                    // Draw the appropriate bowl state, same sizing as food bowl
+                    ctx.drawImage(
+                        this.waterBowlImg,
+                        sourceX, sourceY, sourceWidth, sourceHeight, // source rectangle
+                        x - 6, y + 15, 12, 24      // destination rectangle (same as food bowl)
+                    );
+                } else {
+                    // Fallback to simple rectangle if image didn't load
+                    ctx.fillStyle = '#4169E1';
+                    ctx.fillRect(x, y, 40, 20);
+                    if (isFull) {
+                        ctx.fillStyle = '#87CEEB';
+                        ctx.fillRect(x + 4, y + 2, 32, 14);
+                    }
+                }
             }
             
             drawCatTree(x, y) {
@@ -3353,6 +3394,26 @@
                     loadEmbeddedDefault();
                 });
             
+            // Load food bowl sprite
+            loadImage('./pet_food_bowl.png')
+                .then(img => {
+                    game.foodBowlImg = img;
+                    console.log('Loaded pet_food_bowl.png successfully');
+                })
+                .catch(() => {
+                    console.log('Could not load pet_food_bowl.png, using fallback drawing');
+                });
+
+            // Load water bowl sprite
+            loadImage('./pet_water_bowl.png')
+                .then(img => {
+                    game.waterBowlImg = img;
+                    console.log('Loaded pet_water_bowl.png successfully');
+                })
+                .catch(() => {
+                    console.log('Could not load pet_water_bowl.png, using fallback drawing');
+                });
+
             // Try to load a second sheet if available
             loadImage('./cat_sheet_2.png')
                 .then(img => {
