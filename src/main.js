@@ -7,6 +7,8 @@
 import './styles/main.css';
 import { GameLoop } from './core/game-loop.js';
 import { getGameState } from './core/game-state.js';
+import { getAssetLoader } from './core/asset-loader.js';
+import { ItemSystem } from './entities/items.js';
 
 // Global game instance
 let gameInstance = null;
@@ -17,7 +19,11 @@ class CatPlatformerGame {
     this.ctx = null;
     this.gameState = getGameState();
     this.gameLoop = null;
+    this.assetLoader = getAssetLoader();
     this.initialized = false;
+
+    // Game systems
+    this.itemSystem = new ItemSystem(this.gameState);
 
     // Input state
     this.keys = {};
@@ -45,10 +51,14 @@ class CatPlatformerGame {
       onFixedUpdate: (dt) => this.fixedUpdate(dt)
     });
 
+    // Initialize game systems
+    await this.initializeSystems();
+
     // Subscribe to game state events
     this.setupStateListeners();
 
-    // Load level
+    // Load level (start on Level 5 to test pet bowls)
+    this.gameState.currentLevel = 5;
     await this.loadLevel(this.gameState.currentLevel);
 
     this.initialized = true;
@@ -136,6 +146,18 @@ class CatPlatformerGame {
     this.canvas.addEventListener('touchend', (e) => e.preventDefault());
   }
 
+  async initializeSystems() {
+    console.log('🔧 Initializing game systems...');
+    
+    // Load core game assets
+    await this.assetLoader.loadGameAssets();
+    
+    // Initialize item system
+    await this.itemSystem.initialize();
+    
+    console.log('✅ All systems initialized');
+  }
+
   setupStateListeners() {
     this.gameState.subscribe('gameOver', () => {
       console.log('💀 Game Over!');
@@ -156,8 +178,15 @@ class CatPlatformerGame {
   async loadLevel(levelNumber) {
     console.log(`Loading level ${levelNumber}...`);
 
-    // Level loading will be implemented in level module
-    // For now, just reset player position
+    // Clear previous level items
+    this.itemSystem.clear();
+
+    // Load level-specific content
+    if (levelNumber === 5) {
+      this.itemSystem.createLevel5Items();
+    }
+
+    // Reset player position
     this.gameState.resetLevel();
   }
 
@@ -191,6 +220,9 @@ class CatPlatformerGame {
 
     // Handle input
     this.handleInput(deltaTime);
+
+    // Update game systems
+    this.itemSystem.update(deltaTime);
 
     // Update camera
     this.updateCamera(deltaTime);
@@ -322,6 +354,9 @@ class CatPlatformerGame {
 
     // Draw level (will be implemented in level module)
     this.drawLevel();
+
+    // Draw items (pet bowls, etc.)
+    this.itemSystem.render(this.ctx);
 
     // Draw player
     this.drawPlayer(interpolation);

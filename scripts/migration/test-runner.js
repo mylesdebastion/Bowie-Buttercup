@@ -5,9 +5,13 @@
  * Automated testing for feature parity during migration
  */
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+import fs from 'fs';
+import path from 'path';
+import { execSync } from 'child_process';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 class MigrationTestRunner {
     constructor() {
@@ -287,9 +291,10 @@ class MigrationTestRunner {
 }
 
 // Run tests if called directly
-if (require.main === module) {
+if (process.argv[1] && import.meta.url.endsWith(path.basename(process.argv[1]))) {
+    console.log('🚀 Starting Migration Test Runner...');
     const runner = new MigrationTestRunner();
     runner.runAllTests().catch(console.error);
 }
 
-module.exports = MigrationTestRunner;
+export default MigrationTestRunner;

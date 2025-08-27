@@ -32,8 +32,8 @@
     "migration:extract-bowls": "node scripts/migration/feature-extractor.js pet-bowls",
     "migration:extract-core": "node scripts/migration/feature-extractor.js core",
     "migration:setup": "./setup-hooks.sh",
-    "dev:monolithic": "open index.html",
-    "dev:modular": "open src/index.html"
+    "dev:monolithic": "start index.html",
+    "dev:modular": "start src/index.html"
   },
   "devDependencies": {
     "vite": "^5.0.0",
