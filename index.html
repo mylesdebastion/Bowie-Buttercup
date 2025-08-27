@@ -2344,8 +2344,11 @@
             
             drawWaterBowl(x, y, isFull) {
                 if (this.waterBowlImg && this.waterBowlImg.complete) {
+                    // Debug: log the state to verify
+                    console.log('Water bowl - isFull:', isFull, 'catHasDrunk:', this.catHasDrunk);
+                    
                     // The image is 1024x1024 with two bowls side by side
-                    // Full bowl on left half (0-512), empty bowl on right half (512-1024)
+                    // Based on visual inspection: Full bowl on left (0-512), empty bowl on right (512-1024)
                     const sourceX = isFull ? 0 : 512; // Full bowl on left, empty on right
                     const sourceY = 0;
                     const sourceWidth = 512;  // Half the image width
