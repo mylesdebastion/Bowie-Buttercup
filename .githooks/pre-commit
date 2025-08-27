@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Pre-commit hook to enforce modular development workflow
+# Prevents modifications to monolithic index.html during migration
+
+# Check if index.html (root) is being modified
+if git diff --cached --name-only | grep -q "^index\.html$"; then
+    echo ""
+    echo "🚫 WORKFLOW ENFORCEMENT: index.html modifications blocked"
+    echo ""
+    echo "The monolithic index.html is now in migration mode."
+    echo "All new development should occur in the modular /src/ structure."
+    echo ""
+    echo "📁 Use these files instead:"
+    echo "  • /src/index.html - HTML structure"
+    echo "  • /src/main.js - Main entry point"  
+    echo "  • /src/core/ - Core game systems"
+    echo "  • /src/entities/ - Game entities"
+    echo "  • /src/systems/ - Game systems"
+    echo ""
+    echo "🔓 Override options:"
+    echo "  • Emergency fixes: git commit --no-verify"
+    echo "  • Migration work: MIGRATION=true git commit"
+    echo ""
+    echo "📖 See CLAUDE.md for updated development workflow"
+    echo ""
+    
+    # Check for override flags
+    if [ "$MIGRATION" = "true" ]; then
+        echo "✅ Migration override detected - allowing commit"
+        exit 0
+    fi
+    
+    # Check commit message for emergency override
+    if git log --format=%B -n 1 HEAD 2>/dev/null | grep -q "\[EMERGENCY\]"; then
+        echo "🚨 Emergency override detected - allowing commit"
+        exit 0
+    fi
+    
+    exit 1
+fi
+
+# Allow all other commits
+exit 0

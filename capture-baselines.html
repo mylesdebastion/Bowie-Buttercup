@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baseline Capture Tool - Cat Platformer</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #1a1a2e;
+            color: #eee;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #f39c12;
+            text-align: center;
+        }
+        
+        .warning {
+            background: #e94560;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .section {
+            background: #16213e;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            border: 2px solid #0f3460;
+        }
+        
+        button {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 5px;
+            font-family: monospace;
+        }
+        
+        button:hover {
+            background: #ff6b6b;
+        }
+        
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #0f3460;
+        }
+        
+        .success {
+            background: #34a853;
+        }
+        
+        .error {
+            background: #e94560;
+        }
+        
+        #log {
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            height: 200px;
+            overflow-y: auto;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        #gameFrame {
+            width: 100%;
+            height: 500px;
+            border: 2px solid #f39c12;
+            border-radius: 5px;
+        }
+        
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .checklist li {
+            padding: 5px 0;
+        }
+        
+        .checklist li::before {
+            content: "⬜ ";
+        }
+        
+        .checklist li.complete::before {
+            content: "✅ ";
+        }
+        
+        .checklist li.error::before {
+            content: "❌ ";
+        }
+    </style>
+</head>
+<body>
+    <h1>🔴 Baseline Capture Tool - Cat Platformer</h1>
+    
+    <div class="warning">
+        ⚠️ CRITICAL: This MUST be run BEFORE any code changes!
+        <br>These baselines are essential for validating modularization.
+    </div>
+
+    <div class="grid">
+        <div>
+            <div class="section">
+                <h2>📋 Pre-Capture Checklist</h2>
+                <ul class="checklist" id="checklist">
+                    <li id="check-game">Game loaded successfully</li>
+                    <li id="check-levels">All 5 levels accessible</li>
+                    <li id="check-physics">Physics system running</li>
+                    <li id="check-canvas">Canvas rendering active</li>
+                    <li id="check-storage">LocalStorage available</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>🎮 Capture Controls</h2>
+                <button id="loadGame" onclick="loadGame()">1. Load Original Game</button>
+                <button id="verifyGame" onclick="verifyGame()" disabled>2. Verify Game State</button>
+                <button id="capturePhysics" onclick="capturePhysics()" disabled>3. Capture Physics Baseline</button>
+                <button id="captureVisual" onclick="captureVisual()" disabled>4. Capture Visual Baseline</button>
+                <button id="downloadBaselines" onclick="downloadBaselines()" disabled>5. Download Baselines</button>
+            </div>
+
+            <div class="section">
+                <h2>📊 Capture Status</h2>
+                <div id="status" class="status">Ready to begin baseline capture...</div>
+            </div>
+        </div>
+
+        <div>
+            <div class="section">
+                <h2>🖼️ Game Preview</h2>
+                <iframe id="gameFrame" src=""></iframe>
+            </div>
+
+            <div class="section">
+                <h2>📜 Capture Log</h2>
+                <div id="log"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let gameWindow = null;
+        let physicsBaseline = null;
+        let visualBaseline = null;
+        
+        function log(message, type = 'info') {
+            const logEl = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : '📝';
+            logEl.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function updateStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = 'status ' + type;
+        }
+
+        function loadGame() {
+            log('Loading original game...');
+            const frame = document.getElementById('gameFrame');
+            frame.src = 'index.html';
+            
+            frame.onload = () => {
+                gameWindow = frame.contentWindow;
+                log('Game loaded in iframe', 'success');
+                document.getElementById('check-game').classList.add('complete');
+                document.getElementById('verifyGame').disabled = false;
+                updateStatus('Game loaded - ready for verification');
+            };
+            
+            frame.onerror = () => {
+                log('Failed to load game', 'error');
+                document.getElementById('check-game').classList.add('error');
+                updateStatus('Failed to load game!', 'error');
+            };
+        }
+
+        async function verifyGame() {
+            log('Verifying game state...');
+            
+            try {
+                // Check if game object exists
+                if (!gameWindow.game) {
+                    throw new Error('Game object not found');
+                }
+                
+                // Check physics
+                if (!gameWindow.physics) {
+                    throw new Error('Physics object not found');
+                }
+                document.getElementById('check-physics').classList.add('complete');
+                log('Physics system verified');
+                
+                // Check canvas
+                const canvas = gameWindow.document.getElementById('gameCanvas');
+                if (!canvas) {
+                    throw new Error('Game canvas not found');
+                }
+                document.getElementById('check-canvas').classList.add('complete');
+                log('Canvas verified');
+                
+                // Check localStorage
+                gameWindow.localStorage.setItem('test', 'test');
+                gameWindow.localStorage.removeItem('test');
+                document.getElementById('check-storage').classList.add('complete');
+                log('LocalStorage verified');
+                
+                // Check levels (try to load each)
+                let levelsOk = true;
+                for (let i = 1; i <= 5; i++) {
+                    gameWindow.game.currentLevel = i;
+                    gameWindow.game.level = gameWindow.game.createLevel();
+                    if (!gameWindow.game.level) {
+                        levelsOk = false;
+                        break;
+                    }
+                }
+                
+                if (levelsOk) {
+                    document.getElementById('check-levels').classList.add('complete');
+                    log('All 5 levels verified');
+                } else {
+                    throw new Error('Not all levels are accessible');
+                }
+                
+                // Reset to level 1
+                gameWindow.game.currentLevel = 1;
+                gameWindow.game.level = gameWindow.game.createLevel();
+                gameWindow.game.initLevel();
+                
+                log('Game verification complete!', 'success');
+                updateStatus('Game verified - ready for baseline capture', 'success');
+                
+                document.getElementById('capturePhysics').disabled = false;
+                document.getElementById('captureVisual').disabled = false;
+                
+            } catch (error) {
+                log(`Verification failed: ${error.message}`, 'error');
+                updateStatus('Verification failed!', 'error');
+            }
+        }
+
+        async function capturePhysics() {
+            log('Starting physics baseline capture...');
+            updateStatus('Capturing physics baseline... (this may take 30 seconds)');
+            
+            try {
+                // Inject the physics recorder script
+                const script = gameWindow.document.createElement('script');
+                script.src = 'test-utils/baseline-recorder.js';
+                gameWindow.document.head.appendChild(script);
+                
+                // Wait for script to load
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Create recorder and capture
+                const recorder = new gameWindow.PhysicsBaselineRecorder();
+                physicsBaseline = await recorder.recordAllScenarios();
+                
+                log('Physics baseline captured successfully!', 'success');
+                log(`Captured ${Object.keys(physicsBaseline).length} scenarios`);
+                
+                // Check if baseline was saved to localStorage
+                const saved = gameWindow.localStorage.getItem('physics_baseline');
+                if (saved) {
+                    log('Physics baseline saved to localStorage', 'success');
+                }
+                
+                updateStatus('Physics baseline captured!', 'success');
+                checkEnableDownload();
+                
+            } catch (error) {
+                log(`Physics capture failed: ${error.message}`, 'error');
+                updateStatus('Physics capture failed!', 'error');
+            }
+        }
+
+        async function captureVisual() {
+            log('Starting visual baseline capture...');
+            updateStatus('Capturing visual baseline... (this may take 20 seconds)');
+            
+            try {
+                // Inject the visual capture script
+                const script = gameWindow.document.createElement('script');
+                script.src = 'test-utils/visual-baseline-capture.js';
+                gameWindow.document.head.appendChild(script);
+                
+                // Wait for script to load
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Create capture and run
+                const capture = new gameWindow.VisualBaselineCapture();
+                visualBaseline = await capture.captureAllStates();
+                
+                log('Visual baseline captured successfully!', 'success');
+                log(`Captured ${Object.keys(visualBaseline).length} visual states`);
+                
+                // Check if baseline was saved to localStorage
+                const saved = gameWindow.localStorage.getItem('visual_baseline');
+                if (saved) {
+                    log('Visual baseline saved to localStorage', 'success');
+                }
+                
+                updateStatus('Visual baseline captured!', 'success');
+                checkEnableDownload();
+                
+            } catch (error) {
+                log(`Visual capture failed: ${error.message}`, 'error');
+                updateStatus('Visual capture failed!', 'error');
+            }
+        }
+
+        function checkEnableDownload() {
+            if (physicsBaseline && visualBaseline) {
+                document.getElementById('downloadBaselines').disabled = false;
+                updateStatus('All baselines captured! Ready to download.', 'success');
+            }
+        }
+
+        function downloadBaselines() {
+            log('Preparing baseline downloads...');
+            
+            // Get from localStorage
+            const physicsData = gameWindow.localStorage.getItem('physics_baseline');
+            const visualData = gameWindow.localStorage.getItem('visual_baseline');
+            
+            if (physicsData) {
+                const blob = new Blob([physicsData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `physics_baseline_${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                log('Physics baseline downloaded', 'success');
+            }
+            
+            if (visualData) {
+                const blob = new Blob([visualData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `visual_baseline_${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                log('Visual baseline downloaded', 'success');
+            }
+            
+            updateStatus('✅ Baselines downloaded! Move files to test-utils/baselines/', 'success');
+            log('NEXT STEP: Move downloaded files to test-utils/baselines/ and commit to git', 'success');
+        }
+        
+        // Initialize
+        log('Baseline Capture Tool initialized');
+        log('Click "Load Original Game" to begin');
+    </script>
+</body>
+</html>

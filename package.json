@@ -24,7 +24,16 @@
     "visual:capture-baseline": "node test-visual/scripts/capture-baseline.js",
     "visual:capture-issue": "node test-visual/scripts/capture-issue.js",
     "visual:regression": "node test-visual/scripts/run-regression.js",
-    "visual:report": "node test-visual/scripts/generate-report.js"
+    "visual:report": "node test-visual/scripts/generate-report.js",
+    "migration:status": "node scripts/migration/test-runner.js",
+    "migration:test": "node scripts/migration/test-runner.js",
+    "migration:validate": "node scripts/migration/test-runner.js",
+    "migration:extract": "node scripts/migration/feature-extractor.js interactive",
+    "migration:extract-bowls": "node scripts/migration/feature-extractor.js pet-bowls",
+    "migration:extract-core": "node scripts/migration/feature-extractor.js core",
+    "migration:setup": "./setup-hooks.sh",
+    "dev:monolithic": "open index.html",
+    "dev:modular": "open src/index.html"
   },
   "devDependencies": {
     "vite": "^5.0.0",

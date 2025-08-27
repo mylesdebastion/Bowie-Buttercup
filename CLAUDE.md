@@ -3,10 +3,11 @@
 ## Project Overview
 AI-powered platform where users upload pet photos → generates pixel art → creates personalized platformer games. Targeting $259k Year 1 revenue with $14.99-24.99 game purchases.
 
-## Current Status: Post-Planning, Pre-Implementation
+## Current Status: Migration Phase - Controlled Transition
 ✅ **Planning Complete**: PRD, Architecture, Frontend Spec validated  
-🎯 **Next Phase**: Begin web platform development (manual pixel art for first 20 users)  
-📁 **All Planning**: See `/docs/planning/` for complete artifacts
+🔄 **Active Phase**: Migrating monolithic game to modular structure  
+🔒 **File Lock Active**: `/index.html` locked, development in `/src/` only  
+📁 **Migration Docs**: See `/docs/migration/` for workflow and progress
 
 ## Architecture Decision
 **Lean Monorepo → Multi-Repo Evolution**
@@ -35,11 +36,33 @@ AI-powered platform where users upload pet photos → generates pixel art → cr
 - **Integration Strategy**: `/docs/architecture/platform-game-integration.md`
 
 ### Development Workflow
+- **Migration Workflow**: `/docs/migration/migration-workflow.md` (current active workflow)
+- **Feature Audit**: `/docs/migration/feature-audit.md` (migration progress tracking)  
 - **Epic Stories**: `/docs/stories-web-platform/` and `/docs/stories-game-dev/`
 - **QA Guidelines**: `/docs/qa/` (testing strategies and risk assessments)
 - **BMad Methodology**: `/docs/bmad/` (AI-driven development process)
 
 ## Quick Start Commands
+
+### Current Migration Commands
+```bash
+# Setup migration workflow (run once)
+./setup-hooks.sh              # Configure git hooks for file lock
+
+# Development (modular structure only)
+open src/index.html            # Modular game development
+code src/                      # Work in modular structure
+
+# Migration tooling
+node scripts/migration/test-runner.js           # Run migration tests
+node scripts/migration/feature-extractor.js     # Extract features
+
+# Emergency overrides (use sparingly)
+git commit --no-verify        # Bypass file lock for emergencies
+MIGRATION=true git commit      # Override for migration work
+```
+
+### Platform Development Commands
 ```bash
 # Start platform development
 pnpm dev --filter=web          # Next.js platform app
@@ -82,11 +105,31 @@ pnpm test --filter=web         # Platform tests only
 - Check epic breakdown in `/docs/epics-web-platform/epic-e00X-*.md`
 - Use stories in `/docs/stories-web-platform/` for implementation details
 
-### When Working on Game Development
-- Reference game-specific epics in `/docs/epics-game-dev/`
-- Follow lean architecture in `/docs/architecture/lean-game-architecture.md`
-- Focus on single HTML file export capability
-- Ensure offline functionality and <2MB file size
+### 🚨 Current Migration Workflow (ACTIVE)
+**ALL GAME DEVELOPMENT MUST USE MODULAR STRUCTURE**
+
+#### File Lock Status
+- ❌ `/index.html` is **LOCKED** - no direct modifications allowed
+- ✅ `/src/` structure is the **ONLY** development target
+- 🔧 Use migration tools for extracting features from monolithic file
+
+#### Daily Development Process
+1. **New Features**: Implement in `/src/` modular structure only
+2. **Bug Fixes**: Fix in `/src/` if possible, emergency override for `/index.html`
+3. **Migration Work**: Use `MIGRATION=true git commit` for moving features
+4. **Testing**: Run migration test suite regularly
+
+#### Migration Guidelines
+- Reference `/docs/migration/migration-workflow.md` for complete workflow
+- Use feature extraction tools in `/scripts/migration/`
+- Follow modular architecture patterns in `/src/`
+- Maintain feature parity during transition
+
+### When Working on Web Platform
+- Reference `/docs/planning/prd-web-platform.md` for requirements
+- Follow architecture in `/docs/planning/architecture-web-platform.md`
+- Check epic breakdown in `/docs/epics-web-platform/epic-e00X-*.md`
+- Use stories in `/docs/stories-web-platform/` for implementation details
 
 ### Code Quality Standards
 - TypeScript strict mode for all new code
@@ -102,5 +145,21 @@ pnpm test --filter=web         # Platform tests only
 4. **Business Model**: Clear path to $14.99-24.99 revenue per user
 
 ---
-*Last Updated: 2025-01-20*  
-*For detailed technical information, see planning documents in `/docs/planning/`*
+
+## Migration Progress Tracking
+
+### Week 1 Status (Jan 26 - Feb 2, 2025)
+- ✅ File lock implemented and active
+- ✅ Migration tooling created
+- ✅ Feature audit completed
+- 🔄 Core system extraction in progress
+
+### Important Files During Migration
+- **Migration Status**: `/docs/migration/feature-audit.md`
+- **Daily Workflow**: `/docs/migration/migration-workflow.md` 
+- **Test Results**: `migration-test-report.json` (generated)
+- **Hook Setup**: `./setup-hooks.sh`
+
+---
+*Last Updated: 2025-01-26*  
+*Migration Phase Active - See `/docs/migration/` for current workflow*
