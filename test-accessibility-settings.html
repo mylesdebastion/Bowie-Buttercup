@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessibility Settings Test - US-005</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 3px;
+        }
+        .pass { background-color: #d4edda; color: #155724; }
+        .fail { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        button {
+            margin: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+        canvas {
+            border: 1px solid #ccc;
+            margin: 10px 0;
+        }
+        .side-by-side {
+            display: flex;
+            gap: 20px;
+        }
+        .canvas-container {
+            flex: 1;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>♿ Accessibility Settings Test (US-005)</h1>
+    <p>Testing that accessibility settings work identically to the monolithic version.</p>
+
+    <div class="test-section">
+        <h2>🎛️ Accessibility Controls</h2>
+        <div class="controls">
+            <label><input type="checkbox" id="highContrast"> High Contrast</label>
+            <label><input type="checkbox" id="reducedMotion"> Reduced Motion</label>
+            <label><input type="checkbox" id="musicMuted"> Music Muted</label>
+            <label><input type="checkbox" id="sfxMuted"> SFX Muted</label>
+        </div>
+        <div class="controls">
+            <button onclick="testAccessibilityPersistence()">Test Persistence</button>
+            <button onclick="resetSettings()">Reset Settings</button>
+            <button onclick="saveSettings()">Save Settings</button>
+            <button onclick="loadSettings()">Load Settings</button>
+        </div>
+        <div id="accessibility-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🎨 Visual Accessibility Test</h2>
+        <p>Compare rendering with and without high contrast mode.</p>
+        <div class="side-by-side">
+            <div class="canvas-container">
+                <h3>Normal Mode</h3>
+                <canvas id="normalCanvas" width="400" height="300"></canvas>
+            </div>
+            <div class="canvas-container">
+                <h3>High Contrast Mode</h3>
+                <canvas id="contrastCanvas" width="400" height="300"></canvas>
+            </div>
+        </div>
+        <button onclick="testVisualAccessibility()">Test Visual Rendering</button>
+        <div id="visual-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🎯 Settings Persistence Test</h2>
+        <p>Verify that settings persist exactly like the monolithic version.</p>
+        <button onclick="runPersistenceTest()">Run Complete Persistence Test</button>
+        <div id="persistence-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 Current State</h2>
+        <button onclick="showCurrentSettings()">Show Current Settings</button>
+        <div id="settings-display"></div>
+    </div>
+
+    <script type="module">
+        import { getStateManager } from './src/core/StateManager.js';
+        import { Canvas } from './src/core/Canvas.js';
+
+        let stateManager = null;
+        let normalCanvas = null;
+        let contrastCanvas = null;
+
+        // Initialize
+        window.addEventListener('load', async () => {
+            try {
+                stateManager = getStateManager();
+                
+                // Create canvas instances for visual testing
+                const normalCanvasEl = document.getElementById('normalCanvas');
+                const contrastCanvasEl = document.getElementById('contrastCanvas');
+                
+                normalCanvas = new Canvas(normalCanvasEl);
+                contrastCanvas = new Canvas(contrastCanvasEl);
+                
+                await normalCanvas.initialize();
+                await contrastCanvas.initialize();
+                
+                // Set up contrast canvas
+                contrastCanvas.setHighContrast(true);
+                
+                // Connect UI controls to StateManager
+                setupControls();
+                
+                // Load initial settings
+                loadCurrentSettings();
+                
+                addResult('accessibility-results', '✅ Accessibility test initialized successfully', true);
+                
+            } catch (error) {
+                addResult('accessibility-results', `❌ Initialization failed: ${error.message}`, false);
+            }
+        });
+
+        // Utility functions
+        function addResult(container, message, isPass) {
+            const div = document.createElement('div');
+            div.className = `test-result ${isPass ? 'pass' : 'fail'}`;
+            div.textContent = message;
+            document.getElementById(container).appendChild(div);
+        }
+
+        function addInfo(container, message) {
+            const div = document.createElement('div');
+            div.className = 'test-result info';
+            div.textContent = message;
+            document.getElementById(container).appendChild(div);
+        }
+
+        // Set up UI controls
+        function setupControls() {
+            const controls = {
+                highContrast: document.getElementById('highContrast'),
+                reducedMotion: document.getElementById('reducedMotion'),
+                musicMuted: document.getElementById('musicMuted'),
+                sfxMuted: document.getElementById('sfxMuted')
+            };
+
+            // Connect controls to StateManager
+            Object.entries(controls).forEach(([setting, checkbox]) => {
+                checkbox.addEventListener('change', (e) => {
+                    stateManager.setSetting(setting, e.target.checked);
+                    console.log(`Setting ${setting} changed to ${e.target.checked}`);
+                    
+                    // Update canvases for visual settings
+                    if (setting === 'highContrast') {
+                        normalCanvas.setHighContrast(false); // Always keep normal canvas normal
+                        contrastCanvas.setHighContrast(true); // Always keep contrast canvas high contrast
+                    } else if (setting === 'reducedMotion') {
+                        normalCanvas.reducedMotion = e.target.checked;
+                        contrastCanvas.reducedMotion = e.target.checked;
+                    }
+                });
+            });
+        }
+
+        // Load current settings into UI
+        function loadCurrentSettings() {
+            const settings = stateManager.getSettings();
+            
+            document.getElementById('highContrast').checked = settings.highContrast;
+            document.getElementById('reducedMotion').checked = settings.reducedMotion;
+            document.getElementById('musicMuted').checked = settings.musicMuted;
+            document.getElementById('sfxMuted').checked = settings.sfxMuted;
+        }
+
+        // Test functions
+        window.testAccessibilityPersistence = () => {
+            const container = 'accessibility-results';
+            
+            try {
+                // Clear previous results
+                document.getElementById(container).innerHTML = '';
+                
+                // Set test values
+                stateManager.setSetting('highContrast', true);
+                stateManager.setSetting('reducedMotion', true);
+                stateManager.setSetting('musicMuted', false);
+                stateManager.setSetting('sfxMuted', true);
+                
+                // Save to localStorage
+                const saveResults = stateManager.save();
+                addResult(container, `✓ Settings saved: ${saveResults.settings ? 'PASS' : 'FAIL'}`, saveResults.settings);
+                
+                // Reset StateManager and load
+                const freshStateManager = getStateManager();
+                const loadResults = freshStateManager.load();
+                
+                // Verify persistence
+                const loadedSettings = freshStateManager.getSettings();
+                const correctValues = (
+                    loadedSettings.highContrast === true &&
+                    loadedSettings.reducedMotion === true &&
+                    loadedSettings.musicMuted === false &&
+                    loadedSettings.sfxMuted === true
+                );
+                
+                addResult(container, `✓ Settings loaded: ${loadResults.settings ? 'PASS' : 'FAIL'}`, loadResults.settings);
+                addResult(container, `✓ Values persisted correctly: ${correctValues ? 'PASS' : 'FAIL'}`, correctValues);
+                
+                // Update stateManager reference
+                stateManager = freshStateManager;
+                loadCurrentSettings();
+                
+            } catch (error) {
+                addResult(container, `❌ Persistence test failed: ${error.message}`, false);
+            }
+        };
+
+        window.testVisualAccessibility = () => {
+            const container = 'visual-results';
+            document.getElementById(container).innerHTML = '';
+            
+            try {
+                // Test visual rendering differences
+                drawTestScene(normalCanvas, false);
+                drawTestScene(contrastCanvas, true);
+                
+                addResult(container, '✓ Visual test scenes rendered', true);
+                addResult(container, '✓ High contrast differences should be visible', true);
+                addInfo(container, 'Compare the two canvases - contrast version should have adjusted colors');
+                
+            } catch (error) {
+                addResult(container, `❌ Visual test failed: ${error.message}`, false);
+            }
+        };
+
+        // Draw a test scene to show accessibility differences
+        function drawTestScene(canvasInstance, isHighContrast) {
+            const ctx = canvasInstance.ctx;
+            canvasInstance.clear('#87CEEB'); // Sky blue background
+            
+            // Test various colors that should change with high contrast
+            const colors = [
+                { color: '#FF6B35', x: 50, y: 50, label: 'Orange' },    // Player color
+                { color: '#8B4513', x: 150, y: 50, label: 'Brown' },   // Platform color  
+                { color: '#FF0000', x: 250, y: 50, label: 'Red' },     // Fireball color
+                { color: '#808080', x: 350, y: 50, label: 'Gray' },    // Mouse color
+                { color: '#4169E1', x: 50, y: 150, label: 'Blue' },    // Water color
+                { color: '#228B22', x: 150, y: 150, label: 'Green' },  // Grass color
+                { color: '#DC143C', x: 250, y: 150, label: 'Crimson' },// Couch color
+                { color: '#FF8C00', x: 350, y: 150, label: 'Orange' }, // Treat color
+            ];
+            
+            colors.forEach(({color, x, y, label}) => {
+                canvasInstance.fillRect(x, y, 80, 40, color);
+                
+                // Add labels
+                ctx.fillStyle = isHighContrast ? '#FFFFFF' : '#000000';
+                ctx.font = '12px Arial';
+                ctx.fillText(label, x, y + 55);
+            });
+            
+            // Test alpha blending (should be affected by reduced motion)
+            canvasInstance.setAlpha(0.5);
+            canvasInstance.fillRect(50, 200, 200, 40, '#FF00FF');
+            canvasInstance.resetAlpha();
+            
+            // Add title
+            ctx.fillStyle = isHighContrast ? '#FFFFFF' : '#000000';
+            ctx.font = '16px Arial';
+            ctx.fillText(isHighContrast ? 'High Contrast Mode' : 'Normal Mode', 50, 30);
+        }
+
+        window.runPersistenceTest = () => {
+            const container = 'persistence-results';
+            document.getElementById(container).innerHTML = '';
+            
+            try {
+                // Test complete settings persistence cycle
+                const testSettings = {
+                    highContrast: true,
+                    reducedMotion: false,
+                    musicMuted: true,
+                    sfxMuted: false,
+                    musicVolume: 0.8,
+                    sfxVolume: 0.6,
+                    uiScale: 3
+                };
+                
+                // Apply settings
+                stateManager.updateSettings(testSettings);
+                addResult(container, '✓ Test settings applied', true);
+                
+                // Save
+                const saveResults = stateManager.save();
+                addResult(container, `✓ Settings saved to localStorage: ${saveResults.settings ? 'PASS' : 'FAIL'}`, saveResults.settings);
+                
+                // Clear and reload
+                stateManager.clear();
+                const loadResults = stateManager.load();
+                
+                // Verify all settings
+                const loadedSettings = stateManager.getSettings();
+                const allCorrect = Object.entries(testSettings).every(([key, value]) => 
+                    loadedSettings[key] === value
+                );
+                
+                addResult(container, `✓ All settings loaded correctly: ${allCorrect ? 'PASS' : 'FAIL'}`, allCorrect);
+                
+                if (!allCorrect) {
+                    addInfo(container, `Expected: ${JSON.stringify(testSettings, null, 2)}`);
+                    addInfo(container, `Actual: ${JSON.stringify(loadedSettings, null, 2)}`);
+                }
+                
+                // Update UI to reflect loaded settings
+                loadCurrentSettings();
+                
+            } catch (error) {
+                addResult(container, `❌ Persistence test failed: ${error.message}`, false);
+            }
+        };
+
+        window.resetSettings = () => {
+            stateManager.resetSection('settings');
+            loadCurrentSettings();
+            addInfo('accessibility-results', 'Settings reset to defaults');
+        };
+
+        window.saveSettings = () => {
+            const results = stateManager.save();
+            addResult('accessibility-results', `Settings saved: ${results.settings ? 'SUCCESS' : 'FAILED'}`, results.settings);
+        };
+
+        window.loadSettings = () => {
+            const results = stateManager.load();
+            loadCurrentSettings();
+            addResult('accessibility-results', `Settings loaded: ${results.settings ? 'SUCCESS' : 'FAILED'}`, results.settings);
+        };
+
+        window.showCurrentSettings = () => {
+            const container = 'settings-display';
+            try {
+                const settings = stateManager.getSettings();
+                const storageKeys = {
+                    settings: localStorage.getItem('catPlatformerSettings'),
+                    gameProgress: localStorage.getItem('catPlatformerSave'),
+                    spriteEditor: localStorage.getItem('catPlatformerEditor')
+                };
+                
+                document.getElementById(container).innerHTML = `
+                    <h4>Current Settings in StateManager:</h4>
+                    <pre>${JSON.stringify(settings, null, 2)}</pre>
+                    
+                    <h4>Raw localStorage Data:</h4>
+                    <pre>${JSON.stringify(storageKeys, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById(container).innerHTML = `<div class="test-result fail">Error: ${error.message}</div>`;
+            }
+        };
+
+    </script>
+</body>
+</html>

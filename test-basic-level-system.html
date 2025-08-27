@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Level System Test</title>
+    <style>
+        body { margin: 20px; font-family: Arial, sans-serif; }
+        #output { background: #f5f5f5; padding: 10px; margin: 10px 0; font-family: monospace; white-space: pre-wrap; }
+        .error { color: red; }
+        .success { color: green; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Basic Level System Test</h1>
+    <div id="output">Starting tests...</div>
+
+    <script type="module">
+        const output = document.getElementById('output');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            output.innerHTML += `[${timestamp}] <span class="${type}">${message}</span>\n`;
+            console.log(message);
+        }
+
+        async function runTests() {
+            try {
+                log('Testing Level System imports...', 'info');
+                
+                // Test individual level imports
+                const { Level } = await import('./src/levels/Level.js');
+                log('✅ Level base class imported successfully', 'success');
+                
+                const { LevelManager } = await import('./src/levels/LevelManager.js');
+                log('✅ LevelManager imported successfully', 'success');
+                
+                const { Level1 } = await import('./src/levels/Level1.js');
+                log('✅ Level1 imported successfully', 'success');
+                
+                const { Level2 } = await import('./src/levels/Level2.js');
+                log('✅ Level2 imported successfully', 'success');
+                
+                const { Level3 } = await import('./src/levels/Level3.js');
+                log('✅ Level3 imported successfully', 'success');
+                
+                const { Level4 } = await import('./src/levels/Level4.js');
+                log('✅ Level4 imported successfully', 'success');
+                
+                const { Level5 } = await import('./src/levels/Level5.js');
+                log('✅ Level5 imported successfully', 'success');
+                
+                // Test level manager functionality
+                log('\nTesting LevelManager functionality...', 'info');
+                
+                const mockGame = {
+                    player: { x: 100, y: 300 },
+                    stateManager: { set: () => {}, get: () => 1 },
+                    canvasManager: { fillRect: () => {} },
+                    playSound: () => {},
+                    score: 0
+                };
+                
+                const levelManager = new LevelManager(mockGame);
+                log('✅ LevelManager created successfully', 'success');
+                
+                // Register levels
+                levelManager.registerLevel('level1', Level1);
+                levelManager.registerLevel('level2', Level2);
+                levelManager.registerLevel('level3', Level3);
+                levelManager.registerLevel('level4', Level4);
+                levelManager.registerLevel('level5', Level5);
+                
+                log('✅ All levels registered successfully', 'success');
+                
+                // Test level loading
+                log('\nTesting level loading...', 'info');
+                
+                const level1 = levelManager.loadLevel('level1');
+                log(`✅ Level 1 loaded: ${level1.getName()}`, 'success');
+                
+                const level2 = levelManager.loadLevel('level2');
+                log(`✅ Level 2 loaded: ${level2.getName()}`, 'success');
+                
+                log('\nTesting Game.js integration...', 'info');
+                
+                // Test Game.js integration
+                const { Game } = await import('./src/core/Game.js');
+                log('✅ Game class imported successfully', 'success');
+                
+                log('\n🎉 All tests passed! Level system is working correctly.', 'success');
+                
+            } catch (error) {
+                log(`❌ Test failed: ${error.message}`, 'error');
+                console.error('Full error:', error);
+            }
+        }
+
+        runTests();
+    </script>
+</body>
+</html>

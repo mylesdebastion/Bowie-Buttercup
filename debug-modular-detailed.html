@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Modular Game - Detailed Console</title>
+    <style>
+        body { 
+            font-family: monospace; 
+            background: #1a1a2e; 
+            color: #eee; 
+            margin: 20px;
+        }
+        .game-container {
+            border: 2px solid #0f3460;
+            margin: 20px 0;
+            max-width: 800px;
+        }
+        .debug-log {
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            font-size: 12px;
+            border: 1px solid #333;
+            margin: 10px 0;
+        }
+        .controls {
+            margin: 10px 0;
+        }
+        button {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚨 Modular Game Debug Console</h1>
+    
+    <div class="controls">
+        <button onclick="testGameInitialization()">Test Game Initialization</button>
+        <button onclick="testAssetLoading()">Test Asset Loading</button>
+        <button onclick="testStateManager()">Test State Manager</button>
+        <button onclick="testRendering()">Test Rendering</button>
+        <button onclick="clearLog()">Clear Log</button>
+    </div>
+    
+    <div class="debug-log" id="debugLog">
+        Debug output will appear here...
+    </div>
+    
+    <div class="game-container">
+        <iframe src="http://localhost:3000/src/index.html" width="800" height="400" id="gameFrame"></iframe>
+    </div>
+
+    <script>
+        let logCount = 0;
+        
+        function debugLog(message, type = 'info') {
+            logCount++;
+            const timestamp = new Date().toLocaleTimeString();
+            const logElement = document.getElementById('debugLog');
+            const color = {
+                'info': '#0f0',
+                'warn': '#ff0',
+                'error': '#f00',
+                'success': '#0a0'
+            }[type] || '#0f0';
+            
+            logElement.innerHTML += `<div style="color: ${color}">[${timestamp}] ${logCount}. ${message}</div>`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        function clearLog() {
+            document.getElementById('debugLog').innerHTML = '';
+            logCount = 0;
+        }
+        
+        async function testGameInitialization() {
+            debugLog('🎮 Testing game initialization...', 'info');
+            
+            const frame = document.getElementById('gameFrame');
+            
+            try {
+                // Wait a bit for iframe to load
+                setTimeout(() => {
+                    try {
+                        const frameWindow = frame.contentWindow;
+                        const frameDocument = frame.contentDocument || frameWindow.document;
+                        
+                        debugLog(`📄 Iframe document loaded: ${!!frameDocument}`, 'info');
+                        debugLog(`🎯 Canvas exists: ${!!frameDocument.getElementById('gameCanvas')}`, 'info');
+                        debugLog(`🎮 Game instance exists: ${!!frameWindow.game}`, frameWindow.game ? 'success' : 'error');
+                        
+                        if (frameWindow.game) {
+                            debugLog(`🔧 Game initialized: ${frameWindow.game.initialized}`, frameWindow.game.initialized ? 'success' : 'error');
+                            debugLog(`🎬 Game loop running: ${frameWindow.game.gameLoop?.isRunning()}`, frameWindow.game.gameLoop?.isRunning() ? 'success' : 'error');
+                        }
+                        
+                        // Check console errors
+                        debugLog('📋 Check the browser dev tools console for JavaScript errors!', 'warn');
+                        
+                    } catch (e) {
+                        debugLog(`❌ Error accessing iframe: ${e.message}`, 'error');
+                    }
+                }, 2000);
+                
+            } catch (error) {
+                debugLog(`❌ Initialization test error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testAssetLoading() {
+            debugLog('🎨 Testing asset loading...', 'info');
+            
+            // Test asset URLs directly
+            const assetUrls = [
+                'http://localhost:3000/pet_food_bowl.png',
+                'http://localhost:3000/pet_water_bowl.png',
+                'http://localhost:3000/bowie_cat_3x3.png'
+            ];
+            
+            for (const url of assetUrls) {
+                try {
+                    const response = await fetch(url);
+                    debugLog(`📦 ${url.split('/').pop()}: ${response.ok ? '✅ OK' : '❌ FAIL'} (${response.status})`, response.ok ? 'success' : 'error');
+                } catch (error) {
+                    debugLog(`📦 ${url.split('/').pop()}: ❌ Network error: ${error.message}`, 'error');
+                }
+            }
+        }
+        
+        async function testStateManager() {
+            debugLog('🗂️ Testing state manager...', 'info');
+            
+            const frame = document.getElementById('gameFrame');
+            
+            setTimeout(() => {
+                try {
+                    const frameWindow = frame.contentWindow;
+                    const stateManager = frameWindow.stateManager;
+                    
+                    if (stateManager) {
+                        debugLog(`🗂️ State Manager exists: ✅`, 'success');
+                        debugLog(`📊 Current level: ${stateManager.get('game.currentLevel')}`, 'info');
+                        debugLog(`👤 Player X: ${stateManager.get('runtime.player.x')}`, 'info');
+                        debugLog(`👤 Player Y: ${stateManager.get('runtime.player.y')}`, 'info');
+                        debugLog(`🎥 Camera X: ${stateManager.get('runtime.camera.x')}`, 'info');
+                    } else {
+                        debugLog(`🗂️ State Manager not found: ❌`, 'error');
+                    }
+                } catch (error) {
+                    debugLog(`❌ State manager test error: ${error.message}`, 'error');
+                }
+            }, 2000);
+        }
+        
+        async function testRendering() {
+            debugLog('🎨 Testing rendering...', 'info');
+            
+            const frame = document.getElementById('gameFrame');
+            
+            setTimeout(() => {
+                try {
+                    const frameDocument = frame.contentDocument || frame.contentWindow.document;
+                    const canvas = frameDocument.getElementById('gameCanvas');
+                    
+                    if (canvas) {
+                        debugLog(`🎨 Canvas dimensions: ${canvas.width}x${canvas.height}`, 'info');
+                        debugLog(`🖼️ Canvas context: ${!!canvas.getContext('2d')}`, 'info');
+                        
+                        // Try to capture canvas data
+                        try {
+                            const ctx = canvas.getContext('2d');
+                            const imageData = ctx.getImageData(0, 0, 10, 10);
+                            const hasNonTransparentPixels = imageData.data.some((value, index) => 
+                                index % 4 === 3 && value > 0 // Check alpha channel
+                            );
+                            debugLog(`🖼️ Canvas has content: ${hasNonTransparentPixels ? '✅ YES' : '❌ NO (empty/transparent)'}`, hasNonTransparentPixels ? 'success' : 'error');
+                        } catch (e) {
+                            debugLog(`🖼️ Cannot read canvas content: ${e.message}`, 'warn');
+                        }
+                    } else {
+                        debugLog(`🎨 Canvas not found: ❌`, 'error');
+                    }
+                } catch (error) {
+                    debugLog(`❌ Rendering test error: ${error.message}`, 'error');
+                }
+            }, 3000);
+        }
+        
+        // Auto-run initial tests
+        setTimeout(() => {
+            debugLog('🚀 Starting automated debug tests...', 'info');
+            testAssetLoading();
+            testGameInitialization();
+        }, 1000);
+    </script>
+</body>
+</html>

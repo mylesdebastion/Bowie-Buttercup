@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Import Debug</title>
+</head>
+<body>
+    <h1>Import Debug Test</h1>
+    <div id="results"></div>
+    
+    <script type="module">
+        const results = document.getElementById('results');
+        
+        async function testImport(moduleName, path) {
+            try {
+                console.log(`Testing import: ${moduleName} from ${path}`);
+                const module = await import(path);
+                console.log(`✅ ${moduleName} imported successfully:`, module);
+                results.innerHTML += `<p>✅ ${moduleName}: SUCCESS</p>`;
+                return module;
+            } catch (error) {
+                console.error(`❌ ${moduleName} failed:`, error);
+                results.innerHTML += `<p>❌ ${moduleName}: ${error.message}</p>`;
+                return null;
+            }
+        }
+        
+        // Test all imports from main.js
+        async function runTests() {
+            await testImport('GameLoop', './src/core/game-loop.js');
+            await testImport('StateManager', './src/core/StateManager.js');
+            await testImport('AssetLoader', './src/core/asset-loader.js');
+            await testImport('ItemSystem', './src/entities/items.js');
+            await testImport('Main CSS', './src/styles/main.css');
+        }
+        
+        runTests();
+    </script>
+</body>
+</html>

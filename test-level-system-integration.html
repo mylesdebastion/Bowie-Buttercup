@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level System Integration Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        
+        .game-container {
+            display: flex;
+            gap: 20px;
+        }
+        
+        canvas {
+            border: 2px solid #333;
+            background: #87CEEB;
+        }
+        
+        .controls {
+            min-width: 200px;
+        }
+        
+        .debug-info {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .level-controls button {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+            padding: 8px;
+            cursor: pointer;
+        }
+        
+        .status {
+            color: #666;
+            margin: 10px 0;
+        }
+        
+        .error {
+            color: #d00;
+            background: #fee;
+            padding: 10px;
+            border-radius: 3px;
+        }
+        
+        .success {
+            color: #0a0;
+            background: #efe;
+            padding: 10px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Level System Integration Test</h1>
+        
+        <div class="game-container">
+            <canvas id="gameCanvas" width="800" height="480"></canvas>
+            
+            <div class="controls">
+                <div class="debug-info" id="debugInfo">
+                    Loading...
+                </div>
+                
+                <div class="level-controls">
+                    <h3>Level Controls</h3>
+                    <button onclick="goToLevel(1)">Level 1 - Fireball</button>
+                    <button onclick="goToLevel(2)">Level 2 - Mouse</button>
+                    <button onclick="goToLevel(3)">Level 3 - Challenge</button>
+                    <button onclick="goToLevel(4)">Level 4 - Dog</button>
+                    <button onclick="goToLevel(5)">Level 5 - Victory</button>
+                    
+                    <button onclick="nextLevel()">Next Level</button>
+                    <button onclick="prevLevel()">Previous Level</button>
+                </div>
+                
+                <div class="status" id="status">
+                    Initializing game...
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <h3>Controls:</h3>
+            <ul>
+                <li><strong>Arrow Keys:</strong> Move left/right</li>
+                <li><strong>Space:</strong> Jump</li>
+                <li><strong>Level specific goals:</strong>
+                    <ul>
+                        <li>Level 1: Avoid fireballs, reach the right side</li>
+                        <li>Level 2: Catch all the mice by running into them</li>
+                        <li>Level 3: Navigate the challenge platforms</li>
+                        <li>Level 4: Interact with the friendly dog</li>
+                        <li>Level 5: Drink from water bowl and eat from food plate</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script type="module">
+        import { Game } from './src/core/Game.js';
+
+        let game = null;
+        let debugInterval = null;
+
+        function setStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+        }
+
+        function updateDebugInfo() {
+            const debugEl = document.getElementById('debugInfo');
+            
+            if (!game || !game.levelManager) {
+                debugEl.innerHTML = 'Game not initialized';
+                return;
+            }
+
+            const levelManager = game.levelManager;
+            const currentLevel = levelManager.getCurrentLevel();
+            
+            const debugInfo = {
+                'Current Level': `${levelManager.getCurrentLevelNumber()} (${levelManager.getCurrentLevelId()})`,
+                'Level Name': currentLevel ? currentLevel.getName() : 'None',
+                'Level Active': levelManager.isLevelActive(),
+                'Level Completed': levelManager.isLevelCompleted(),
+                'Total Levels': levelManager.getTotalLevels(),
+                'Player Position': game.player ? `(${Math.round(game.player.x)}, ${Math.round(game.player.y)})` : 'N/A',
+                'Player Health': game.player ? game.player.health : 'N/A',
+                'Score': game.score,
+                'FPS': Math.round(game.getFPS()),
+                'Level Debug': currentLevel ? JSON.stringify(currentLevel.debugInfo(), null, 2) : 'None'
+            };
+
+            let html = '';
+            for (const [key, value] of Object.entries(debugInfo)) {
+                if (key === 'Level Debug') {
+                    html += `<strong>${key}:</strong><br><pre style="font-size: 10px; margin: 5px 0;">${value}</pre><br>`;
+                } else {
+                    html += `<strong>${key}:</strong> ${value}<br>`;
+                }
+            }
+            
+            debugEl.innerHTML = html;
+        }
+
+        function initGame() {
+            try {
+                const canvas = document.getElementById('gameCanvas');
+                game = new Game(canvas);
+                
+                game.init().start();
+                
+                setStatus('Game initialized successfully!', 'success');
+                
+                // Start debug info updates
+                debugInterval = setInterval(updateDebugInfo, 100);
+                
+                // Make game accessible for debugging
+                window.testGame = game;
+                
+            } catch (error) {
+                console.error('Failed to initialize game:', error);
+                setStatus(`Failed to initialize game: ${error.message}`, 'error');
+            }
+        }
+
+        // Level control functions
+        window.goToLevel = function(levelNumber) {
+            if (!game || !game.levelManager) {
+                setStatus('Game not initialized', 'error');
+                return;
+            }
+
+            try {
+                const success = game.levelManager.goToLevelByNumber(levelNumber);
+                if (success) {
+                    setStatus(`Switched to level ${levelNumber}`, 'success');
+                } else {
+                    setStatus(`Failed to switch to level ${levelNumber}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error switching level:', error);
+                setStatus(`Error switching level: ${error.message}`, 'error');
+            }
+        };
+
+        window.nextLevel = function() {
+            if (!game || !game.levelManager) {
+                setStatus('Game not initialized', 'error');
+                return;
+            }
+
+            try {
+                const success = game.levelManager.nextLevel();
+                if (success) {
+                    const levelNum = game.levelManager.getCurrentLevelNumber();
+                    setStatus(`Advanced to level ${levelNum}`, 'success');
+                } else {
+                    setStatus('Cannot advance - at final level or game complete', 'info');
+                }
+            } catch (error) {
+                console.error('Error advancing level:', error);
+                setStatus(`Error advancing level: ${error.message}`, 'error');
+            }
+        };
+
+        window.prevLevel = function() {
+            if (!game || !game.levelManager) {
+                setStatus('Game not initialized', 'error');
+                return;
+            }
+
+            try {
+                const success = game.levelManager.previousLevel();
+                if (success) {
+                    const levelNum = game.levelManager.getCurrentLevelNumber();
+                    setStatus(`Returned to level ${levelNum}`, 'success');
+                } else {
+                    setStatus('Cannot go back - at first level', 'info');
+                }
+            } catch (error) {
+                console.error('Error going to previous level:', error);
+                setStatus(`Error going to previous level: ${error.message}`, 'error');
+            }
+        };
+
+        // Initialize game when page loads
+        window.addEventListener('load', initGame);
+        
+        // Cleanup when page unloads
+        window.addEventListener('beforeunload', () => {
+            if (debugInterval) {
+                clearInterval(debugInterval);
+            }
+            if (game) {
+                game.destroy();
+            }
+        });
+    </script>
+</body>
+</html>

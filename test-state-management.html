@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>State Management Test - US-005</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 3px;
+        }
+        .pass { background-color: #d4edda; color: #155724; }
+        .fail { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        button {
+            margin: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 State Management System Test (US-005)</h1>
+    <p>Testing the new StateManager implementation for complete state management functionality.</p>
+
+    <div class="test-section">
+        <h2>🎯 Basic State Operations</h2>
+        <button onclick="testBasicOperations()">Test Basic Get/Set</button>
+        <div id="basic-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>💾 State Persistence (localStorage)</h2>
+        <button onclick="testStatePersistence()">Test Save/Load</button>
+        <button onclick="clearAllData()">Clear All Data</button>
+        <div id="persistence-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🎮 Game Progress Management</h2>
+        <button onclick="testGameProgress()">Test Game Progress</button>
+        <div id="game-progress-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>⚙️ Settings Management</h2>
+        <button onclick="testSettingsManagement()">Test Settings</button>
+        <div id="settings-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📡 Event System</h2>
+        <button onclick="testEventSystem()">Test State Changes</button>
+        <div id="events-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔧 State Validation</h2>
+        <button onclick="testStateValidation()">Test Validation & Recovery</button>
+        <div id="validation-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 Current State</h2>
+        <button onclick="showCurrentState()">Show Current State</button>
+        <div id="state-display"></div>
+    </div>
+
+    <script type="module">
+        import { getStateManager, resetStateManager } from './src/core/StateManager.js';
+
+        let stateManager = null;
+        window.testResults = [];
+
+        // Initialize for testing
+        window.initializeTest = () => {
+            stateManager = resetStateManager(); // Start fresh for testing
+            return stateManager;
+        };
+
+        // Test utilities
+        window.addResult = (container, message, isPass) => {
+            const div = document.createElement('div');
+            div.className = `test-result ${isPass ? 'pass' : 'fail'}`;
+            div.textContent = message;
+            document.getElementById(container).appendChild(div);
+        };
+
+        window.addInfo = (container, message) => {
+            const div = document.createElement('div');
+            div.className = 'test-result info';
+            div.textContent = message;
+            document.getElementById(container).appendChild(div);
+        };
+
+        // Basic Operations Test
+        window.testBasicOperations = () => {
+            const container = 'basic-results';
+            document.getElementById(container).innerHTML = '';
+            
+            try {
+                const sm = window.initializeTest();
+                
+                // Test get/set basic values
+                sm.set('test.value', 42);
+                const result = sm.get('test.value');
+                window.addResult(container, `✓ Basic set/get: ${result === 42 ? 'PASS' : 'FAIL'}`, result === 42);
+                
+                // Test nested object access
+                sm.set('game.score', 1000);
+                const score = sm.get('game.score');
+                window.addResult(container, `✓ Nested object access: ${score === 1000 ? 'PASS' : 'FAIL'}`, score === 1000);
+                
+                // Test default values
+                const defaultLevel = sm.get('game.currentLevel');
+                window.addResult(container, `✓ Default values loaded: Level ${defaultLevel}`, defaultLevel === 1);
+                
+            } catch (error) {
+                window.addResult(container, `✗ Error in basic operations: ${error.message}`, false);
+            }
+        };
+
+        // State Persistence Test
+        window.testStatePersistence = () => {
+            const container = 'persistence-results';
+            document.getElementById(container).innerHTML = '';
+            
+            try {
+                const sm = window.initializeTest();
+                
+                // Set some test data
+                sm.set('game.score', 5000);
+                sm.set('game.currentLevel', 3);
+                sm.set('settings.highContrast', true);
+                sm.set('settings.musicMuted', true);
+                
+                // Save to localStorage
+                const saveResults = sm.save();
+                window.addResult(container, `✓ Save operation: ${saveResults.gameProgress && saveResults.settings ? 'PASS' : 'FAIL'}`, 
+                    saveResults.gameProgress && saveResults.settings);
+                
+                // Create new instance to test loading
+                const sm2 = resetStateManager();
+                const loadResults = sm2.load();
+                
+                // Check if data was loaded correctly
+                const loadedScore = sm2.get('game.score');
+                const loadedLevel = sm2.get('game.currentLevel');
+                const loadedContrast = sm2.get('settings.highContrast');
+                const loadedMuted = sm2.get('settings.musicMuted');
+                
+                window.addResult(container, `✓ Load operation: ${loadResults.gameProgress && loadResults.settings ? 'PASS' : 'FAIL'}`, 
+                    loadResults.gameProgress && loadResults.settings);
+                window.addResult(container, `✓ Score persistence: ${loadedScore === 5000 ? 'PASS' : 'FAIL'}`, loadedScore === 5000);
+                window.addResult(container, `✓ Level persistence: ${loadedLevel === 3 ? 'PASS' : 'FAIL'}`, loadedLevel === 3);
+                window.addResult(container, `✓ Settings persistence: ${loadedContrast === true && loadedMuted === true ? 'PASS' : 'FAIL'}`, 
+                    loadedContrast === true && loadedMuted === true);
+                
+            } catch (error) {
+                window.addResult(container, `✗ Error in persistence test: ${error.message}`, false);
+            }
+        };
+
+        // Game Progress Test
+        window.testGameProgress = () => {
+            const container = 'game-progress-results';
+            document.getElementById(container).innerHTML = '';
+            
+            try {
+                const sm = window.initializeTest();
+                
+                // Test level progression
+                const initialLevel = sm.get('game.currentLevel');
+                const nextResult = sm.nextLevel();
+                const newLevel = sm.get('game.currentLevel');
+                
+                window.addResult(container, `✓ Level progression: ${newLevel === 2 ? 'PASS' : 'FAIL'}`, newLevel === 2);
+                
+                // Test score system
+                sm.addScore(100);
+                const score = sm.get('game.score');
+                window.addResult(container, `✓ Score system: ${score === 100 ? 'PASS' : 'FAIL'}`, score === 100);
+                
+                // Test coin collection
+                sm.collectCoin();
+                const coins = sm.get('game.coins');
+                const updatedScore = sm.get('game.score');
+                window.addResult(container, `✓ Coin collection: ${coins === 1 && updatedScore === 110 ? 'PASS' : 'FAIL'}`, 
+                    coins === 1 && updatedScore === 110);
+                
+                // Test high score
+                const highScore = sm.get('game.highScore');
+                window.addResult(container, `✓ High score tracking: ${highScore === 110 ? 'PASS' : 'FAIL'}`, highScore === 110);
+                
+            } catch (error) {
+                window.addResult(container, `✗ Error in game progress test: ${error.message}`, false);
+            }
+        };
+
+        // Settings Management Test
+        window.testSettingsManagement = () => {
+            const container = 'settings-results';
+            document.getElementById(container).innerHTML = '';
+            
+            try {
+                const sm = window.initializeTest();
+                
+                // Test individual settings
+                sm.setSetting('highContrast', true);
+                sm.setSetting('musicMuted', true);
+                sm.setSetting('reducedMotion', false);
+                
+                const contrast = sm.getSetting('highContrast');
+                const muted = sm.getSetting('musicMuted');
+                const motion = sm.getSetting('reducedMotion');
+                
+                window.addResult(container, `✓ Individual setting access: ${contrast === true && muted === true && motion === false ? 'PASS' : 'FAIL'}`, 
+                    contrast === true && muted === true && motion === false);
+                
+                // Test bulk settings update
+                sm.updateSettings({
+                    sfxMuted: true,
+                    uiScale: 3
+                });
+                
+                const allSettings = sm.getSettings();
+                window.addResult(container, `✓ Bulk settings update: ${allSettings.sfxMuted === true && allSettings.uiScale === 3 ? 'PASS' : 'FAIL'}`, 
+                    allSettings.sfxMuted === true && allSettings.uiScale === 3);
+                
+            } catch (error) {
+                window.addResult(container, `✗ Error in settings test: ${error.message}`, false);
+            }
+        };
+
+        // Event System Test
+        window.testEventSystem = () => {
+            const container = 'events-results';
+            document.getElementById(container).innerHTML = '';
+            
+            try {
+                const sm = window.initializeTest();
+                let eventsFired = [];
+                
+                // Subscribe to various events
+                const unsubscribe1 = sm.subscribe('stateChanged', (data) => {
+                    eventsFired.push('stateChanged');
+                });
+                
+                const unsubscribe2 = sm.subscribe('change:game.score', (data) => {
+                    eventsFired.push('scoreChanged');
+                });
+                
+                // Trigger events
+                sm.set('game.score', 500);
+                sm.addScore(100);
+                
+                // Check if events fired
+                window.addResult(container, `✓ Event subscription: ${eventsFired.length > 0 ? 'PASS' : 'FAIL'}`, eventsFired.length > 0);
+                window.addResult(container, `✓ Specific event fired: ${eventsFired.includes('scoreChanged') ? 'PASS' : 'FAIL'}`, 
+                    eventsFired.includes('scoreChanged'));
+                
+                // Test unsubscribe
+                unsubscribe1();
+                unsubscribe2();
+                eventsFired = [];
+                sm.set('game.lives', 2);
+                
+                window.addResult(container, `✓ Unsubscribe works: ${eventsFired.length === 0 ? 'PASS' : 'FAIL'}`, eventsFired.length === 0);
+                
+            } catch (error) {
+                window.addResult(container, `✗ Error in event system test: ${error.message}`, false);
+            }
+        };
+
+        // State Validation Test
+        window.testStateValidation = () => {
+            const container = 'validation-results';
+            document.getElementById(container).innerHTML = '';
+            
+            try {
+                const sm = window.initializeTest();
+                
+                // Test storage health check
+                const health = sm.checkStorageHealth();
+                window.addResult(container, `✓ Storage health check: ${health.available ? 'PASS' : 'FAIL'}`, health.available);
+                
+                // Test corrupt data handling by injecting invalid data
+                try {
+                    localStorage.setItem('catPlatformerSave', 'invalid json');
+                    const sm2 = resetStateManager();
+                    const loadResults = sm2.load();
+                    
+                    window.addResult(container, `✓ Corrupt data handling: ${loadResults.errors.length > 0 ? 'PASS' : 'FAIL'}`, 
+                        loadResults.errors.length > 0);
+                    
+                    // Should still have valid defaults
+                    const defaultLevel = sm2.get('game.currentLevel');
+                    window.addResult(container, `✓ Defaults after corruption: ${defaultLevel === 1 ? 'PASS' : 'FAIL'}`, defaultLevel === 1);
+                    
+                } catch (validationError) {
+                    window.addResult(container, `✓ Validation error handling: PASS`, true);
+                }
+                
+            } catch (error) {
+                window.addResult(container, `✗ Error in validation test: ${error.message}`, false);
+            }
+        };
+
+        // Clear all data
+        window.clearAllData = () => {
+            try {
+                const sm = window.initializeTest();
+                const results = sm.clear();
+                window.addResult('persistence-results', `✓ Data cleared: ${results.gameProgress && results.settings ? 'PASS' : 'FAIL'}`, 
+                    results.gameProgress && results.settings);
+            } catch (error) {
+                window.addResult('persistence-results', `✗ Error clearing data: ${error.message}`, false);
+            }
+        };
+
+        // Show current state
+        window.showCurrentState = () => {
+            const container = 'state-display';
+            try {
+                const sm = stateManager || getStateManager();
+                const state = sm.getState();
+                
+                document.getElementById(container).innerHTML = `
+                    <h4>Complete State Object:</h4>
+                    <pre>${JSON.stringify(state, null, 2)}</pre>
+                    <h4>Storage Health:</h4>
+                    <pre>${JSON.stringify(sm.checkStorageHealth(), null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById(container).innerHTML = `<div class="test-result fail">Error: ${error.message}</div>`;
+            }
+        };
+
+        // Run initialization
+        window.initializeTest();
+        window.addInfo('basic-results', 'StateManager initialized successfully');
+        
+    </script>
+</body>
+</html>

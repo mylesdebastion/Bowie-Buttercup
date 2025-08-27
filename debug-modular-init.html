@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Modular Game Init</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: monospace;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        canvas {
+            border: 2px solid #0f3460;
+            display: block;
+            margin: 20px auto;
+        }
+        .debug {
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Debug Modular Game Initialization</h1>
+    
+    <div id="debug-output" class="debug">Starting debug...</div>
+    <div id="gameArea"></div>
+    
+    <script type="module">
+        const debug = document.getElementById('debug-output');
+        
+        function log(message) {
+            console.log(message);
+            debug.textContent += message + '\n';
+            debug.scrollTop = debug.scrollHeight;
+        }
+        
+        async function testGameInit() {
+            try {
+                log('🧪 Starting modular game test...');
+                log('📍 Current URL: ' + window.location.href);
+                
+                // Check if modules can be imported
+                log('📦 Importing Game module...');
+                const { Game } = await import('./src/core/Game.js');
+                log('✅ Game class imported successfully');
+                
+                // Create canvas
+                log('🖼️ Creating canvas...');
+                const canvas = document.createElement('canvas');
+                canvas.id = 'gameCanvas';
+                canvas.width = 800;
+                canvas.height = 600;
+                canvas.style.border = '2px solid #0f3460';
+                canvas.style.imageRendering = 'pixelated';
+                document.getElementById('gameArea').appendChild(canvas);
+                log('✅ Canvas created: ' + canvas.width + 'x' + canvas.height);
+                
+                // Initialize game
+                log('🎮 Creating Game instance...');
+                const game = new Game(canvas);
+                log('✅ Game instance created');
+                
+                // Check game state before init
+                log('📊 Game state before init: Level=' + game.currentLevel + ', Player=(' + game.player.x + ',' + game.player.y + ')');
+                
+                // Initialize and start
+                log('🚀 Calling game.init()...');
+                game.init();
+                log('✅ Game initialized');
+                
+                log('▶️ Calling game.start()...');
+                game.start();
+                log('✅ Game started');
+                
+                // Check final state
+                setTimeout(() => {
+                    log('📊 Final state check:');
+                    log('  - Level: ' + game.currentLevel);
+                    log('  - Player: (' + game.player.x + ',' + game.player.y + ')');
+                    log('  - Canvas dimensions: ' + game.canvasManager.getDimensions().width + 'x' + game.canvasManager.getDimensions().height);
+                    log('  - Game running: ' + game.isRunning());
+                    log('  - FPS: ' + game.getFPS());
+                    
+                    if (game.currentLevel === 5) {
+                        log('🥣 Level 5 specific checks:');
+                        log('  - Water bowl: (' + game.waterBowl.x + ',' + game.waterBowl.y + ')');
+                        log('  - Food plate: (' + game.foodPlate.x + ',' + game.foodPlate.y + ')');
+                        log('  - Cat has drunk: ' + game.catHasDrunk);
+                        log('  - Cat has eaten: ' + game.catHasEaten);
+                    }
+                    
+                    // Try to manually trigger a render
+                    log('🎨 Manually calling draw()...');
+                    game.draw();
+                    log('✅ Manual draw completed');
+                    
+                }, 2000);
+                
+            } catch (error) {
+                log('❌ Error: ' + error.message);
+                log('📍 Stack trace: ' + error.stack);
+            }
+        }
+        
+        // Wait for DOM to be fully loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', testGameInit);
+        } else {
+            testGameInit();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quick Modular Test</title>
+    <style>
+        body { margin: 20px; background: #1a1a2e; color: white; font-family: monospace; }
+        canvas { border: 2px solid blue; display: block; margin: 20px 0; }
+        .output { background: rgba(0,0,0,0.5); padding: 10px; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>Quick Modular Game Test</h1>
+    <div id="output" class="output">Loading...</div>
+    <div id="gameArea"></div>
+
+    <script type="module">
+        const output = document.getElementById('output');
+        function log(msg) {
+            output.textContent += msg + '\n';
+            console.log(msg);
+        }
+
+        try {
+            log('1. Starting test...');
+            
+            // Force level 5
+            const url = new URL(window.location);
+            url.searchParams.set('level', '5');
+            window.history.replaceState({}, '', url);
+            
+            log('2. URL updated to force level 5');
+            log('3. Current URL: ' + window.location.href);
+            
+            // Import and test main game
+            log('4. Importing src/index.js...');
+            import('./src/index.js').then(() => {
+                log('5. ✅ Module imported successfully');
+                
+                // Wait and check game state
+                setTimeout(() => {
+                    log('6. Checking game state after 2s...');
+                    if (window.game) {
+                        log('7. ✅ Game object found');
+                        log(`   - Current Level: ${window.game.currentLevel}`);
+                        log(`   - Player: (${window.game.player.x}, ${window.game.player.y})`);
+                        log(`   - Running: ${window.game.isRunning()}`);
+                        log(`   - FPS: ${window.game.getFPS()}`);
+                        
+                        // Check canvas
+                        const canvas = document.getElementById('gameCanvas');
+                        if (canvas) {
+                            log('8. ✅ Canvas found: ' + canvas.width + 'x' + canvas.height);
+                        } else {
+                            log('8. ❌ Canvas not found');
+                        }
+                        
+                        // Manually trigger a draw
+                        log('9. Manually calling game.draw()...');
+                        window.game.draw();
+                        log('10. ✅ Manual draw completed');
+                        
+                    } else {
+                        log('7. ❌ Game object not found');
+                    }
+                }, 2000);
+                
+            }).catch(error => {
+                log('5. ❌ Import failed: ' + error.message);
+                log('   Stack: ' + error.stack);
+            });
+            
+        } catch (error) {
+            log('❌ Test failed: ' + error.message);
+            log('Stack: ' + error.stack);
+        }
+    </script>
+</body>
+</html>

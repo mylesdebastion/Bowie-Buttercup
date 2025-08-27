@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 export default defineConfig({
   // Entry point for development
@@ -15,19 +16,46 @@ export default defineConfig({
       },
       output: {
         // Single file output (inline all assets)
-        manualChunks: undefined,
-        inlineDynamicImports: true,
-        assetFileNames: 'assets/[name].[ext]',
-        entryFileNames: 'assets/[name].js'
+        manualChunks: process.env.NODE_ENV === 'production' ? undefined : {
+          // Development: split chunks for better debugging
+          'vendor': ['./src/utils/EventBus.js'],
+          'game-core': ['./src/core/GameEngine.js', './src/core/GameLoop.js'],
+          'entities': ['./src/entities/Player.js', './src/entities/Pet.js'],
+          'performance': ['./src/performance/PerformanceMonitor.js', './src/performance/MemoryManager.js']
+        },
+        inlineDynamicImports: process.env.NODE_ENV === 'production',
+        assetFileNames: 'assets/[name].[hash:8].[ext]',
+        entryFileNames: 'assets/[name].[hash:8].js',
+        chunkFileNames: 'assets/[name].[hash:8].js'
+      },
+      // Tree shaking and dead code elimination
+      treeshake: {
+        moduleSideEffects: false,
+        propertyReadSideEffects: false,
+        unknownGlobalSideEffects: false
       }
     },
-    // Target modern browsers (ES6 modules)
+    // Target modern browsers (ES2020 for better optimization)
     target: 'es2020',
-    // Source maps for debugging
-    sourcemap: true,
+    // Source maps only in development
+    sourcemap: process.env.NODE_ENV !== 'production',
     // Bundle size limits
     chunkSizeWarningLimit: 200, // 200KB warning
-    assetsInlineLimit: 0 // Don't inline assets by default
+    assetsInlineLimit: 4096, // Inline assets under 4KB
+    // Minification options
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: process.env.NODE_ENV === 'production',
+        drop_debugger: process.env.NODE_ENV === 'production',
+        pure_funcs: process.env.NODE_ENV === 'production' ? ['console.log', 'console.info'] : []
+      },
+      mangle: {
+        properties: {
+          regex: /^_private/
+        }
+      }
+    }
   },
 
   // Development server
@@ -63,14 +91,22 @@ export default defineConfig({
       buildEnd() {
         console.log('✅ Build complete!')
       }
-    }
-  ],
+    },
+    // Bundle analyzer for production builds
+    process.env.ANALYZE && visualizer({
+      filename: 'dist/bundle-analysis.html',
+      open: true,
+      gzipSize: true,
+      brotliSize: true
+    })
+  ].filter(Boolean),
 
   // Optimization
   optimizeDeps: {
     include: [],
     exclude: []
   },
+  
 
   // Test configuration (for Vitest)
   test: {

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Epic E004: UI System Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1a1a1a;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        
+        #gameArea {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #gameCanvas {
+            border: 2px solid #333;
+            background: #87CEEB;
+            image-rendering: pixelated;
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        .test-info {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 3000;
+        }
+        
+        .test-controls {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            color: white;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 3000;
+        }
+        
+        .test-controls button {
+            margin: 2px;
+            padding: 5px 10px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .test-controls button:hover {
+            background: #2980b9;
+        }
+        
+        /* High contrast styles */
+        body.high-contrast {
+            background: #000;
+        }
+        
+        body.high-contrast #gameCanvas {
+            border-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <strong>Epic E004: UI System Integration Test</strong><br>
+        📱 Mobile Controls: Automatic detection<br>
+        ⚙️ Settings Panel: Ctrl+S<br>
+        🎨 Sprite Editor: Tab key<br>
+        📊 HUD: Always visible<br>
+        <div id="status">Loading...</div>
+    </div>
+    
+    <div class="test-controls">
+        <button onclick="testMobileControls()">Show Mobile Controls</button>
+        <button onclick="testSettingsPanel()">Settings Panel</button>
+        <button onclick="testSpriteEditor()">Sprite Editor</button>
+        <button onclick="testHUD()">Toggle HUD</button>
+    </div>
+    
+    <div id="gameArea">
+        <canvas id="gameCanvas" width="800" height="480"></canvas>
+    </div>
+
+    <script type="module">
+        import { Game } from './src/core/Game.js';
+        
+        let game;
+        let testResults = {
+            uiManager: false,
+            mobileControls: false,
+            settingsPanel: false,
+            hud: false,
+            spriteEditor: false
+        };
+        
+        function updateStatus() {
+            const status = document.getElementById('status');
+            const passed = Object.values(testResults).filter(Boolean).length;
+            const total = Object.keys(testResults).length;
+            status.innerHTML = `
+                Tests: ${passed}/${total} passed<br>
+                UI Manager: ${testResults.uiManager ? '✅' : '❌'}<br>
+                Mobile Controls: ${testResults.mobileControls ? '✅' : '❌'}<br>
+                Settings Panel: ${testResults.settingsPanel ? '✅' : '❌'}<br>
+                HUD: ${testResults.hud ? '✅' : '❌'}<br>
+                Sprite Editor: ${testResults.spriteEditor ? '✅' : '❌'}
+            `;
+        }
+        
+        async function initGame() {
+            try {
+                console.log('🧪 Starting UI System Integration Test');
+                
+                const canvas = document.getElementById('gameCanvas');
+                game = new Game(canvas);
+                
+                // Test UI Manager initialization
+                if (game.uiManager) {
+                    testResults.uiManager = true;
+                    console.log('✅ UI Manager initialized');
+                    
+                    // Test individual UI components
+                    if (game.uiManager.getMobileControls()) {
+                        testResults.mobileControls = true;
+                        console.log('✅ Mobile Controls available');
+                    }
+                    
+                    if (game.uiManager.getSettingsPanel()) {
+                        testResults.settingsPanel = true;
+                        console.log('✅ Settings Panel available');
+                    }
+                    
+                    if (game.uiManager.getHUD()) {
+                        testResults.hud = true;
+                        console.log('✅ HUD available');
+                    }
+                    
+                    if (game.uiManager.getSpriteEditor()) {
+                        testResults.spriteEditor = true;
+                        console.log('✅ Sprite Editor available');
+                    }
+                }
+                
+                // Start the game
+                game.init();
+                game.start();
+                
+                console.log('🎮 Game started successfully');
+                updateStatus();
+                
+            } catch (error) {
+                console.error('❌ Test failed:', error);
+                document.getElementById('status').innerHTML = `❌ Error: ${error.message}`;
+            }
+        }
+        
+        // Test functions
+        window.testMobileControls = function() {
+            if (game && game.uiManager) {
+                const mobileControls = game.uiManager.getMobileControls();
+                if (mobileControls.isActive()) {
+                    mobileControls.hide();
+                    console.log('📱 Mobile controls hidden');
+                } else {
+                    mobileControls.show();
+                    console.log('📱 Mobile controls shown');
+                }
+            }
+        };
+        
+        window.testSettingsPanel = function() {
+            if (game && game.uiManager) {
+                game.uiManager.toggleSettingsPanel();
+                console.log('⚙️ Settings panel toggled');
+            }
+        };
+        
+        window.testSpriteEditor = function() {
+            if (game && game.uiManager) {
+                game.uiManager.toggleSpriteEditor();
+                console.log('🎨 Sprite editor toggled');
+            }
+        };
+        
+        window.testHUD = function() {
+            if (game && game.uiManager) {
+                const hud = game.uiManager.getHUD();
+                if (hud.isVisible) {
+                    hud.hide();
+                    console.log('📊 HUD hidden');
+                } else {
+                    hud.show();
+                    console.log('📊 HUD shown');
+                }
+            }
+        };
+        
+        // Handle keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F1') {
+                e.preventDefault();
+                console.log('🧪 Running UI system diagnostics...');
+                
+                if (game && game.uiManager) {
+                    console.log('UI Manager State:', {
+                        currentMode: game.uiManager.currentUIMode,
+                        isVisible: game.uiManager.isVisible,
+                        mobileControls: game.uiManager.getMobileControls().isActive(),
+                        settingsVisible: game.uiManager.getSettingsPanel().isVisible(),
+                        hudVisible: game.uiManager.getHUD().isVisible,
+                        spriteEditorVisible: game.uiManager.getSpriteEditor().isVisible()
+                    });
+                }
+            }
+        });
+        
+        // Initialize when page loads
+        window.addEventListener('load', initGame);
+        
+        // Handle page unload
+        window.addEventListener('beforeunload', () => {
+            if (game) {
+                game.destroy();
+            }
+        });
+    </script>
+</body>
+</html>

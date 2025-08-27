@@ -7,8 +7,8 @@
 import { getAssetLoader } from '../core/asset-loader.js';
 
 export class ItemSystem {
-    constructor(gameState) {
-        this.gameState = gameState;
+    constructor(stateManager) {
+        this.stateManager = stateManager;
         this.assetLoader = getAssetLoader();
         this.items = [];
         
@@ -22,11 +22,14 @@ export class ItemSystem {
         
         // Load bowl assets
         try {
-            this.foodBowlImg = await this.assetLoader.loadImage('./pet_food_bowl.png');
-            this.waterBowlImg = await this.assetLoader.loadImage('./pet_water_bowl.png');
-            console.log('✅ Bowl assets loaded successfully');
+            this.foodBowlImg = await this.assetLoader.loadImage('/pet_food_bowl.png');
+            this.waterBowlImg = await this.assetLoader.loadImage('/pet_water_bowl.png');
+            console.log('✅ Bowl assets loaded successfully', {
+                foodBowl: !!this.foodBowlImg,
+                waterBowl: !!this.waterBowlImg
+            });
         } catch (error) {
-            console.warn('⚠️ Could not load bowl assets, using fallback rendering');
+            console.warn('⚠️ Could not load bowl assets, using fallback rendering', error);
         }
     }
 
@@ -37,8 +40,8 @@ export class ItemSystem {
         this.items = [
             {
                 type: 'water_bowl',
-                x: 350,
-                y: 370,
+                x: 450,  // Position to the right of player, visible in current viewport
+                y: 350,  // Same level as player
                 width: 40,
                 height: 20,
                 isEmpty: false,  // starts full
@@ -46,8 +49,8 @@ export class ItemSystem {
             },
             {
                 type: 'food_bowl', 
-                x: 450,
-                y: 370,
+                x: 500,  // Position next to water bowl
+                y: 350,  // Same level as player
                 width: 40,
                 height: 20,
                 isEmpty: false,  // starts full
@@ -55,14 +58,14 @@ export class ItemSystem {
             }
         ];
         
-        console.log('🏠 Created Level 5 items (food and water bowls)');
+        console.log('🏠 Created Level 5 items (food and water bowls)', this.items);
     }
 
     /**
      * Update item interactions - extracted from monolithic collision logic
      */
     update(deltaTime) {
-        const player = this.gameState.playerState;
+        const player = this.stateManager.get('runtime.player');
         
         for (const item of this.items) {
             if (this.checkPlayerNearItem(player, item)) {
@@ -71,13 +74,13 @@ export class ItemSystem {
         }
         
         // Check win condition for Level 5
-        if (this.gameState.currentLevel === 5) {
+        if (this.stateManager.get('game.currentLevel') === 5) {
             const waterBowl = this.items.find(item => item.type === 'water_bowl');
             const foodBowl = this.items.find(item => item.type === 'food_bowl');
             
-            if (waterBowl?.interacted && foodBowl?.interacted && !this.gameState.isVictory) {
+            if (waterBowl?.interacted && foodBowl?.interacted && !this.stateManager.get('runtime.isVictory')) {
                 console.log('🎉 Cat has eaten and drunk - Level 5 complete!');
-                this.gameState.victory();
+                this.stateManager.set('runtime.isVictory', true);
             }
         }
     }
@@ -102,7 +105,7 @@ export class ItemSystem {
                     console.log('💧 Cat drinks water');
                     item.isEmpty = true;
                     item.interacted = true;
-                    this.gameState.addScore(20);
+                    this.stateManager.addScore(20);
                 }
                 break;
                 
@@ -111,7 +114,7 @@ export class ItemSystem {
                     console.log('🍽️ Cat eats food');
                     item.isEmpty = true;
                     item.interacted = true;
-                    this.gameState.addScore(20);
+                    this.stateManager.addScore(20);
                 }
                 break;
         }

@@ -99,6 +99,49 @@ pnpm test --filter=web         # Platform tests only
 
 ## Development Guidelines
 
+## BMaD Command Enforcement - MANDATORY PROCESS
+
+**🚨 CRITICAL: Prevent False Completion Claims**
+
+### **MANDATORY BMaD Commands at Each Transition:**
+
+**Epic Start:**
+```bash
+/bmad epic-start E001 --capture-baseline
+```
+
+**Progress Checkpoints:**
+```bash
+/bmad checkpoint --visual-test
+/bmad validate-progress --compare-baseline
+```
+
+**Before ANY Completion Claims:**
+```bash
+/bmad qa-gate --epic E001 --require-visual-match
+/bmad validate-completion --epic E001
+```
+
+**Documentation Updates (ONLY after passing validation):**
+```bash
+/bmad mark-complete E001
+```
+
+### **🔒 QA Gate Rules:**
+1. **NEVER** update completion docs without `/bmad qa-gate` passing
+2. **ALWAYS** run visual verification before claiming "complete"
+3. **MANDATORY** baseline comparison for each epic
+4. **BLOCK** progression if visual verification fails
+
+### **Visual Verification Command:**
+```bash
+/bmad visual-verify
+```
+- Captures modular version screenshot
+- Compares to monolithic baseline  
+- **FAILS epic if no visual match**
+- Required before any completion claims
+
 ### When Working on Web Platform
 - Reference `/docs/planning/prd-web-platform.md` for requirements
 - Follow architecture in `/docs/planning/architecture-web-platform.md`

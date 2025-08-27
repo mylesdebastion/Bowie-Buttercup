@@ -1,0 +1,2406 @@
+{
+  "2025-08-26_224149_level-5-bowls-monolithic_baseline.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_224149_level-5-bowls-monolithic_baseline.png",
+    "description": "level-5-bowls-monolithic",
+    "status": "baseline",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:41:49.392Z",
+    "url": "http://localhost:3000/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 3,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 100,
+        "y": 372,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle_sit"
+      },
+      "levelData": {
+        "width": 50,
+        "height": 30
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:41:47.134Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:41:47.134Z"
+      }
+    ],
+    "hash": "ced949a2a18c390ae2f34df60e4dd20f",
+    "fileSize": 16753
+  },
+  "2025-08-26_224320_level-5-bowls-monolithic_baseline.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_224320_level-5-bowls-monolithic_baseline.png",
+    "description": "level-5-bowls-monolithic",
+    "status": "baseline",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:43:20.413Z",
+    "url": "http://localhost:3000/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 3,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 100,
+        "y": 372,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle_sit"
+      },
+      "levelData": {
+        "width": 50,
+        "height": 30
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:43:18.149Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:43:18.150Z"
+      }
+    ],
+    "hash": "a746a7c39f1ec69285ee772d655e22d6",
+    "fileSize": 16831
+  },
+  "2025-08-26_224322_level-5-bowls-modular_investigating.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_224322_level-5-bowls-modular_investigating.png",
+    "description": "level-5-bowls-modular",
+    "status": "investigating",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:43:22.732Z",
+    "url": "http://localhost:3000/src/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 0,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 50,
+        "y": 350,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle"
+      },
+      "levelData": {
+        "width": 25,
+        "height": 55
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:43:18.149Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:43:18.150Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:43:20.480Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_water_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:43:20.507Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bowie_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:43:20.534Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./happy_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:43:20.559Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./sad_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:43:20.589Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bonbon_dog_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:43:20.617Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./cat-tree.png JSHandle@object",
+        "timestamp": "2025-08-27T05:43:20.657Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:43:20.687Z"
+      }
+    ],
+    "hash": "9e63d6c66b14dad069366de9ddf666c1",
+    "fileSize": 16482
+  },
+  "2025-08-26_224447_level-5-bowls-monolithic_baseline.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_224447_level-5-bowls-monolithic_baseline.png",
+    "description": "level-5-bowls-monolithic",
+    "status": "baseline",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:44:47.417Z",
+    "url": "http://localhost:3000/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 3,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 100,
+        "y": 372,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle_sit"
+      },
+      "levelData": {
+        "width": 50,
+        "height": 30
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:44:45.145Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:44:45.145Z"
+      }
+    ],
+    "hash": "8d6d2398656bde41ba19ed5386ea5250",
+    "fileSize": 16831
+  },
+  "2025-08-26_224449_level-5-bowls-modular_investigating.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_224449_level-5-bowls-modular_investigating.png",
+    "description": "level-5-bowls-modular",
+    "status": "investigating",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:44:49.751Z",
+    "url": "http://localhost:3000/src/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 0,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 50,
+        "y": 350,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle"
+      },
+      "levelData": {
+        "width": 25,
+        "height": 55
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:44:45.145Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:44:45.145Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:44:47.490Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_water_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:44:47.518Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bowie_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:44:47.561Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./happy_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:44:47.592Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./sad_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:44:47.619Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bonbon_dog_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:44:47.645Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./cat-tree.png JSHandle@object",
+        "timestamp": "2025-08-27T05:44:47.675Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:44:47.700Z"
+      }
+    ],
+    "hash": "b1d5307260cbe3b884cea0e2c8a9c656",
+    "fileSize": 16482
+  },
+  "2025-08-26_224524_level-5-bowls-monolithic_baseline.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_224524_level-5-bowls-monolithic_baseline.png",
+    "description": "level-5-bowls-monolithic",
+    "status": "baseline",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:45:24.800Z",
+    "url": "http://localhost:3000/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 3,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 100,
+        "y": 372,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle_sit"
+      },
+      "levelData": {
+        "width": 50,
+        "height": 30
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:45:22.530Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:45:22.531Z"
+      }
+    ],
+    "hash": "27a5bc3271d716788210a30df73afa59",
+    "fileSize": 16831
+  },
+  "2025-08-26_224526_level-5-bowls-modular_investigating.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_224526_level-5-bowls-modular_investigating.png",
+    "description": "level-5-bowls-modular",
+    "status": "investigating",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:45:27.103Z",
+    "url": "http://localhost:3000/src/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 0,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 50,
+        "y": 350,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle"
+      },
+      "levelData": {
+        "width": 25,
+        "height": 55
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:45:22.530Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:45:22.531Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:45:24.868Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_water_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:45:24.911Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bowie_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:45:24.944Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./happy_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:45:24.973Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./sad_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:45:24.998Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bonbon_dog_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:45:25.028Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./cat-tree.png JSHandle@object",
+        "timestamp": "2025-08-27T05:45:25.055Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:45:25.082Z"
+      }
+    ],
+    "hash": "aca2ff4002d8b1564204485f96d87f4d",
+    "fileSize": 16465
+  },
+  "2025-08-26_224643_level-5-bowls-monolithic_baseline.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_224643_level-5-bowls-monolithic_baseline.png",
+    "description": "level-5-bowls-monolithic",
+    "status": "baseline",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:46:43.424Z",
+    "url": "http://localhost:3000/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 3,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 100,
+        "y": 372,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle_sit"
+      },
+      "levelData": {
+        "width": 50,
+        "height": 30
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:46:41.159Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:46:41.159Z"
+      }
+    ],
+    "hash": "9feaf3ea94e28db60f413e375bb5b688",
+    "fileSize": 16831
+  },
+  "2025-08-26_224645_level-5-bowls-modular_investigating.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_224645_level-5-bowls-modular_investigating.png",
+    "description": "level-5-bowls-modular",
+    "status": "investigating",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:46:45.730Z",
+    "url": "http://localhost:3000/src/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 0,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 50,
+        "y": 350,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle"
+      },
+      "levelData": {
+        "width": 25,
+        "height": 55
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:46:41.159Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:46:41.159Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:46:43.490Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_water_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:46:43.519Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bowie_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:46:43.546Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./happy_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:46:43.571Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./sad_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:46:43.596Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bonbon_dog_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:46:43.623Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./cat-tree.png JSHandle@object",
+        "timestamp": "2025-08-27T05:46:43.664Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:46:43.694Z"
+      }
+    ],
+    "hash": "dc47288e55c2b17dd482e306e58d68dc",
+    "fileSize": 16465
+  },
+  "2025-08-26_224709_level-5-bowls-monolithic_baseline.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_224709_level-5-bowls-monolithic_baseline.png",
+    "description": "level-5-bowls-monolithic",
+    "status": "baseline",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:47:09.744Z",
+    "url": "http://localhost:3000/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 3,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 100,
+        "y": 372,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle_sit"
+      },
+      "levelData": {
+        "width": 50,
+        "height": 30
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:47:07.474Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:47:07.475Z"
+      }
+    ],
+    "hash": "9e0b1d2b36972aabb3be9411dd4a0a55",
+    "fileSize": 16831
+  },
+  "2025-08-26_224711_level-5-bowls-modular_investigating.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_224711_level-5-bowls-modular_investigating.png",
+    "description": "level-5-bowls-modular",
+    "status": "investigating",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:47:12.040Z",
+    "url": "http://localhost:3000/src/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 0,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 50,
+        "y": 350,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle"
+      },
+      "levelData": {
+        "width": 25,
+        "height": 55
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:47:07.474Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:47:07.475Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:47:09.808Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_water_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:47:09.834Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bowie_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:47:09.860Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./happy_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:47:09.886Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./sad_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:47:09.916Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bonbon_dog_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:47:09.941Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./cat-tree.png JSHandle@object",
+        "timestamp": "2025-08-27T05:47:09.977Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:47:10.008Z"
+      }
+    ],
+    "hash": "24462c2f0b6db4f2c3b709123338a003",
+    "fileSize": 16465
+  },
+  "2025-08-26_224752_level-5-bowls-monolithic_baseline.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_224752_level-5-bowls-monolithic_baseline.png",
+    "description": "level-5-bowls-monolithic",
+    "status": "baseline",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:47:52.642Z",
+    "url": "http://localhost:3000/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 3,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 100,
+        "y": 372,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle_sit"
+      },
+      "levelData": {
+        "width": 50,
+        "height": 30
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:47:50.396Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:47:50.396Z"
+      }
+    ],
+    "hash": "60aa551ffbead4019a7ddb6befbf4f20",
+    "fileSize": 16753
+  },
+  "2025-08-26_224754_level-5-bowls-modular_investigating.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_224754_level-5-bowls-modular_investigating.png",
+    "description": "level-5-bowls-modular",
+    "status": "investigating",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:47:54.943Z",
+    "url": "http://localhost:3000/src/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 0,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 50,
+        "y": 350,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle"
+      },
+      "levelData": {
+        "width": 25,
+        "height": 55
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:47:50.396Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:47:50.396Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:47:52.704Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_water_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:47:52.737Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bowie_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:47:52.764Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./happy_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:47:52.789Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./sad_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:47:52.817Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bonbon_dog_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:47:52.845Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./cat-tree.png JSHandle@object",
+        "timestamp": "2025-08-27T05:47:52.886Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:47:52.917Z"
+      }
+    ],
+    "hash": "278f68a576f891e8d2d4ab8159825dbd",
+    "fileSize": 18657
+  },
+  "2025-08-26_224818_level-5-bowls-monolithic_baseline.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_224818_level-5-bowls-monolithic_baseline.png",
+    "description": "level-5-bowls-monolithic",
+    "status": "baseline",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:48:18.246Z",
+    "url": "http://localhost:3000/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 3,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 100,
+        "y": 372,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle_sit"
+      },
+      "levelData": {
+        "width": 50,
+        "height": 30
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:48:15.997Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:48:15.998Z"
+      }
+    ],
+    "hash": "99403f182ccb1787ea5f99b82bb26f9c",
+    "fileSize": 16831
+  },
+  "2025-08-26_224820_level-5-bowls-modular_investigating.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_224820_level-5-bowls-modular_investigating.png",
+    "description": "level-5-bowls-modular",
+    "status": "investigating",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:48:20.543Z",
+    "url": "http://localhost:3000/src/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 0,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 50,
+        "y": 350,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle"
+      },
+      "levelData": {
+        "width": 25,
+        "height": 55
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:48:15.997Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:48:15.998Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:48:18.312Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_water_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:48:18.339Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bowie_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:48:18.367Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./happy_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:48:18.394Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./sad_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:48:18.421Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bonbon_dog_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:48:18.449Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./cat-tree.png JSHandle@object",
+        "timestamp": "2025-08-27T05:48:18.488Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:48:18.517Z"
+      }
+    ],
+    "hash": "0511509fe76a0efc148c4ce4de6b964c",
+    "fileSize": 18638
+  },
+  "2025-08-26_224841_level-5-bowls-monolithic_baseline.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_224841_level-5-bowls-monolithic_baseline.png",
+    "description": "level-5-bowls-monolithic",
+    "status": "baseline",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:48:41.451Z",
+    "url": "http://localhost:3000/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 3,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 100,
+        "y": 372,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle_sit"
+      },
+      "levelData": {
+        "width": 50,
+        "height": 30
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:48:39.200Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:48:39.201Z"
+      }
+    ],
+    "hash": "1f4408e603008e22c894c5458285bfb8",
+    "fileSize": 16753
+  },
+  "2025-08-26_224843_level-5-bowls-modular_investigating.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_224843_level-5-bowls-modular_investigating.png",
+    "description": "level-5-bowls-modular",
+    "status": "investigating",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:48:43.748Z",
+    "url": "http://localhost:3000/src/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 0,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 50,
+        "y": 350,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle"
+      },
+      "levelData": {
+        "width": 25,
+        "height": 55
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:48:39.200Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:48:39.201Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:48:41.524Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_water_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:48:41.555Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bowie_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:48:41.587Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./happy_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:48:41.615Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./sad_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:48:41.639Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bonbon_dog_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:48:41.673Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./cat-tree.png JSHandle@object",
+        "timestamp": "2025-08-27T05:48:41.713Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:48:41.750Z"
+      }
+    ],
+    "hash": "2d47064ea836711af5f41badf90157bd",
+    "fileSize": 18638
+  },
+  "2025-08-26_224912_level-5-bowls-monolithic_baseline.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_224912_level-5-bowls-monolithic_baseline.png",
+    "description": "level-5-bowls-monolithic",
+    "status": "baseline",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:49:12.519Z",
+    "url": "http://localhost:3000/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 3,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 100,
+        "y": 372,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle_sit"
+      },
+      "levelData": {
+        "width": 50,
+        "height": 30
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:49:10.247Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:49:10.248Z"
+      }
+    ],
+    "hash": "7d658bbf52a752620ca53a79d53e2fe8",
+    "fileSize": 16831
+  },
+  "2025-08-26_224914_level-5-bowls-modular_investigating.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_224914_level-5-bowls-modular_investigating.png",
+    "description": "level-5-bowls-modular",
+    "status": "investigating",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:49:14.817Z",
+    "url": "http://localhost:3000/src/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 0,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 50,
+        "y": 350,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle"
+      },
+      "levelData": {
+        "width": 25,
+        "height": 55
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:49:10.247Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:49:10.248Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:49:12.583Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_water_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:49:12.613Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bowie_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:49:12.637Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./happy_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:49:12.662Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./sad_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:49:12.688Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bonbon_dog_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:49:12.714Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./cat-tree.png JSHandle@object",
+        "timestamp": "2025-08-27T05:49:12.755Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:49:12.783Z"
+      }
+    ],
+    "hash": "68d3efde2e8b04598e259553ce699fe5",
+    "fileSize": 20557
+  },
+  "2025-08-26_224942_level-5-bowls-monolithic_baseline.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_224942_level-5-bowls-monolithic_baseline.png",
+    "description": "level-5-bowls-monolithic",
+    "status": "baseline",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:49:42.786Z",
+    "url": "http://localhost:3000/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 3,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 100,
+        "y": 372,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle_sit"
+      },
+      "levelData": {
+        "width": 50,
+        "height": 30
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:49:40.546Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:49:40.547Z"
+      }
+    ],
+    "hash": "e8a5dfd0776059659da17cafae869ff9",
+    "fileSize": 16753
+  },
+  "2025-08-26_224944_level-5-bowls-modular_investigating.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_224944_level-5-bowls-modular_investigating.png",
+    "description": "level-5-bowls-modular",
+    "status": "investigating",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:49:45.086Z",
+    "url": "http://localhost:3000/src/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 0,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 50,
+        "y": 350,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle"
+      },
+      "levelData": {
+        "width": 25,
+        "height": 55
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:49:40.546Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:49:40.547Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:49:42.846Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_water_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:49:42.873Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bowie_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:49:42.917Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./happy_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:49:42.946Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./sad_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:49:42.973Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bonbon_dog_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:49:42.997Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./cat-tree.png JSHandle@object",
+        "timestamp": "2025-08-27T05:49:43.027Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:49:43.054Z"
+      }
+    ],
+    "hash": "6622f7c66bbebaf512e1aad6758b6f9f",
+    "fileSize": 20557
+  },
+  "2025-08-26_225010_level-5-bowls-monolithic_baseline.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_225010_level-5-bowls-monolithic_baseline.png",
+    "description": "level-5-bowls-monolithic",
+    "status": "baseline",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:50:10.240Z",
+    "url": "http://localhost:3000/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 3,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 100,
+        "y": 372,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle_sit"
+      },
+      "levelData": {
+        "width": 50,
+        "height": 30
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:50:07.977Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:50:07.978Z"
+      }
+    ],
+    "hash": "2d22005834eb384fbe22260653cf0fca",
+    "fileSize": 16753
+  },
+  "2025-08-26_225017_level-5-bowls-modular_investigating.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_225017_level-5-bowls-modular_investigating.png",
+    "description": "level-5-bowls-modular",
+    "status": "investigating",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:50:17.549Z",
+    "url": "http://localhost:3000/src/index.html",
+    "gameState": null,
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:50:07.977Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:50:07.978Z"
+      },
+      {
+        "type": "page",
+        "message": "Identifier 'camera' has already been declared",
+        "timestamp": "2025-08-27T05:50:10.267Z"
+      }
+    ],
+    "hash": "62f32f2bee72c7773920ae116711a4d9",
+    "fileSize": 13182
+  },
+  "2025-08-26_225132_level-5-bowls-monolithic_baseline.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_225132_level-5-bowls-monolithic_baseline.png",
+    "description": "level-5-bowls-monolithic",
+    "status": "baseline",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:51:32.938Z",
+    "url": "http://localhost:3000/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 3,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 100,
+        "y": 372,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle_sit"
+      },
+      "levelData": {
+        "width": 50,
+        "height": 30
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:51:30.668Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:51:30.668Z"
+      }
+    ],
+    "hash": "d724ee265cd5e86cc42eb5f24c67b6ff",
+    "fileSize": 16831
+  },
+  "2025-08-26_225135_level-5-bowls-modular_investigating.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_225135_level-5-bowls-modular_investigating.png",
+    "description": "level-5-bowls-modular",
+    "status": "investigating",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:51:35.223Z",
+    "url": "http://localhost:3000/src/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 0,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 50,
+        "y": 350,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle"
+      },
+      "levelData": {
+        "width": 25,
+        "height": 55
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:51:30.668Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:51:30.668Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:51:32.995Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_water_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:51:33.021Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bowie_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:51:33.050Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./happy_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:51:33.077Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./sad_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:51:33.102Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bonbon_dog_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:51:33.144Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./cat-tree.png JSHandle@object",
+        "timestamp": "2025-08-27T05:51:33.172Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:51:33.196Z"
+      }
+    ],
+    "hash": "79bfe30c4006934206e1080e02303ea0",
+    "fileSize": 16465
+  },
+  "2025-08-26_225209_level-5-bowls-monolithic_baseline.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_225209_level-5-bowls-monolithic_baseline.png",
+    "description": "level-5-bowls-monolithic",
+    "status": "baseline",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:52:09.939Z",
+    "url": "http://localhost:3000/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 3,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 100,
+        "y": 372,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle_sit"
+      },
+      "levelData": {
+        "width": 50,
+        "height": 30
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:52:07.678Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:52:07.679Z"
+      }
+    ],
+    "hash": "f9428c7a8e2fc94aed3eae9bd86d860f",
+    "fileSize": 16831
+  },
+  "2025-08-26_225212_level-5-bowls-modular_investigating.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_225212_level-5-bowls-modular_investigating.png",
+    "description": "level-5-bowls-modular",
+    "status": "investigating",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:52:12.326Z",
+    "url": "http://localhost:3000/src/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 0,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 50,
+        "y": 350,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle"
+      },
+      "levelData": {
+        "width": 25,
+        "height": 55
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:52:07.678Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:52:07.679Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:52:10.057Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_water_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:52:10.097Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bowie_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:52:10.127Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./happy_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:52:10.210Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./sad_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:52:10.233Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bonbon_dog_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:52:10.282Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./cat-tree.png JSHandle@object",
+        "timestamp": "2025-08-27T05:52:10.307Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:52:10.335Z"
+      }
+    ],
+    "hash": "c75cba1b4cb0b7c0b5e343e04174f416",
+    "fileSize": 16482
+  },
+  "2025-08-26_225252_level-5-bowls-monolithic_baseline.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_225252_level-5-bowls-monolithic_baseline.png",
+    "description": "level-5-bowls-monolithic",
+    "status": "baseline",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:52:52.644Z",
+    "url": "http://localhost:3000/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 3,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 100,
+        "y": 372,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle_sit"
+      },
+      "levelData": {
+        "width": 50,
+        "height": 30
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:52:50.377Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:52:50.378Z"
+      }
+    ],
+    "hash": "ef7df9d1c937ac04ec204d6521be334b",
+    "fileSize": 16831
+  },
+  "2025-08-26_225254_level-5-bowls-modular_investigating.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_225254_level-5-bowls-modular_investigating.png",
+    "description": "level-5-bowls-modular",
+    "status": "investigating",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:52:54.945Z",
+    "url": "http://localhost:3000/src/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 0,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 50,
+        "y": 350,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle"
+      },
+      "levelData": {
+        "width": 25,
+        "height": 55
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:52:50.377Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:52:50.378Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:52:52.705Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_water_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:52:52.740Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bowie_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:52:52.771Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./happy_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:52:52.795Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./sad_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:52:52.836Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bonbon_dog_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:52:52.865Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./cat-tree.png JSHandle@object",
+        "timestamp": "2025-08-27T05:52:52.891Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:52:52.914Z"
+      }
+    ],
+    "hash": "aa76c67f8c73893c340dc1aa7b28fdcb",
+    "fileSize": 17915
+  },
+  "2025-08-26_225342_level-5-bowls-monolithic_baseline.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_225342_level-5-bowls-monolithic_baseline.png",
+    "description": "level-5-bowls-monolithic",
+    "status": "baseline",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:53:43.095Z",
+    "url": "http://localhost:3000/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 3,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 100,
+        "y": 372,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle_sit"
+      },
+      "levelData": {
+        "width": 50,
+        "height": 30
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:53:40.832Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:53:40.833Z"
+      }
+    ],
+    "hash": "0f5656d24d6f8770fab1f09b0c0c6e26",
+    "fileSize": 16753
+  },
+  "2025-08-26_225345_level-5-bowls-modular_investigating.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_225345_level-5-bowls-modular_investigating.png",
+    "description": "level-5-bowls-modular",
+    "status": "investigating",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T05:53:45.383Z",
+    "url": "http://localhost:3000/src/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 0,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 50,
+        "y": 350,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle"
+      },
+      "levelData": {
+        "width": 25,
+        "height": 55
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T05:53:40.832Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T05:53:40.833Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:53:43.165Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_water_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:53:43.192Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bowie_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:53:43.233Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./happy_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:53:43.262Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./sad_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:53:43.291Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bonbon_dog_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T05:53:43.316Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./cat-tree.png JSHandle@object",
+        "timestamp": "2025-08-27T05:53:43.345Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T05:53:43.370Z"
+      }
+    ],
+    "hash": "afa22e971d09e2e2a7b139015c41fd8d",
+    "fileSize": 16498
+  },
+  "2025-08-26_233227_level-5-bowls-monolithic_baseline.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_233227_level-5-bowls-monolithic_baseline.png",
+    "description": "level-5-bowls-monolithic",
+    "status": "baseline",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T06:32:27.343Z",
+    "url": "http://localhost:3000/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 3,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 100,
+        "y": 372,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle_sit"
+      },
+      "levelData": {
+        "width": 50,
+        "height": 30
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T06:32:25.096Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T06:32:25.097Z"
+      }
+    ],
+    "hash": "67a11330af726df4e7f56af10c9d7b43",
+    "fileSize": 16831
+  },
+  "2025-08-26_233229_level-5-bowls-modular_investigating.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_233229_level-5-bowls-modular_investigating.png",
+    "description": "level-5-bowls-modular",
+    "status": "investigating",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T06:32:29.648Z",
+    "url": "http://localhost:3000/src/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 0,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 50,
+        "y": 350,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle"
+      },
+      "levelData": {
+        "width": 25,
+        "height": 55
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T06:32:25.096Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T06:32:25.097Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T06:32:27.413Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_water_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T06:32:27.468Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bowie_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T06:32:27.509Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./happy_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T06:32:27.539Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./sad_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T06:32:27.566Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bonbon_dog_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T06:32:27.595Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./cat-tree.png JSHandle@object",
+        "timestamp": "2025-08-27T06:32:27.620Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T06:32:27.647Z"
+      }
+    ],
+    "hash": "29b57eda8dbfcbb708ef386d9f389962",
+    "fileSize": 16482
+  },
+  "2025-08-26_233408_level-5-bowls-monolithic_baseline.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_233408_level-5-bowls-monolithic_baseline.png",
+    "description": "level-5-bowls-monolithic",
+    "status": "baseline",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T06:34:08.149Z",
+    "url": "http://localhost:3000/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 3,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 100,
+        "y": 372,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle_sit"
+      },
+      "levelData": {
+        "width": 50,
+        "height": 30
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T06:34:05.865Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T06:34:05.865Z"
+      }
+    ],
+    "hash": "0488fdb16d3cf1ea2ea200d3a61c697c",
+    "fileSize": 16831
+  },
+  "2025-08-26_233410_level-5-bowls-modular_investigating.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_233410_level-5-bowls-modular_investigating.png",
+    "description": "level-5-bowls-modular",
+    "status": "investigating",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T06:34:10.571Z",
+    "url": "http://localhost:3000/src/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 0,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 50,
+        "y": 350,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle"
+      },
+      "levelData": {
+        "width": 25,
+        "height": 55
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T06:34:05.865Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T06:34:05.865Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T06:34:08.412Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_water_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T06:34:08.437Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bowie_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T06:34:08.466Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./happy_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T06:34:08.558Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./sad_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T06:34:08.640Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bonbon_dog_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T06:34:08.664Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./cat-tree.png JSHandle@object",
+        "timestamp": "2025-08-27T06:34:08.692Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T06:34:08.719Z"
+      }
+    ],
+    "hash": "a349dc96f7f279c0cdc66ecc90daef00",
+    "fileSize": 16465
+  },
+  "2025-08-26_233459_level-5-bowls-monolithic_baseline.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_233459_level-5-bowls-monolithic_baseline.png",
+    "description": "level-5-bowls-monolithic",
+    "status": "baseline",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T06:34:59.569Z",
+    "url": "http://localhost:3000/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 3,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 100,
+        "y": 372,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle_sit"
+      },
+      "levelData": {
+        "width": 50,
+        "height": 30
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T06:34:57.316Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T06:34:57.317Z"
+      }
+    ],
+    "hash": "d3ea2128349fba0fb93ae39135bed0e4",
+    "fileSize": 16831
+  },
+  "2025-08-26_233501_level-5-bowls-modular_investigating.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_233501_level-5-bowls-modular_investigating.png",
+    "description": "level-5-bowls-modular",
+    "status": "investigating",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T06:35:01.873Z",
+    "url": "http://localhost:3000/src/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 0,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 50,
+        "y": 350,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle"
+      },
+      "levelData": {
+        "width": 25,
+        "height": 55
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T06:34:57.316Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T06:34:57.317Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T06:34:59.630Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_water_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T06:34:59.654Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bowie_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T06:34:59.683Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./happy_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T06:34:59.725Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./sad_buttercup_cat_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T06:34:59.765Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./bonbon_dog_3x3.png JSHandle@object",
+        "timestamp": "2025-08-27T06:34:59.792Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./cat-tree.png JSHandle@object",
+        "timestamp": "2025-08-27T06:34:59.814Z"
+      },
+      {
+        "type": "console",
+        "message": "❌ Failed to load image: ./pet_food_bowl.png JSHandle@object",
+        "timestamp": "2025-08-27T06:34:59.841Z"
+      }
+    ],
+    "hash": "f0b81f1534d1b765d071b7660754ce6d",
+    "fileSize": 16465
+  },
+  "2025-08-26_235949_level-5-bowls-monolithic_baseline.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_235949_level-5-bowls-monolithic_baseline.png",
+    "description": "level-5-bowls-monolithic",
+    "status": "baseline",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T06:59:49.140Z",
+    "url": "http://localhost:3000/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 3,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 100,
+        "y": 372,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle_sit"
+      },
+      "levelData": {
+        "width": 50,
+        "height": 30
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T06:59:46.871Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T06:59:46.872Z"
+      }
+    ],
+    "hash": "84eda6412dca733333f94f4b0b8643e1",
+    "fileSize": 16831
+  },
+  "2025-08-26_235956_level-5-bowls-modular_investigating.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-26_235956_level-5-bowls-modular_investigating.png",
+    "description": "level-5-bowls-modular",
+    "status": "investigating",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T06:59:56.408Z",
+    "url": "http://localhost:3000/src/index.html",
+    "gameState": null,
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T06:59:46.871Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T06:59:46.872Z"
+      },
+      {
+        "type": "page",
+        "message": "this.loadState is not a function",
+        "timestamp": "2025-08-27T06:59:49.172Z"
+      }
+    ],
+    "hash": "bed363060c1cfec44040121d8653de34",
+    "fileSize": 13182
+  },
+  "2025-08-27_000319_level-5-bowls-monolithic_baseline.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-27_000319_level-5-bowls-monolithic_baseline.png",
+    "description": "level-5-bowls-monolithic",
+    "status": "baseline",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T07:03:19.969Z",
+    "url": "http://localhost:3000/index.html",
+    "gameState": {
+      "level": 5,
+      "score": 0,
+      "lives": 3,
+      "time": 0,
+      "paused": false,
+      "player": {
+        "x": 100,
+        "y": 372,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true,
+        "state": "idle_sit"
+      },
+      "levelData": {
+        "width": 50,
+        "height": 30
+      }
+    },
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T07:03:17.691Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T07:03:17.691Z"
+      }
+    ],
+    "hash": "c3f1b16a948d69bf70f13222aae1dc81",
+    "fileSize": 16831
+  },
+  "2025-08-27_000326_level-5-bowls-modular_investigating.png": {
+    "path": "D:\\Github\\Bowie-Buttercup\\test-visual\\screenshots\\baseline\\level-5\\2025-08-27_000326_level-5-bowls-modular_investigating.png",
+    "description": "level-5-bowls-modular",
+    "status": "investigating",
+    "viewport": "desktop",
+    "level": 5,
+    "scenario": null,
+    "timestamp": "2025-08-27T07:03:26.753Z",
+    "url": "http://localhost:3000/src/index.html?level=5",
+    "gameState": null,
+    "errors": [
+      {
+        "type": "network",
+        "message": "404 - http://localhost:3000/favicon.ico",
+        "timestamp": "2025-08-27T07:03:17.691Z"
+      },
+      {
+        "type": "console",
+        "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": "2025-08-27T07:03:17.691Z"
+      },
+      {
+        "type": "page",
+        "message": "this.loadState is not a function",
+        "timestamp": "2025-08-27T07:03:19.999Z"
+      }
+    ],
+    "hash": "a0aa78d4a91e079385b32af04741e22f",
+    "fileSize": 13182
+  }
+}

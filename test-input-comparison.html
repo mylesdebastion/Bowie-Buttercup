@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input System Comparison Test - US-004</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: monospace;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        .comparison-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .version-container {
+            flex: 1;
+            border: 2px solid;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .monolithic { border-color: #ff6b35; }
+        .modular { border-color: #4ecdc4; }
+        .iframe-container {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #333;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .controls {
+            background: #333;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .test-instructions {
+            background: rgba(23, 162, 184, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .success-criteria {
+            background: rgba(40, 167, 69, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .keyboard-legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .key-group {
+            background: #2a2a3e;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        kbd {
+            background: #444;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎮 Input System Comparison Test - US-004</h1>
+    
+    <div class="test-instructions">
+        <h3>🎯 Test Objective</h3>
+        <p>Compare input responsiveness between monolithic version (baseline) and modular version with InputManager.</p>
+        <p><strong>Expected Result:</strong> Both versions should respond identically to input with same timing and sensitivity.</p>
+    </div>
+
+    <div class="comparison-container">
+        <div class="version-container monolithic">
+            <h3>🔴 Monolithic Version (Baseline)</h3>
+            <div class="iframe-container">
+                <iframe src="index.html" title="Monolithic Game"></iframe>
+            </div>
+        </div>
+        
+        <div class="version-container modular">
+            <h3>🟢 Modular Version (US-004)</h3>
+            <div class="iframe-container">
+                <iframe src="src/test-modular.html" title="Modular Game"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <h3>🎮 Input Test Controls</h3>
+        <div class="keyboard-legend">
+            <div class="key-group">
+                <h4>Movement</h4>
+                <p><kbd>A</kbd> / <kbd>←</kbd> - Move Left</p>
+                <p><kbd>D</kbd> / <kbd>→</kbd> - Move Right</p>
+            </div>
+            <div class="key-group">
+                <h4>Actions</h4>
+                <p><kbd>W</kbd> / <kbd>Space</kbd> / <kbd>↑</kbd> - Jump</p>
+                <p><kbd>S</kbd> / <kbd>↓</kbd> - Crouch/Duck</p>
+            </div>
+            <div class="key-group">
+                <h4>Special</h4>
+                <p><kbd>Tab</kbd> - Toggle Sprite Editor</p>
+                <p><kbd>F11</kbd> - Fullscreen</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="success-criteria">
+        <h3>✅ Success Criteria</h3>
+        <ul>
+            <li><strong>Identical Response Time:</strong> Both versions respond to input simultaneously</li>
+            <li><strong>Same Movement Physics:</strong> Character moves with identical speed and acceleration</li>
+            <li><strong>Jump Timing:</strong> Jump height and timing match exactly</li>
+            <li><strong>Input Buffering:</strong> Frame-perfect inputs work the same in both versions</li>
+            <li><strong>Multi-key Support:</strong> All alternative key combinations work (WASD vs arrows)</li>
+            <li><strong>No Input Lag:</strong> No noticeable delay or dropped inputs</li>
+            <li><strong>Mobile Compatibility:</strong> Touch controls work on mobile devices</li>
+        </ul>
+    </div>
+
+    <div class="test-instructions">
+        <h3>🧪 Testing Procedure</h3>
+        <ol>
+            <li><strong>Basic Movement:</strong> Test left/right movement with A/D and arrow keys</li>
+            <li><strong>Jump Responsiveness:</strong> Test jump with W, Space, and Up arrow</li>
+            <li><strong>Continuous Input:</strong> Hold movement keys - both should maintain consistent speed</li>
+            <li><strong>Rapid Input:</strong> Tap keys rapidly - both should respond to all inputs</li>
+            <li><strong>Input Combinations:</strong> Test simultaneous inputs (move + jump)</li>
+            <li><strong>Edge Cases:</strong> Test releasing jump mid-air (variable jump height)</li>
+            <li><strong>Special Keys:</strong> Test Tab for sprite editor, other game controls</li>
+        </ol>
+    </div>
+
+    <script>
+        // Focus management to ensure input works properly
+        document.addEventListener('click', (e) => {
+            if (e.target.tagName === 'IFRAME') {
+                e.target.focus();
+            }
+        });
+
+        // Test status tracking
+        const startTime = Date.now();
+        setInterval(() => {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            document.title = `Input Comparison Test - ${elapsed}s - US-004`;
+        }, 1000);
+
+        console.log('🎮 Input System Comparison Test Started');
+        console.log('📋 US-004: Input Management System');
+        console.log('🎯 Compare responsiveness between versions');
+    </script>
+</body>
+</html>

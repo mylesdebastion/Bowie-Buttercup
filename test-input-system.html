@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input System Test - US-004</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: monospace;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        .test-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .test-section {
+            flex: 1;
+            border: 2px solid #0f3460;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .monolithic { border-color: #ff6b35; }
+        .modular { border-color: #4ecdc4; }
+        canvas {
+            border: 1px solid #333;
+            display: block;
+            margin: 10px 0;
+        }
+        .input-display {
+            background: #2a2a3e;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+        .key-pressed { color: #4ecdc4; font-weight: bold; }
+        .key-released { color: #666; }
+        .controls {
+            background: #333;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success { background: rgba(40, 167, 69, 0.2); padding: 10px; border-radius: 4px; }
+        .error { background: rgba(220, 53, 69, 0.2); padding: 10px; border-radius: 4px; }
+        .info { background: rgba(23, 162, 184, 0.2); padding: 10px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>🎮 Input System Test - US-004 Implementation</h1>
+    <div class="info">
+        <strong>Test Objective:</strong> Verify that the modular InputManager provides identical responsiveness to the monolithic version
+    </div>
+
+    <div class="test-container">
+        <div class="test-section monolithic">
+            <h3>🔴 Monolithic Version (Baseline)</h3>
+            <canvas id="monolithicCanvas" width="400" height="300"></canvas>
+            <div class="input-display" id="monolithicInputs">Keys: None</div>
+            <div id="monolithicStatus">Loading...</div>
+        </div>
+        
+        <div class="test-section modular">
+            <h3>🟢 Modular Version (US-004)</h3>
+            <canvas id="modularCanvas" width="400" height="300"></canvas>
+            <div class="input-display" id="modularInputs">Keys: None</div>
+            <div id="modularStatus">Loading...</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <h3>🎯 Test Instructions:</h3>
+        <p><strong>Movement Tests:</strong></p>
+        <ul>
+            <li>Press <kbd>A/D</kbd> or <kbd>←/→</kbd> for horizontal movement</li>
+            <li>Press <kbd>W</kbd> or <kbd>Space</kbd> or <kbd>↑</kbd> for jumping</li>
+            <li>Press <kbd>S</kbd> or <kbd>↓</kbd> for crouching</li>
+        </ul>
+        <p><strong>Validation:</strong> Both versions should respond identically with same timing and sensitivity</p>
+    </div>
+
+    <div id="testResults"></div>
+
+    <script type="module">
+        // Test data collection
+        const testData = {
+            monolithic: { inputs: [], responseTimes: [] },
+            modular: { inputs: [], responseTimes: [] }
+        };
+
+        // Monolithic input simulation (simplified)
+        const monolithicKeys = {};
+        const monolithicKeyMap = {
+            left: ['ArrowLeft', 'a', 'A'],
+            right: ['ArrowRight', 'd', 'D'],
+            jump: [' ', 'w', 'W', 'ArrowUp'],
+            crouch: ['s', 'S', 'ArrowDown']
+        };
+
+        function isMonolithicKeyPressed(action) {
+            return monolithicKeyMap[action].some(key => monolithicKeys[key]);
+        }
+
+        // Set up monolithic input handling
+        document.addEventListener('keydown', (e) => {
+            const timestamp = performance.now();
+            monolithicKeys[e.key] = true;
+            testData.monolithic.inputs.push({ key: e.key, action: 'down', timestamp });
+            updateMonolithicDisplay();
+        });
+
+        document.addEventListener('keyup', (e) => {
+            const timestamp = performance.now();
+            monolithicKeys[e.key] = false;
+            testData.monolithic.inputs.push({ key: e.key, action: 'up', timestamp });
+            updateMonolithicDisplay();
+        });
+
+        function updateMonolithicDisplay() {
+            const activeKeys = Object.keys(monolithicKeys).filter(key => monolithicKeys[key]);
+            const actions = Object.keys(monolithicKeyMap).filter(action => isMonolithicKeyPressed(action));
+            
+            document.getElementById('monolithicInputs').innerHTML = `
+                Keys: ${activeKeys.length ? activeKeys.join(', ') : 'None'}<br>
+                Actions: ${actions.length ? actions.join(', ') : 'None'}
+            `;
+        }
+
+        // Set up modular version test
+        let modularGame = null;
+        let modularInputManager = null;
+
+        async function initModularTest() {
+            try {
+                // Import and initialize the modular game
+                const { Game } = await import('./src/core/Game.js');
+                const canvas = document.getElementById('modularCanvas');
+                
+                modularGame = new Game(canvas);
+                modularInputManager = modularGame.getInputManager();
+                
+                modularGame.init().start();
+                
+                document.getElementById('modularStatus').innerHTML = '✅ Modular version initialized';
+                document.getElementById('modularStatus').className = 'success';
+                
+                // Monitor modular input
+                setInterval(updateModularDisplay, 16); // 60fps monitoring
+                
+            } catch (error) {
+                console.error('Failed to initialize modular test:', error);
+                document.getElementById('modularStatus').innerHTML = '❌ Failed to load: ' + error.message;
+                document.getElementById('modularStatus').className = 'error';
+            }
+        }
+
+        function updateModularDisplay() {
+            if (!modularInputManager) return;
+            
+            const debugInfo = modularInputManager.getDebugInfo();
+            const activeKeys = Object.keys(debugInfo.keys).filter(key => debugInfo.keys[key]);
+            const activeActions = Object.keys(debugInfo.keys).filter(action => {
+                try {
+                    return modularInputManager.isKeyPressed(action);
+                } catch {
+                    return false;
+                }
+            });
+            
+            document.getElementById('modularInputs').innerHTML = `
+                Keys: ${activeKeys.length ? activeKeys.join(', ') : 'None'}<br>
+                Mobile: ${debugInfo.mobile ? 'Yes' : 'No'} | Touch: ${debugInfo.touchEnabled ? 'Enabled' : 'Disabled'}<br>
+                Jump Buffered: ${debugInfo.jumpBuffered ? 'Yes' : 'No'}
+            `;
+        }
+
+        // Initialize tests
+        document.getElementById('monolithicStatus').innerHTML = '✅ Monolithic simulation ready';
+        document.getElementById('monolithicStatus').className = 'success';
+        
+        initModularTest();
+
+        // Performance comparison
+        setInterval(() => {
+            const results = document.getElementById('testResults');
+            results.innerHTML = `
+                <div class="info">
+                    <h3>📊 Input Test Statistics</h3>
+                    <p>Monolithic Inputs: ${testData.monolithic.inputs.length}</p>
+                    <p>Modular Game: ${modularGame ? 'Running ✅' : 'Not Running ❌'}</p>
+                    <p>InputManager: ${modularInputManager ? 'Active ✅' : 'Not Active ❌'}</p>
+                </div>
+            `;
+        }, 1000);
+    </script>
+</body>
+</html>

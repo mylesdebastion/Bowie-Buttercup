@@ -131,20 +131,20 @@ export class AssetLoader {
         console.log('🎨 Loading game assets...');
 
         const assetList = [
-            // Pet bowl sprites
-            './pet_food_bowl.png',
-            './pet_water_bowl.png',
+            // Pet bowl sprites - these are served from the root
+            '/pet_food_bowl.png',
+            '/pet_water_bowl.png',
             
             // Cat sprites
-            './bowie_cat_3x3.png',
-            './happy_buttercup_cat_3x3.png', 
-            './sad_buttercup_cat_3x3.png',
+            '/bowie_cat_3x3.png',
+            '/happy_buttercup_cat_3x3.png', 
+            '/sad_buttercup_cat_3x3.png',
             
             // Dog sprites  
-            './bonbon_dog_3x3.png',
+            '/bonbon_dog_3x3.png',
             
             // Environment
-            './cat-tree.png'
+            '/cat-tree.png'
         ];
 
         const results = {};

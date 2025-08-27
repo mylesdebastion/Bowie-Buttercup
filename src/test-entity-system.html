@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entity System Integration Test</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a1a;
+            color: #00ff00;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            border: 2px solid #00ff00;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .test-output {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #333;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-size: 14px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ff00;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .run-btn {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: inherit;
+            margin: 10px;
+        }
+        
+        .run-btn:hover {
+            background: #00cc00;
+        }
+        
+        .run-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        
+        .pass { color: #00ff00; }
+        .fail { color: #ff4444; }
+        .warn { color: #ffaa00; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Entity System Integration Test</h1>
+            <p>Epic E002: Entity System Modularization - Integration Verification</p>
+            <p>Testing extracted entities for behavior parity with original Game.js implementation</p>
+        </div>
+        
+        <div class="controls">
+            <button class="run-btn" onclick="runTests()">Run Integration Tests</button>
+            <button class="run-btn" onclick="clearOutput()">Clear Output</button>
+        </div>
+        
+        <div class="stats" id="stats" style="display: none;">
+            <div class="stat-card">
+                <div class="stat-value" id="totalTests">0</div>
+                <div class="stat-label">Total Tests</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value pass" id="passedTests">0</div>
+                <div class="stat-label">Passed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value fail" id="failedTests">0</div>
+                <div class="stat-label">Failed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="passRate">0%</div>
+                <div class="stat-label">Pass Rate</div>
+            </div>
+        </div>
+        
+        <div class="test-output" id="output">
+Ready to run integration tests. Click "Run Integration Tests" to begin.
+        </div>
+    </div>
+
+    <script type="module">
+        import { runEntityIntegrationTests } from './entities/integration-test.js';
+        
+        window.runTests = async function() {
+            const outputDiv = document.getElementById('output');
+            const statsDiv = document.getElementById('stats');
+            const runBtn = document.querySelector('.run-btn');
+            
+            // Disable button and show loading
+            runBtn.disabled = true;
+            runBtn.textContent = 'Running Tests...';
+            outputDiv.textContent = 'Initializing Entity System Integration Tests...\n\n';
+            
+            // Capture console output
+            const originalLog = console.log;
+            console.log = function(...args) {
+                outputDiv.textContent += args.join(' ') + '\n';
+                outputDiv.scrollTop = outputDiv.scrollHeight;
+                originalLog.apply(console, args);
+            };
+            
+            try {
+                const results = await runEntityIntegrationTests();
+                
+                // Update stats
+                document.getElementById('totalTests').textContent = results.total;
+                document.getElementById('passedTests').textContent = results.passed;
+                document.getElementById('failedTests').textContent = results.failed;
+                
+                const passRate = results.total > 0 ? (results.passed / results.total * 100).toFixed(1) : '0';
+                document.getElementById('passRate').textContent = passRate + '%';
+                
+                // Show stats
+                statsDiv.style.display = 'grid';
+                
+                // Update button color based on results
+                if (results.failed === 0) {
+                    runBtn.style.background = '#00ff00';
+                    runBtn.textContent = '✅ All Tests Passed';
+                } else {
+                    runBtn.style.background = '#ff4444';
+                    runBtn.textContent = `❌ ${results.failed} Test(s) Failed`;
+                }
+                
+            } catch (error) {
+                outputDiv.textContent += `\n❌ ERROR: ${error.message}\n`;
+                outputDiv.textContent += error.stack;
+                runBtn.style.background = '#ff4444';
+                runBtn.textContent = '❌ Test Error';
+            }
+            
+            // Restore console
+            console.log = originalLog;
+            
+            // Re-enable button after delay
+            setTimeout(() => {
+                runBtn.disabled = false;
+                if (runBtn.textContent.includes('Running')) {
+                    runBtn.textContent = 'Run Integration Tests';
+                    runBtn.style.background = '#00ff00';
+                }
+            }, 2000);
+        };
+        
+        window.clearOutput = function() {
+            document.getElementById('output').textContent = 'Ready to run integration tests. Click "Run Integration Tests" to begin.';
+            document.getElementById('stats').style.display = 'none';
+            
+            const runBtn = document.querySelector('.run-btn');
+            runBtn.textContent = 'Run Integration Tests';
+            runBtn.style.background = '#00ff00';
+            runBtn.disabled = false;
+        };
+        
+        // Auto-run tests on page load for demo
+        setTimeout(() => {
+            console.log('Entity System Integration Test loaded successfully!');
+            console.log('Click "Run Integration Tests" to verify modular entity system.');
+        }, 500);
+    </script>
+</body>
+</html>

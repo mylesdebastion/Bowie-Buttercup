@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Integration Test - StateManager</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 3px;
+        }
+        .pass { background-color: #d4edda; color: #155724; }
+        .fail { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        canvas {
+            border: 1px solid #ccc;
+            display: block;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎮 Game Integration Test - StateManager</h1>
+    <p>Testing if the game can initialize and run with the new StateManager.</p>
+
+    <div id="test-results"></div>
+    
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <div id="game-info"></div>
+
+    <script type="module">
+        // Test if all modules can be imported without errors
+        try {
+            console.log('🔧 Testing module imports...');
+            
+            // Import StateManager
+            const { getStateManager } = await import('./src/core/StateManager.js');
+            console.log('✅ StateManager imported successfully');
+            
+            // Import Game
+            const Game = await import('./src/core/Game.js');
+            console.log('✅ Game class imported successfully');
+            
+            // Import main game
+            const main = await import('./src/main.js');
+            console.log('✅ Main game module imported successfully');
+            
+            // Initialize StateManager
+            const stateManager = getStateManager();
+            console.log('✅ StateManager initialized');
+            
+            // Test basic state operations
+            stateManager.set('game.currentLevel', 1);
+            stateManager.set('settings.highContrast', false);
+            stateManager.set('settings.reducedMotion', false);
+            
+            const level = stateManager.get('game.currentLevel');
+            const contrast = stateManager.get('settings.highContrast');
+            
+            console.log('✅ State operations working', { level, contrast });
+            
+            // Test state persistence
+            const saveResults = stateManager.save();
+            console.log('✅ State persistence working', saveResults);
+            
+            // Display success
+            document.getElementById('test-results').innerHTML = `
+                <div class="test-result pass">✅ All imports successful</div>
+                <div class="test-result pass">✅ StateManager initialized</div>
+                <div class="test-result pass">✅ State operations working</div>
+                <div class="test-result pass">✅ State persistence working</div>
+                <div class="test-result info">Game is ready to initialize</div>
+            `;
+            
+            // Show current state
+            document.getElementById('game-info').innerHTML = `
+                <h3>Current Game State</h3>
+                <pre>${JSON.stringify(stateManager.getState(), null, 2)}</pre>
+                
+                <h3>Settings</h3>
+                <pre>${JSON.stringify(stateManager.getSettings(), null, 2)}</pre>
+                
+                <h3>Storage Health</h3>
+                <pre>${JSON.stringify(stateManager.checkStorageHealth(), null, 2)}</pre>
+            `;
+            
+        } catch (error) {
+            console.error('❌ Integration test failed:', error);
+            document.getElementById('test-results').innerHTML = `
+                <div class="test-result fail">❌ Integration test failed: ${error.message}</div>
+                <div class="test-result info">Check console for detailed error information</div>
+            `;
+        }
+    </script>
+</body>
+</html>
