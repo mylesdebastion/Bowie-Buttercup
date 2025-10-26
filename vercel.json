@@ -1,6 +1,6 @@
 {
-  "buildCommand": "",
-  "outputDirectory": ".",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "framework": null,
   "headers": [
     {
