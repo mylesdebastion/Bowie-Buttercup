@@ -110,8 +110,14 @@ export class Level1 extends Level {
                     level[y][x] = 1; // Another platform
                 } else if (y > 26 && x >= 15 && x <= 19) {
                     level[y][x] = 2; // Lava pit
-                } else if (y === 23 && x >= 12 && x <= 13) {
-                    level[y][x] = 3; // Red couch trampoline
+                } else if (y === 25 && x >= 5 && x <= 12) {
+                    level[y][x] = 3; // Red couch seat (on ground)
+                } else if (y === 24 && x >= 5 && x <= 12) {
+                    level[y][x] = 3; // Red couch seat middle
+                } else if (y === 23 && x >= 5 && x <= 12) {
+                    level[y][x] = 3; // Red couch backrest
+                } else if (y === 22 && x >= 5 && x <= 12) {
+                    level[y][x] = 3; // Red couch backrest top
                 } else {
                     level[y][x] = 0;
                 }
