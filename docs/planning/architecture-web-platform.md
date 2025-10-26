@@ -1,11 +1,11 @@
 # System Architecture Document
-## PetPixel Games Platform
+## SparkleClassic
 
-**Document Version:** 1.0  
-**Created:** 2025-01-20  
-**Architect:** BMad Architect Agent  
-**Dependencies:** PRD v1.0, Frontend Spec v1.0  
-**Status:** Draft  
+**Document Version:** 2.0
+**Updated:** 2025-10-25
+**Architect:** BMad Architect Agent
+**Dependencies:** PRD v3.0, Frontend Spec v2.0
+**Status:** Active - Custom URL Hosting Support  
 
 ---
 

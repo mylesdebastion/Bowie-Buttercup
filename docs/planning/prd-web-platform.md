@@ -1,12 +1,12 @@
-# Web Platform PRD - PetPixel Games Platform
+# Web Platform PRD - SparkleClassic
 
-**Document Version:** 2.0  
-**Updated:** 2025-01-20  
+**Document Version:** 3.0
+**Updated:** 2025-10-25
 **Status:** Final - Ready for Implementation
 
 ## Executive Summary
 
-PetPixel Games is a web platform where users upload pet photos to generate personalized pixel art platformer games. This PRD focuses on the web platform development, with manual pixel art generation for the first 20 users to accelerate market validation.
+SparkleClassic is a web platform where users upload pet photos to generate personalized pixel art platformer games hosted at custom URLs (sparkleclassic.com/[petname]). This PRD focuses on the web platform development, with manual pixel art generation for the first 20 users to accelerate market validation.
 
 **Key Strategy Change**: Manual pixel art creation for first 20 users to reach profitability faster, with AI automation as Phase 2.
 

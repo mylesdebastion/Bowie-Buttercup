@@ -1,7 +1,7 @@
 {
-  "name": "cat-platformer-modularization",
-  "version": "2.0.0",
-  "description": "Cat Platformer Game - Modular Architecture Migration",
+  "name": "sparkleclassic",
+  "version": "3.0.0",
+  "description": "SparkleClassic - Personalized Pet Platformer Games",
   "type": "module",
   "main": "src/index.js",
   "scripts": {
@@ -46,6 +46,7 @@
     "deploy": "node scripts/deploy.js"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "@vitest/coverage-v8": "^1.0.0",
     "@vitest/ui": "^1.0.0",
     "canvas": "^2.11.2",

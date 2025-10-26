@@ -1,12 +1,12 @@
-# Internal Tool Architecture - PetPixel Games Platform
+# Internal Tool Architecture - SparkleClassic
 
-**Version**: 1.0  
-**Updated**: 2025-01-20  
-**Scope**: Phase 2 - Internal Tool Development
+**Version**: 2.0
+**Updated**: 2025-10-25
+**Scope**: Phase 2 - Internal Tool Development + Custom URL Hosting
 
 ## 🏗️ **Architecture Overview**
 
-The internal tool architecture is designed to streamline boutique operations while providing a solid foundation for AI integration and customer platform development. The system prioritizes developer productivity, user experience, and scalability.
+The internal tool architecture is designed to streamline boutique operations while providing multi-tenant game hosting at custom URLs (sparkleclassic.com/[petname]). The system prioritizes developer productivity, user experience, and scalability for creating personalized pet games for friends and colleagues.
 
 ### **Core Principles**
 - **User-Centric Design**: Optimized for artist and operator workflows
@@ -24,7 +24,7 @@ The internal tool architecture is designed to streamline boutique operations whi
 │                     Internal Tool Frontend                      │
 │  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐   │
 │  │   Dashboard     │ │ Asset Manager   │ │ URL Generator   │   │
-│  │   (Projects)    │ │  (Uploads)      │ │  (Collision)    │   │
+│  │   (Projects)    │ │  (Sprite Tool)  │ │  (SparkleURLs)  │   │
 │  └─────────────────┘ └─────────────────┘ └─────────────────┘   │
 │                                                                 │
 │  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐   │

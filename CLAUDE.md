@@ -1,7 +1,7 @@
-# PetPixel Games Platform - Claude Development Guide
+# SparkleClassic - Claude Development Guide
 
 ## Project Overview
-AI-powered platform where users upload pet photos → generates pixel art → creates personalized platformer games. Targeting $259k Year 1 revenue with $14.99-24.99 game purchases.
+AI-powered platform where users upload pet photos → generates pixel art → creates personalized platformer games at custom URLs (sparkleclassic.com/[petname]). Targeting $259k Year 1 revenue with $14.99-24.99 game purchases.
 
 ## Current Status: Migration Phase - Controlled Transition
 ✅ **Planning Complete**: PRD, Architecture, Frontend Spec validated  

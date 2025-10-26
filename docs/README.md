@@ -1,6 +1,6 @@
-# PetPixel Games Platform - Documentation
+# SparkleClassic - Documentation
 
-Complete documentation for the PetPixel Games platform development project.
+Complete documentation for the SparkleClassic platform development project.
 
 ## 📁 Documentation Structure
 
