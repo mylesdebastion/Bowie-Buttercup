@@ -88,16 +88,18 @@ export class UIManager {
         if (this.mobileControls) {
             this.mobileControls.update(dt);
         }
-        
-        if (this.settingsPanel && this.settingsPanel.isVisible()) {
+
+        // Skip settings panel update if not implemented yet
+        if (this.settingsPanel && typeof this.settingsPanel.isVisible === 'function' && this.settingsPanel.isVisible()) {
             this.settingsPanel.update(dt);
         }
-        
+
         if (this.hud && this.isVisible) {
             this.hud.update(dt);
         }
-        
-        if (this.spriteEditor && this.spriteEditor.isVisible()) {
+
+        // Skip sprite editor update if not implemented yet
+        if (this.spriteEditor && typeof this.spriteEditor.isVisible === 'function' && this.spriteEditor.isVisible()) {
             this.spriteEditor.update(dt);
         }
     }

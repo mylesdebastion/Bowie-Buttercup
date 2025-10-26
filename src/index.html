@@ -15,14 +15,17 @@
     <div id="gameContainer">
         <!-- Game UI will be loaded by modules -->
         <div id="gameArea">
-            <canvas id="gameCanvas"></canvas>
-            
+            <canvas id="gameCanvas" width="800" height="400"></canvas>
+
             <!-- HUD will be managed by UI module -->
             <div id="hud">
                 <div>Score: <span id="score">0</span></div>
                 <div>Lives: <span id="lives">3</span></div>
                 <div>Time: <span id="time">0</span>s</div>
             </div>
+
+            <!-- Pet Selector UI - E002.1-002 -->
+            <div id="petSelectorContainer"></div>
             
             <!-- Debug overlay managed by debug module -->
             <div id="debugOverlay" style="display: none;">
@@ -38,6 +41,6 @@
     <script src="../debug-trace.js"></script>
     
     <!-- Main application entry point -->
-    <script type="module" src="./main.js"></script>
+    <script type="module" src="./index.js"></script>
 </body>
 </html>

@@ -49,18 +49,29 @@ export class Canvas {
      * Initialize canvas with optimal settings for pixel-perfect rendering
      */
     setupCanvas() {
-        // Set up high-DPI support
-        const rect = this.canvas.getBoundingClientRect();
-        this.canvas.width = rect.width * this.pixelRatio;
-        this.canvas.height = rect.height * this.pixelRatio;
-        this.width = rect.width;
-        this.height = rect.height;
-        
-        // Scale context for high-DPI displays
-        this.ctx.scale(this.pixelRatio, this.pixelRatio);
-        this.canvas.style.width = rect.width + 'px';
-        this.canvas.style.height = rect.height + 'px';
-        
+        // Preserve existing canvas dimensions if already set (for fixed-size game canvas)
+        if (this.canvas.width > 0 && this.canvas.height > 0) {
+            // Use existing dimensions as logical game size
+            this.width = this.canvas.width;
+            this.height = this.canvas.height;
+
+            console.log(`🎨 Canvas: Using existing dimensions ${this.width}x${this.height}`);
+        } else {
+            // Set up responsive canvas based on container size
+            const rect = this.canvas.getBoundingClientRect();
+            this.canvas.width = rect.width * this.pixelRatio;
+            this.canvas.height = rect.height * this.pixelRatio;
+            this.width = rect.width;
+            this.height = rect.height;
+
+            // Scale context for high-DPI displays
+            this.ctx.scale(this.pixelRatio, this.pixelRatio);
+            this.canvas.style.width = rect.width + 'px';
+            this.canvas.style.height = rect.height + 'px';
+
+            console.log(`🎨 Canvas: Set responsive dimensions ${this.width}x${this.height}`);
+        }
+
         // Optimize for pixel art
         this.ctx.imageSmoothingEnabled = false;
         this.ctx.webkitImageSmoothingEnabled = false;
