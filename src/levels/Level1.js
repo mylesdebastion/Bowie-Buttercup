@@ -185,15 +185,25 @@ export class Level1 extends Level {
     drawLevelEntities(ctx, camera) {
         // Call parent to draw treats
         super.drawLevelEntities(ctx, camera);
-        
+
+        // Draw "Hello World" test text at top of level
+        if (ctx) {
+            ctx.save();
+            ctx.font = '32px Arial';
+            ctx.fillStyle = '#000000';
+            ctx.textAlign = 'center';
+            ctx.fillText('Hello World', 400, 50);
+            ctx.restore();
+        }
+
         // Draw fireballs using game's canvas manager
         if (this.game && this.game.canvasManager) {
             this.fireballs.forEach(fireball => {
                 this.game.canvasManager.fillRect(
-                    fireball.x - fireball.width/2, 
-                    fireball.y - fireball.height/2, 
-                    fireball.width, 
-                    fireball.height, 
+                    fireball.x - fireball.width/2,
+                    fireball.y - fireball.height/2,
+                    fireball.width,
+                    fireball.height,
                     '#FF0000'
                 );
             });
