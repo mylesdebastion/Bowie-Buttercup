@@ -1039,29 +1039,25 @@
                     const headTileY = Math.floor(this.y / 16);
                     const headTileX = Math.floor((this.x + this.width/2) / 16);
 
-                    if (game.level[headTileY] && (game.level[headTileY][headTileX] === 1 || game.level[headTileY][headTileX] === 6)) {
+                    if (game.level[headTileY] && game.level[headTileY][headTileX] === 1) {
                         if (this.vy < 0) {
                             this.y = (headTileY + 1) * 16;
                             this.vy = 0;
-                        }
-                    }
 
-                    // Mystery block collision (tile type 5)
-                    if (game.level[headTileY] && game.level[headTileY][headTileX] === 5) {
-                        if (this.vy < 0 && game.mysteryBlock && !game.mysteryBlock.used) {
-                            this.y = (headTileY + 1) * 16;
-                            this.vy = 0;
+                            // Check if this is the hidden mystery block
+                            if (game.mysteryBlock && !game.mysteryBlock.used &&
+                                headTileX === game.mysteryBlock.x && headTileY === game.mysteryBlock.y) {
 
-                            // Hit the mystery block!
-                            game.mysteryBlock.hits++;
-                            game.createParticles(headTileX * 16 + 8, headTileY * 16 + 16, 5);
-                            game.playSound('jump');
+                                // Hit the mystery block!
+                                game.mysteryBlock.hits++;
+                                game.createParticles(headTileX * 16 + 8, headTileY * 16 + 16, 8);
+                                game.playSound('jump');
 
-                            // After 3 hits, spawn mouse and mark block as used
-                            if (game.mysteryBlock.hits >= 3) {
-                                game.spawnMysteryMouse(headTileX * 16, headTileY * 16);
-                                game.mysteryBlock.used = true;
-                                game.level[headTileY][headTileX] = 6; // Change to "used" block type
+                                // After 3 hits, spawn mouse and mark block as used
+                                if (game.mysteryBlock.hits >= 3) {
+                                    game.spawnMysteryMouse(headTileX * 16, headTileY * 16);
+                                    game.mysteryBlock.used = true;
+                                }
                             }
                         }
                     }
@@ -1607,11 +1603,11 @@
                     this.grounded = true;
                 }
                 
-                // Platform collisions
-                if (game && game.currentLevel === 2) {
+                // Platform collisions (for Level 1 mystery mouse and Level 2 mice)
+                if (game && (game.currentLevel === 1 || game.currentLevel === 2)) {
                     const tileX = Math.floor((this.x + this.width/2) / 16);
                     const tileY = Math.floor((this.y + this.height) / 16);
-                    
+
                     if (game.level[tileY] && game.level[tileY][tileX] === 1) {
                         if (this.vy > 0) {
                             this.y = tileY * 16 - this.height;
@@ -1701,7 +1697,7 @@
                 this.level = this.createLevel();
                 this.fishTreats = this.createFishTreats();
                 this.goalReached = false;
-                this.mysteryBlock = { x: 12, y: 22, hits: 0, used: false }; // Block above couch
+                this.mysteryBlock = { x: 12, y: 20, hits: 0, used: false }; // Hidden in platform above couch
 
                 this.initLevel();
             }
@@ -1802,9 +1798,6 @@
                             } else if ((y === 24 || y === 25) && (x === 12 || x === 13)) {
                                 // Red couch trampoline (2x2 tiles at ground level)
                                 level[y][x] = 3;
-                            } else if (y === 22 && x === 12) {
-                                // Mystery block above couch - releases mouse after 3 head hits
-                                level[y][x] = 5;
                             } else {
                                 level[y][x] = 0;
                             }
@@ -1976,7 +1969,7 @@
                     return p.life > 0;
                 });
                 
-                // Level 1 - Fireballs
+                // Level 1 - Fireballs and mystery mouse
                 if (this.currentLevel === 1) {
                     this.fireballs.forEach(f => {
                         f.update(dt);
@@ -1984,7 +1977,18 @@
                             this.player.hurt();
                         }
                     });
-                    
+
+                    // Update and check mystery mouse if spawned
+                    this.mice.forEach(mouse => {
+                        mouse.update(dt);
+
+                        // Check if caught
+                        if (mouse.checkCaught(this.player)) {
+                            this.score += 500; // Bonus points for mystery mouse!
+                            this.playSound('collect');
+                        }
+                    });
+
                     // Check goal
                     if (this.player.x > 750 && !this.goalReached) {
                         this.goalReached = true;
@@ -2208,15 +2212,17 @@
                     this.drawBed(750, 350);
                 }
                 
-                // Draw mice for level 2
-                if (this.currentLevel === 2) {
+                // Draw mice for level 1 (mystery mouse) and level 2
+                if (this.currentLevel === 1 || this.currentLevel === 2) {
                     this.mice.forEach(mouse => mouse.draw(ctx));
-                    
-                    // Draw mouse counter
-                    const uncaughtMice = this.mice.filter(m => !m.caught).length;
-                    ctx.fillStyle = '#FFF';
-                    ctx.font = '16px monospace';
-                    ctx.fillText(`Mice: ${uncaughtMice}/${this.mice.length}`, 10, 30);
+
+                    // Draw mouse counter for level 2 only
+                    if (this.currentLevel === 2) {
+                        const uncaughtMice = this.mice.filter(m => !m.caught).length;
+                        ctx.fillStyle = '#FFF';
+                        ctx.font = '16px monospace';
+                        ctx.fillText(`Mice: ${uncaughtMice}/${this.mice.length}`, 10, 30);
+                    }
                 }
                 
                 // Draw speed boost indicator
@@ -2300,47 +2306,6 @@
                             for (let i = 0; i < 16; i += 3) {
                                 ctx.fillRect(x * 16 + i, y * 16, 2, 4);
                             }
-                        } else if (tile === 5) {
-                            // Mystery block (active) - draws with "?" and hit indicator
-                            const hitCount = this.mysteryBlock ? this.mysteryBlock.hits : 0;
-
-                            // Animated color based on hits
-                            const blockColor = hitCount === 0 ? '#FFD700' :
-                                             hitCount === 1 ? '#FFA500' :
-                                             '#FF6347'; // Red after 2 hits
-
-                            // Block base
-                            ctx.fillStyle = blockColor;
-                            ctx.fillRect(x * 16, y * 16, 16, 16);
-
-                            // Block border
-                            ctx.fillStyle = '#DAA520';
-                            ctx.fillRect(x * 16 + 1, y * 16 + 1, 14, 14);
-
-                            // Draw "?" symbol
-                            ctx.fillStyle = '#8B4513';
-                            ctx.font = 'bold 12px monospace';
-                            ctx.fillText('?', x * 16 + 5, y * 16 + 12);
-
-                            // Draw hit counter
-                            if (hitCount > 0) {
-                                ctx.fillStyle = '#FF0000';
-                                ctx.font = 'bold 8px monospace';
-                                ctx.fillText(`${hitCount}`, x * 16 + 12, y * 16 + 6);
-                            }
-                        } else if (tile === 6) {
-                            // Used mystery block (empty)
-                            ctx.fillStyle = '#808080';
-                            ctx.fillRect(x * 16, y * 16, 16, 16);
-
-                            // Block border
-                            ctx.fillStyle = '#606060';
-                            ctx.fillRect(x * 16 + 1, y * 16 + 1, 14, 14);
-
-                            // Draw empty indicator
-                            ctx.fillStyle = '#404040';
-                            ctx.font = 'bold 12px monospace';
-                            ctx.fillText('X', x * 16 + 5, y * 16 + 12);
                         }
                     }
                 }
