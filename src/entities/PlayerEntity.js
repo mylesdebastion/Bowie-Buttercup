@@ -1,9 +1,9 @@
 /**
  * Player Entity Module - US-007: Player Entity Module
- * 
+ *
  * Extracted from monolithic Game.js Player class
  * Preserves exact physics, animation, and input handling behavior
- * 
+ *
  * Critical Requirements:
  * - Maintain identical movement physics (acceleration, jump height, air control)
  * - Preserve collision responses pixel-perfect matches
@@ -13,6 +13,7 @@
  */
 
 import { Entity } from './Entity.js';
+import { getSpriteSystem } from '../core/sprites/index.js';
 
 export class PlayerEntity extends Entity {
     constructor(x = 100, y = 300, options = {}) {
@@ -48,6 +49,7 @@ export class PlayerEntity extends Entity {
         this.animFrame = 0;
         this.animTimer = 0;
         this.currentAnimation = 'idle';
+        this.state = 'idle_sit'; // For compatibility with tests
         this.facing = 1; // 1 = right, -1 = left
         
         // Input state tracking
@@ -60,6 +62,10 @@ export class PlayerEntity extends Entity {
         
         // Reference to game systems (will be injected)
         this.gameInstance = null;
+
+        // Sprite system integration - E002.1-001
+        this.spriteSystem = getSpriteSystem();
+        this.useSpriteRendering = true; // Flag to enable/disable sprite rendering
     }
     
     /**
@@ -226,22 +232,31 @@ export class PlayerEntity extends Entity {
      * Update animation - extracted exactly from Game.js Player.updateAnimation()
      */
     updateAnimation(deltaTime) {
-        this.animTimer += deltaTime;
-        
-        // Exactly matching Game.js animation timing
-        if (this.animTimer > 200) {
-            this.animFrame = (this.animFrame + 1) % 4;
-            this.animTimer = 0;
-        }
-        
-        // Animation state logic - exactly matching Game.js
+        // Determine animation state based on physics
+        let newState;
         if (!this.grounded) {
-            this.currentAnimation = this.vy < 0 ? 'jump' : 'fall';
+            newState = this.vy < 0 ? 'jump_up' : 'fall_down';
         } else if (Math.abs(this.vx) > 10) {
-            this.currentAnimation = 'run';
+            newState = 'run';
         } else {
-            this.currentAnimation = 'idle';
+            newState = 'idle_sit';
         }
+
+        // Update sprite system animation
+        if (this.useSpriteRendering) {
+            this.spriteSystem.updateAnimation(deltaTime, newState);
+        } else {
+            // Legacy animation timing
+            this.animTimer += deltaTime;
+            if (this.animTimer > 200) {
+                this.animFrame = (this.animFrame + 1) % 4;
+                this.animTimer = 0;
+            }
+        }
+
+        // Update legacy animation properties for compatibility
+        this.currentAnimation = newState;
+        this.state = newState;
     }
     
     /**
@@ -285,24 +300,60 @@ export class PlayerEntity extends Entity {
     }
     
     /**
-     * Render player - matches Game.js drawing logic
+     * Heal player (for tests and power-ups)
+     */
+    heal(amount) {
+        this.health = Math.min(3, this.health + amount);
+    }
+    
+    /**
+     * Check if player is dead (for tests)
+     */
+    isDead() {
+        return this.dead || this.health <= 0;
+    }
+    
+    /**
+     * Update player state (for tests and animation)
+     */
+    updateState() {
+        if (this.invulnerable && this.invulnerabilityTimer > 0) {
+            this.currentAnimation = 'hurt';
+        } else if (!this.grounded) {
+            this.currentAnimation = this.vy < 0 ? 'jump' : 'fall';
+        } else if (Math.abs(this.vx) > 10) {
+            this.currentAnimation = 'walk';
+        } else {
+            this.currentAnimation = 'idle';
+        }
+    }
+    
+    /**
+     * Render player - matches Game.js drawing logic with sprite support
      */
     render(ctx, camera = { x: 0, y: 0 }) {
         if (!this.visible || this.destroyed) return;
-        
+
         // Calculate screen position
         const screenX = this.x - this.width / 2 - camera.x;
         const screenY = this.y - this.height / 2 - camera.y;
-        
-        // Player color logic - exactly matching Game.js
-        let playerColor = this.invulnerable ? '#FF8C00' : '#FF6B35';
-        if (this.invulnerable && Math.floor(Date.now() / 100) % 2) {
-            playerColor = '#FFAAAA'; // Flashing when invulnerable
+
+        if (this.useSpriteRendering && this.spriteSystem.areSheetsLoaded()) {
+            // Render using sprite system - E002.1-001
+            this.spriteSystem.render(ctx, screenX, screenY, this.width, this.height, {
+                facing: this.facing,
+                invulnerable: this.invulnerable
+            });
+        } else {
+            // Fallback: Draw player rectangle - exactly matching Game.js
+            let playerColor = this.invulnerable ? '#FF8C00' : '#FF6B35';
+            if (this.invulnerable && Math.floor(Date.now() / 100) % 2) {
+                playerColor = '#FFAAAA'; // Flashing when invulnerable
+            }
+
+            ctx.fillStyle = playerColor;
+            ctx.fillRect(screenX, screenY, this.width, this.height);
         }
-        
-        // Draw player rectangle - exactly matching Game.js
-        ctx.fillStyle = playerColor;
-        ctx.fillRect(screenX, screenY, this.width, this.height);
     }
     
     /**

@@ -1,0 +1,118 @@
+{
+  "id": "pet-a",
+  "name": "Bowie Cat",
+  "description": "Calm White Scottish Fold Cat with pink nose - collected and graceful",
+  "spriteSheet": "bowie_cat_3x3.png",
+  "sheet": "A",
+  "version": "1.0.0",
+  "author": "SparkleClassic Games",
+  "cells": [
+    {
+      "r": 1,
+      "c": 1,
+      "crop": [0, 0, 32, 32],
+      "assign": "dodge_roll",
+      "pivot": [0.5, 1],
+      "flipX": false,
+      "description": "Rolling dodge animation"
+    },
+    {
+      "r": 1,
+      "c": 2,
+      "crop": [32, 0, 32, 32],
+      "assign": "run_1",
+      "pivot": [0.5, 1],
+      "flipX": false,
+      "description": "Run cycle frame 1"
+    },
+    {
+      "r": 1,
+      "c": 3,
+      "crop": [64, 0, 32, 32],
+      "assign": "idle_sit",
+      "pivot": [0.5, 1],
+      "flipX": false,
+      "description": "Idle sitting pose (side view)"
+    },
+    {
+      "r": 2,
+      "c": 1,
+      "crop": [0, 32, 32, 32],
+      "assign": "run_2",
+      "pivot": [0.5, 1],
+      "flipX": false,
+      "description": "Run cycle frame 2"
+    },
+    {
+      "r": 2,
+      "c": 2,
+      "crop": [32, 32, 32, 32],
+      "assign": "run_3",
+      "pivot": [0.5, 1],
+      "flipX": false,
+      "description": "Run cycle frame 3"
+    },
+    {
+      "r": 2,
+      "c": 3,
+      "crop": [64, 32, 32, 32],
+      "assign": "idle_sit_front",
+      "pivot": [0.5, 1],
+      "flipX": false,
+      "description": "Idle sitting pose (front view)"
+    },
+    {
+      "r": 3,
+      "c": 1,
+      "crop": [0, 64, 32, 32],
+      "assign": "crouch",
+      "pivot": [0.5, 1],
+      "flipX": false,
+      "description": "Crouching pose"
+    },
+    {
+      "r": 3,
+      "c": 2,
+      "crop": [32, 64, 32, 32],
+      "assign": "jump_up",
+      "pivot": [0.5, 1],
+      "flipX": false,
+      "description": "Jumping up animation"
+    },
+    {
+      "r": 3,
+      "c": 3,
+      "crop": [64, 64, 32, 32],
+      "assign": "fall_down",
+      "pivot": [0.5, 1],
+      "flipX": false,
+      "description": "Falling down animation"
+    }
+  ],
+  "animations": {
+    "run": {
+      "frames": ["run_1", "run_2", "run_3"],
+      "speed": 100,
+      "loop": true,
+      "description": "Running animation cycle"
+    },
+    "idle": {
+      "frames": ["idle_sit"],
+      "speed": 150,
+      "loop": true,
+      "description": "Idle sitting animation"
+    },
+    "jump": {
+      "frames": ["jump_up"],
+      "speed": 150,
+      "loop": false,
+      "description": "Jumping animation"
+    },
+    "fall": {
+      "frames": ["fall_down"],
+      "speed": 150,
+      "loop": false,
+      "description": "Falling animation"
+    }
+  }
+}

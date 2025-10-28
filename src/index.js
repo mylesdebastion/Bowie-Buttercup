@@ -8,6 +8,7 @@
  */
 
 import { Game } from './core/Game.js';
+import { PetSelector } from './ui/PetSelector.js';
 
 // Global variables for compatibility (InputManager will handle input)
 window.keys = {};
@@ -30,25 +31,66 @@ async function initializeGame() {
     // Input handling is now managed by Game's InputManager
     // setupInputHandlers();
     
-    // Check for URL parameters to override level (for testing)
+    // Check for URL parameters for pet/level selection - E003.1-003
     const urlParams = new URLSearchParams(window.location.search);
     const forceLevel = urlParams.get('level');
-    
+    const petParam = urlParams.get('pet'); // ?pet=bowie or ?pet=buttercup
+
+    // Determine selected pet from URL parameter
+    let selectedPet = 'A'; // Default to Bowie Cat
+
+    if (petParam) {
+        const petLower = petParam.toLowerCase();
+        if (petLower === 'buttercup' || petLower === 'b') {
+            selectedPet = 'B';
+            console.log('🐱 URL pet selection: Buttercup Cat (curious cream cat)');
+        } else if (petLower === 'bowie' || petLower === 'a') {
+            selectedPet = 'A';
+            console.log('🐱 URL pet selection: Bowie Cat (calm gray tabby)');
+        }
+    }
+
     // Create and start game (Canvas module handles context internally)
     const game = new Game(canvas);
-    
-    // Override level if specified in URL
-    if (forceLevel && !isNaN(parseInt(forceLevel))) {
-      const level = Math.max(1, Math.min(5, parseInt(forceLevel)));
-      console.log(`🔧 Forcing level to ${level} for testing`);
-      game.stateManager.set('game.currentLevel', level);
-      game.currentLevel = level;
-      game.level = game.createLevel();
-      game.initLevel();
+
+    // Set default to Level 1 for platform testing
+    const level = forceLevel && !isNaN(parseInt(forceLevel)) ?
+                  Math.max(1, Math.min(5, parseInt(forceLevel))) : 1;
+
+    console.log(`🔧 Setting level to ${level} for testing`);
+    game.stateManager.set('game.currentLevel', level);
+    game.currentLevel = level;
+
+    await game.init();
+    game.start();
+
+    // Initialize Pet Selector UI - E002.1-002
+    const petSelectorContainer = document.getElementById('petSelectorContainer');
+    if (petSelectorContainer) {
+        const petSelector = new PetSelector(petSelectorContainer, game);
+
+        // Set pet from URL before rendering - E003.1-003
+        petSelector.currentPet = selectedPet;
+        petSelector.saveSelection(selectedPet);
+
+        petSelector.render();
+
+        // Store petSelector on game for auto-dismiss - E003.1-002
+        game.petSelector = petSelector;
+
+        console.log(`🐱 Pet Selector initialized with: ${petSelector.getSelectedPet() === 'A' ? 'Bowie Cat' : 'Buttercup Cat'}`);
+
+        // Set initial pet configuration
+        game.changePet(petSelector.getSelectedPet());
+
+        // Auto-dismiss pet selector after delay - E003.1-002
+        setTimeout(() => {
+            if (petSelector.isVisible && petSelector.isVisible()) {
+                petSelector.hide();
+            }
+        }, 10000); // Hide after 10 seconds
     }
-    
-    game.init().start();
-    
+
     console.log('✅ Cat Platformer loaded successfully');
     console.log('🎯 Modular architecture: Canvas Management Module Complete');
     console.log('📦 Build system: Active');

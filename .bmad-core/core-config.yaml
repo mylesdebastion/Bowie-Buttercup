@@ -1,43 +1,23 @@
-# BMad Core Configuration for Cat Platformer
-
-projectName: "Cat Platformer Game"
-projectType: "game"
-framework: "vanilla-js"
-
-# Files the dev agent should always load
+# <!-- Powered by BMAD™ Core -->
+markdownExploder: true
+qa:
+  qaLocation: docs/qa
+prd:
+  prdFile: docs/prd.md
+  prdVersion: v4
+  prdSharded: true
+  prdShardedLocation: docs/prd
+  epicFilePattern: epic-{n}*.md
+architecture:
+  architectureFile: docs/architecture.md
+  architectureVersion: v4
+  architectureSharded: true
+  architectureShardedLocation: docs/architecture
+customTechnicalDocuments: null
 devLoadAlwaysFiles:
-  - docs/architecture/game-mechanics.md
-  - docs/architecture/entity-system.md
   - docs/architecture/coding-standards.md
-
-# Project-specific paths
-paths:
-  source: "src"
-  dist: "dist"
-  docs: "docs"
-  tests: "tests"
-  assets: "assets"
-
-# Build configuration
-build:
-  tool: "vite"
-  entry: "src/index.js"
-  output: "dist/index.html"
-  inline: true  # Single HTML file output
-
-# Testing configuration
-testing:
-  framework: "vitest"
-  coverage: true
-  
-# Code quality
-quality:
-  linter: "eslint"
-  formatter: "prettier"
-  
-# Game-specific settings
-gameConfig:
-  canvas: "2d"
-  targetFPS: 60
-  tileSize: 16
-  defaultScale: 2
+  - docs/architecture/tech-stack.md
+  - docs/architecture/source-tree.md
+devDebugLog: .ai/debug-log.md
+devStoryLocation: docs/stories
+slashPrefix: BMad

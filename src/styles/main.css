@@ -248,3 +248,110 @@ select {
   outline: 2px solid var(--accent-color);
   outline-offset: 2px;
 }
+
+/* Pet Selector Styles - E002.1-002 */
+#petSelectorContainer {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  background: rgba(0, 0, 0, 0.85);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+  z-index: var(--z-controls);
+  min-width: 280px;
+}
+
+.pet-selector-section h3 {
+  margin: 0 0 var(--spacing-md) 0;
+  color: var(--accent-color);
+  font-size: var(--font-size-lg);
+  border-bottom: 1px solid var(--accent-bg);
+  padding-bottom: var(--spacing-sm);
+}
+
+.pet-selector-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.pet-option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: var(--secondary-bg);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.pet-option:hover {
+  background: var(--accent-bg);
+}
+
+.pet-option input[type="radio"] {
+  margin-top: 2px;
+  cursor: pointer;
+  width: auto;
+}
+
+.pet-option span {
+  display: block;
+}
+
+.pet-name {
+  font-weight: bold;
+  color: var(--accent-color);
+  margin-bottom: var(--spacing-xs);
+}
+
+.pet-description {
+  font-size: var(--font-size-sm);
+  color: var(--primary-color);
+  opacity: 0.8;
+}
+
+.pet-preview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: var(--primary-bg);
+  border-radius: var(--border-radius);
+}
+
+.pet-preview-container label {
+  font-size: var(--font-size-sm);
+  color: var(--primary-color);
+  opacity: 0.8;
+}
+
+#petPreviewCanvas {
+  border: 1px solid var(--accent-bg);
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* Mobile responsiveness for Pet Selector */
+@media (max-width: 768px) {
+  #petSelectorContainer {
+    top: auto;
+    bottom: var(--spacing-md);
+    right: var(--spacing-md);
+    min-width: 200px;
+    font-size: var(--font-size-sm);
+  }
+
+  .pet-selector-section h3 {
+    font-size: var(--font-size-md);
+  }
+
+  #petPreviewCanvas {
+    width: 48px;
+    height: 48px;
+  }
+}

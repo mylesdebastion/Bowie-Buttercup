@@ -67,13 +67,13 @@ class CatPlatformerGame {
     // Subscribe to game state events
     this.setupStateListeners();
 
-    // Load level (start on Level 5 to test pet bowls)
-    this.stateManager.set('game.currentLevel', 5);
+    // Load level (start on Level 1 for platform layout testing)
+    this.stateManager.set('game.currentLevel', 1);
     await this.loadLevel(this.stateManager.get('game.currentLevel'));
     
-    // Position player near the bowls for testing (like monolithic version)
-    this.stateManager.set('runtime.player.x', 400);
-    this.stateManager.set('runtime.player.y', 350);
+    // Position player at Level 1 spawn point (like monolithic version)
+    this.stateManager.set('runtime.player.x', 100);
+    this.stateManager.set('runtime.player.y', 300);
 
     this.initialized = true;
     console.log('✅ Game initialized successfully');

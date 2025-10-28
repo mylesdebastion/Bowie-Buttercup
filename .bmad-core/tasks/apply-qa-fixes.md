@@ -1,3 +1,5 @@
+<!-- Powered by BMAD™ Core -->
+
 # apply-qa-fixes
 
 Implement fixes based on QA results (gate and assessments) for a specific story. This task is for the Dev agent to systematically consume QA outputs and apply code/test changes while only updating allowed sections in the story file.
@@ -14,8 +16,8 @@ Implement fixes based on QA results (gate and assessments) for a specific story.
 ```yaml
 required:
   - story_id: '{epic}.{story}' # e.g., "2.2"
-  - qa_root: from `bmad-core/core-config.yaml` key `qa.qaLocation` (e.g., `docs/project/qa`)
-  - story_root: from `bmad-core/core-config.yaml` key `devStoryLocation` (e.g., `docs/project/stories`)
+  - qa_root: from `.bmad-core/core-config.yaml` key `qa.qaLocation` (e.g., `docs/project/qa`)
+  - story_root: from `.bmad-core/core-config.yaml` key `devStoryLocation` (e.g., `docs/project/stories`)
 
 optional:
   - story_title: '{title}' # derive from story H1 if missing
@@ -43,7 +45,7 @@ optional:
 
 ### 0) Load Core Config & Locate Story
 
-- Read `bmad-core/core-config.yaml` and resolve `qa_root` and `story_root`
+- Read `.bmad-core/core-config.yaml` and resolve `qa_root` and `story_root`
 - Locate story file in `{story_root}/{epic}.{story}.*.md`
   - HALT if missing and ask for correct story id/path
 
@@ -111,7 +113,7 @@ Status Rule:
 
 ## Blocking Conditions
 
-- Missing `bmad-core/core-config.yaml`
+- Missing `.bmad-core/core-config.yaml`
 - Story file not found for `story_id`
 - No QA artifacts found (neither gate nor assessments)
   - HALT and request QA to generate at least a gate file (or proceed only with clear developer-provided fix list)

@@ -113,11 +113,11 @@ export class UIManager {
         }
         
         // Render active modal UI components
-        if (this.settingsPanel && this.settingsPanel.isVisible()) {
+        if (this.settingsPanel && typeof this.settingsPanel.isVisible === 'function' && this.settingsPanel.isVisible()) {
             this.settingsPanel.render(ctx, camera);
         }
-        
-        if (this.spriteEditor && this.spriteEditor.isVisible()) {
+
+        if (this.spriteEditor && typeof this.spriteEditor.isVisible === 'function' && this.spriteEditor.isVisible()) {
             this.spriteEditor.render(ctx, camera);
         }
         

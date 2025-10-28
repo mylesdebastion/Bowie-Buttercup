@@ -1,3 +1,5 @@
+<!-- Powered by BMAD™ Core -->
+
 # Story Definition of Done (DoD) Checklist
 
 ## Instructions for Developer Agent
@@ -39,13 +41,14 @@ The goal is quality delivery, not just checking boxes.]]
    - [ ] No new linter errors or warnings introduced.
    - [ ] Code is well-commented where necessary (clarifying complex logic, not obvious statements).
 
-3. **Testing:**
+3. **Manual Verification:**
 
-   [[LLM: Testing proves your code works. Be honest about test coverage]]
-   - [ ] All required unit tests as per the story and `Operational Guidelines` Testing Strategy are implemented.
-   - [ ] All required integration tests (if applicable) as per the story and `Operational Guidelines` Testing Strategy are implemented.
-   - [ ] All tests (unit, integration, E2E if applicable) pass successfully.
-   - [ ] Test coverage meets project standards (if defined).
+   [[LLM: Manual testing proves your code works. Be thorough and honest about what you tested]]
+   - [ ] Functionality manually tested in browser (development server).
+   - [ ] Tested across responsive breakpoints (mobile, tablet, desktop).
+   - [ ] Interactive behaviors verified (clicks, keyboard, visual feedback).
+   - [ ] Edge cases and error conditions manually tested.
+   - [ ] No console errors or warnings introduced.
 
 4. **Functionality & Verification:**
 

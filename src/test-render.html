@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Render Test</title>
+    <style>
+        body { margin: 0; padding: 20px; background: #000; color: #0f0; font-family: monospace; }
+        canvas { border: 2px solid #0f0; display: block; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>Modular Game Render Test</h1>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <div id="output"></div>
+
+    <script type="module">
+        import { Game } from './core/Game.js';
+
+        const canvas = document.getElementById('gameCanvas');
+        const output = document.getElementById('output');
+
+        function log(msg) {
+            output.innerHTML += msg + '<br>';
+            console.log(msg);
+        }
+
+        log('Creating Game instance...');
+        const game = new Game(canvas);
+
+        log('Initializing game...');
+        await game.init();
+
+        log('Starting game...');
+        game.start();
+
+        // Test render manually
+        setTimeout(() => {
+            log('Testing manual render...');
+            const ctx = canvas.getContext('2d');
+
+            log(`Canvas dimensions: ${canvas.width}x${canvas.height}`);
+            log(`Context exists: ${!!ctx}`);
+
+            // Try to draw something directly
+            ctx.fillStyle = '#FF0000';
+            ctx.fillRect(100, 100, 100, 100);
+            log('Drew red test square at 100,100');
+
+            // Check game state
+            log(`Game running: ${game.isRunning()}`);
+            log(`Game FPS: ${game.getFPS()}`);
+            log(`Player exists: ${!!game.player}`);
+            if (game.player) {
+                log(`Player position: ${game.player.x}, ${game.player.y}`);
+            }
+            log(`Level exists: ${!!game.level}`);
+            if (game.level) {
+                log(`Level size: ${game.level.length}x${game.level[0]?.length}`);
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

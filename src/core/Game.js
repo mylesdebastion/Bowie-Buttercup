@@ -15,8 +15,12 @@ import { LevelManager, Level1, Level2, Level3, Level4, Level5 } from '../levels/
 import { UIManager } from '../ui/index.js';
 import PerformanceMonitor from '../performance/PerformanceMonitor.js';
 import memoryManager from '../performance/MemoryManager.js';
+import { getSpriteSystem } from './sprites/index.js';
+import { PlayerEntity } from '../entities/PlayerEntity.js';
 
 // Core classes extracted from monolithic version
+// DEPRECATED: Legacy Player class - replaced by PlayerEntity for sprite system integration
+// Kept for reference during migration, can be removed once all dependencies are migrated
 class Player {
     constructor() {
         this.x = 100;
@@ -180,18 +184,28 @@ class Player {
 
     updateAnimation(dt) {
         this.animTimer += dt;
-        
+
         if (this.animTimer > 200) {
             this.animFrame = (this.animFrame + 1) % 4;
             this.animTimer = 0;
         }
 
+        // Determine animation state
+        let newState;
         if (!this.grounded) {
-            this.currentAnimation = this.vy < 0 ? 'jump' : 'fall';
+            newState = this.vy < 0 ? 'jump_up' : 'fall_down';
+            this.currentAnimation = this.vy < 0 ? 'jump' : 'fall'; // Legacy compatibility
         } else if (Math.abs(this.vx) > 10) {
+            newState = 'run';
             this.currentAnimation = 'run';
         } else {
+            newState = 'idle_sit';
             this.currentAnimation = 'idle';
+        }
+
+        // Update sprite system animation if available - E002.1-002
+        if (typeof game !== 'undefined' && game.spriteSystem) {
+            game.spriteSystem.updateAnimation(dt, newState);
         }
     }
 
@@ -438,7 +452,9 @@ export class Game {
         });
 
         // Core game objects
-        this.player = new Player();
+        // Use PlayerEntity for sprite system integration - E002.1-001
+        this.player = new PlayerEntity();
+        this.player.initialize(this); // Initialize with game instance
         this.particles = [];
         this.fireballs = [];
         this.mice = [];
@@ -463,20 +479,45 @@ export class Game {
         // Initialize Level Manager
         this.levelManager = new LevelManager(this);
         this.registerLevels();
-        
+
         // Legacy level properties for backward compatibility
         this.level = null;
         this.fishTreats = [];
-        
+
         // Initialize current level
         this.initCurrentLevel();
+
+        // Initialize sprite system - E002.1-001
+        this.spriteSystem = getSpriteSystem();
+        this.spritesLoaded = false;
 
         // Make game instance globally accessible for compatibility
         window.game = this;
     }
 
-    init() {
+    async init() {
         console.log('🎮 Game initialized');
+
+        // Load sprite sheets - E002.1-001
+        console.log('🎨 Loading sprite sheets...');
+        try {
+            await this.spriteSystem.loadAllSheets();
+            this.spritesLoaded = true;
+            console.log('✅ Sprite sheets loaded successfully');
+
+            // Auto-dismiss pet selector after sprites load - E003.1-002
+            if (this.petSelector) {
+                setTimeout(() => {
+                    if (this.petSelector.isVisible && this.petSelector.isVisible()) {
+                        this.petSelector.hide();
+                    }
+                }, 2000); // Hide after 2 seconds
+            }
+        } catch (error) {
+            console.warn('⚠️ Failed to load sprite sheets, using fallback rendering:', error);
+            this.spritesLoaded = false;
+        }
+
         return this;
     }
 
@@ -502,6 +543,28 @@ export class Game {
         console.log('▶️  Resuming game');
         this.gameLoop.resume();
         return this;
+    }
+
+    /**
+     * Change active pet sprite - E002.1-002
+     *
+     * @param {string} petId - Pet identifier ('A' or 'B')
+     */
+    changePet(petId) {
+        if (!petId || (petId !== 'A' && petId !== 'B')) {
+            console.warn(`Invalid pet ID: ${petId}, expected 'A' or 'B'`);
+            return;
+        }
+
+        console.log(`🐱 Changing pet to: ${petId === 'A' ? 'Bowie Cat' : 'Buttercup Cat'}`);
+
+        // Update sprite configuration
+        this.spriteSystem.config.loadConfig(petId);
+
+        // Reset animation state to prevent visual glitches
+        this.spriteSystem.animationController.setState(this.player.currentAnimation);
+
+        console.log(`✅ Pet changed successfully to ${petId}`);
     }
 
     // Level registration and management
@@ -952,7 +1015,7 @@ export class Game {
         
         // Render current level through Level Manager
         if (this.levelManager) {
-            this.levelManager.render(this.ctx, this.camera);
+            this.levelManager.render(this.canvasManager.ctx, this.camera);
         } else {
             // Legacy fallback
             this.drawLevel();
@@ -967,7 +1030,7 @@ export class Game {
         
         // Render UI system
         if (this.uiManager) {
-            this.uiManager.render(this.ctx, this.camera);
+            this.uiManager.render(this.canvasManager.ctx, this.camera);
         }
         
         // Final flush for any UI draw calls
@@ -981,38 +1044,50 @@ export class Game {
                 if (tile > 0) {
                     const drawX = x * 16;
                     const drawY = y * 16;
-                    
-                    let tileColor;
-                    if (tile === 1) {
-                        tileColor = '#8B4513'; // Brown platform
-                    } else if (tile === 2) {
-                        tileColor = '#FF4500'; // Lava/red
-                    } else if (tile === 3) {
-                        tileColor = '#DC143C'; // Red couch
-                    } else if (tile === 4) {
-                        tileColor = '#228B22'; // Grass
+
+                    // Use drawCouch for tile type 3 (couch/trampoline) - E003.1-001
+                    if (tile === 3 && this.currentLevel !== 5) {
+                        this.drawCouch(drawX, drawY);
+                    } else {
+                        let tileColor;
+                        if (tile === 1) {
+                            tileColor = '#8B4513'; // Brown platform
+                        } else if (tile === 2) {
+                            tileColor = '#FF4500'; // Lava/red
+                        } else if (tile === 3) {
+                            tileColor = '#DC143C'; // Red couch/wall (level 5)
+                        } else if (tile === 4) {
+                            tileColor = '#228B22'; // Grass
+                        }
+
+                        // Use Canvas module for drawing with high contrast support
+                        this.canvasManager.fillRect(drawX, drawY, 16, 16, tileColor);
                     }
-                    
-                    // Use Canvas module for drawing with high contrast support
-                    this.canvasManager.fillRect(drawX, drawY, 16, 16, tileColor);
                 }
             }
         }
     }
 
+    drawCouch(x, y) {
+        // Port of monolithic drawCouch() method - E003.1-001
+        // Creates layered pixel-art couch for trampoline effect
+        // Couch base
+        this.canvasManager.fillRect(x, y + 4, 16, 12, '#8B0000');
+
+        // Cushion
+        this.canvasManager.fillRect(x + 1, y + 2, 14, 10, '#DC143C');
+
+        // Cushion detail
+        this.canvasManager.fillRect(x + 3, y + 4, 10, 6, '#FF1493');
+
+        // Legs
+        this.canvasManager.fillRect(x + 2, y + 14, 2, 2, '#4B2F20');
+        this.canvasManager.fillRect(x + 12, y + 14, 2, 2, '#4B2F20');
+    }
+
     drawEntities() {
-        // Draw player as orange rectangle (matching current functionality)
-        let playerColor = this.player.invulnerable ? '#FF8C00' : '#FF6B35';
-        if (this.player.invulnerable && Math.floor(Date.now() / 100) % 2) {
-            playerColor = '#FFAAAA'; // Flashing when invulnerable
-        }
-        this.canvasManager.fillRect(
-            this.player.x - this.player.width / 2, 
-            this.player.y - this.player.height / 2, 
-            this.player.width, 
-            this.player.height,
-            playerColor
-        );
+        // Use PlayerEntity's render method for sprite/fallback rendering - E002.1-001
+        this.player.render(this.ctx, this.camera);
 
         // Draw fireballs
         this.fireballs.forEach(f => {

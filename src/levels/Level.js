@@ -198,11 +198,16 @@ export class Level {
                 if (tile > 0) {
                     const drawX = x * 16;
                     const drawY = y * 16;
-                    
-                    let tileColor = this.getTileColor(tile);
-                    
-                    if (this.game && this.game.canvasManager) {
-                        this.game.canvasManager.fillRect(drawX, drawY, 16, 16, tileColor);
+
+                    // Use drawCouch for tile type 3 (couch/trampoline) - E003.1-001
+                    if (tile === 3 && this.game && this.game.currentLevel !== 5) {
+                        this.drawCouch(drawX, drawY);
+                    } else {
+                        let tileColor = this.getTileColor(tile);
+
+                        if (this.game && this.game.canvasManager) {
+                            this.game.canvasManager.fillRect(drawX, drawY, 16, 16, tileColor);
+                        }
                     }
                 }
             }
@@ -213,10 +218,31 @@ export class Level {
         switch (tile) {
             case 1: return '#8B4513'; // Brown platform
             case 2: return '#FF4500'; // Lava/red or wood floor
-            case 3: return '#DC143C'; // Red couch/walls
+            case 3: return '#DC143C'; // Red couch/walls (level 5 only)
             case 4: return '#228B22'; // Grass/cat tree
             default: return '#8B4513';
         }
+    }
+
+    drawCouch(x, y) {
+        // Port of monolithic drawCouch() method - E003.1-001
+        // Creates layered pixel-art couch for trampoline effect
+        if (!this.game || !this.game.canvasManager) return;
+
+        const canvas = this.game.canvasManager;
+
+        // Couch base
+        canvas.fillRect(x, y + 4, 16, 12, '#8B0000');
+
+        // Cushion
+        canvas.fillRect(x + 1, y + 2, 14, 10, '#DC143C');
+
+        // Cushion detail
+        canvas.fillRect(x + 3, y + 4, 10, 6, '#FF1493');
+
+        // Legs
+        canvas.fillRect(x + 2, y + 14, 2, 2, '#4B2F20');
+        canvas.fillRect(x + 12, y + 14, 2, 2, '#4B2F20');
     }
 
     drawLevelEntities(ctx, camera) {
@@ -300,6 +326,15 @@ export class Level {
         this.game = game;
         this.player = game.player;
         this.entityManager = game.entityManager;
+    }
+
+    // State query methods
+    isActive() {
+        return this.active;
+    }
+
+    isCompleted() {
+        return this.completed;
     }
 
     // Debug methods

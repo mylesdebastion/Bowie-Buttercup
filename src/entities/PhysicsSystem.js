@@ -433,6 +433,64 @@ export class PhysicsSystem {
     }
     
     /**
+     * Apply gravity to an entity (for test compatibility)
+     */
+    applyGravity(entity, deltaTime) {
+        if (entity.active && !entity.grounded && !entity.climbing) {
+            entity.vy += this.GRAVITY * deltaTime / 1000;
+            entity.vy = Math.min(entity.vy, this.MAX_FALL_SPEED);
+        }
+    }
+    
+    /**
+     * Check ground collision (for test compatibility)
+     */
+    checkGroundCollision(entity, level) {
+        const bounds = entity.getBounds();
+        const feetY = bounds.bottom;
+        const gridY = Math.floor(feetY / this.tileSize);
+        const gridXLeft = Math.floor(bounds.left / this.tileSize);
+        const gridXRight = Math.floor(bounds.right / this.tileSize);
+        
+        if (gridY >= 0 && gridY < level.length) {
+            const groundHit = (
+                (gridXLeft >= 0 && gridXLeft < level[0].length && level[gridY][gridXLeft] > 0) ||
+                (gridXRight >= 0 && gridXRight < level[0].length && level[gridY][gridXRight] > 0)
+            );
+            
+            return {
+                grounded: groundHit,
+                groundY: gridY * this.tileSize,
+                collision: groundHit
+            };
+        }
+        
+        return { grounded: false, collision: false };
+    }
+    
+    /**
+     * Check wall collision (for test compatibility)  
+     */
+    checkWallCollision(entity, level) {
+        const bounds = entity.getBounds();
+        const gridY = Math.floor(entity.y / this.tileSize);
+        const gridXLeft = Math.floor(bounds.left / this.tileSize);
+        const gridXRight = Math.floor(bounds.right / this.tileSize);
+        
+        if (gridY >= 0 && gridY < level.length) {
+            const leftWall = gridXLeft >= 0 && gridXLeft < level[0].length && level[gridY][gridXLeft] > 0;
+            const rightWall = gridXRight >= 0 && gridXRight < level[0].length && level[gridY][gridXRight] > 0;
+            
+            return {
+                collision: leftWall || rightWall,
+                side: leftWall ? 'left' : (rightWall ? 'right' : null)
+            };
+        }
+        
+        return { collision: false };
+    }
+
+    /**
      * Get collision statistics for performance monitoring
      */
     getCollisionStats() {

@@ -3,6 +3,41 @@
 ## Project Overview
 AI-powered platform where users upload pet photos → generates pixel art → creates personalized platformer games at custom URLs (sparkleclassic.com/[petname]). Targeting $259k Year 1 revenue with $14.99-24.99 game purchases.
 
+## Project Scale & Testing Philosophy
+
+**Scale:** Small-to-medium creative coding project (solo developer/small team)
+
+**Testing Approach:**
+- **Manual testing** with human-in-the-loop verification (NOT automated test suites)
+- Browser DevTools for debugging and performance monitoring
+- Visual/interactive inspection of module behavior across views
+- Git history + development records as implementation verification
+
+**What We DON'T Use:**
+- ❌ Automated unit test frameworks (Vitest, Jest, etc.)
+- ❌ Integration test suites or E2E test frameworks
+- ❌ Code coverage metrics or test coverage requirements
+- ❌ CI/CD test pipelines
+- ❌ Formal QA department sign-offs
+
+**Exception - Playwright Skill for Visual Verification:**
+- ✅ **ONLY when explicitly requested by user**: Use the `playwright-skill` for automated visual regression testing
+- Use case: Comparing visual output between modular and monolithic game versions
+- This is an on-demand tool, NOT part of the standard development workflow
+- Visual tests are run at user request, not automatically for every feature
+
+**BMAD Workflow Adaptation:**
+- Architecture documents include **"Manual Verification Steps"** not "Test Suites"
+- Stories focus on **"Verification Checklist"** not "Test Coverage %"
+- Dev records document **manual testing performed**, not tests written
+- "Testing Strategy" sections describe **browser-based verification workflows**
+
+**Quality Assurance:**
+- Developer manually tests features in browser during development
+- Interactive behavior verified by direct interaction
+- Responsive design tested via browser DevTools (mobile/tablet/desktop)
+- Hardware integration (if applicable) tested with physical devices when available
+
 ## Current Status: Migration Phase - Controlled Transition
 ✅ **Planning Complete**: PRD, Architecture, Frontend Spec validated  
 🔄 **Active Phase**: Migrating monolithic game to modular structure  
@@ -54,7 +89,6 @@ open src/index.html            # Modular game development
 code src/                      # Work in modular structure
 
 # Migration tooling
-node scripts/migration/test-runner.js           # Run migration tests
 node scripts/migration/feature-extractor.js     # Extract features
 
 # Emergency overrides (use sparingly)
@@ -68,12 +102,12 @@ MIGRATION=true git commit      # Override for migration work
 pnpm dev --filter=web          # Next.js platform app
 pnpm dev --filter=api          # Node.js backend API
 
-# Start game development  
+# Start game development
 pnpm dev --filter=pet-platformer  # Game template development
 
-# Run tests
-pnpm test                      # All tests
-pnpm test --filter=web         # Platform tests only
+# Code quality checks
+pnpm lint                      # Run ESLint
+pnpm format                    # Run Prettier
 ```
 
 ## Epic Development Order
@@ -138,9 +172,10 @@ pnpm test --filter=web         # Platform tests only
 /bmad visual-verify
 ```
 - Captures modular version screenshot
-- Compares to monolithic baseline  
+- Compares to monolithic baseline
 - **FAILS epic if no visual match**
 - Required before any completion claims
+- **Note**: Can use `playwright-skill` for automated visual comparison when explicitly requested by user
 
 ### When Working on Web Platform
 - Reference `/docs/planning/prd-web-platform.md` for requirements
@@ -160,7 +195,7 @@ pnpm test --filter=web         # Platform tests only
 1. **New Features**: Implement in `/src/` modular structure only
 2. **Bug Fixes**: Fix in `/src/` if possible, emergency override for `/index.html`
 3. **Migration Work**: Use `MIGRATION=true git commit` for moving features
-4. **Testing**: Run migration test suite regularly
+4. **Verification**: Manually test in browser after changes
 
 #### Migration Guidelines
 - Reference `/docs/migration/migration-workflow.md` for complete workflow
@@ -176,10 +211,10 @@ pnpm test --filter=web         # Platform tests only
 
 ### Code Quality Standards
 - TypeScript strict mode for all new code
-- Jest tests for business logic
-- Playwright E2E tests for critical user flows
+- Manual verification in browser for functionality testing
+- Browser DevTools for debugging and performance monitoring
 - ESLint + Prettier for code formatting
-- Automated CI/CD with GitHub Actions
+- Git workflow with manual code review before merging
 
 ## Critical Success Factors
 1. **Speed to Market**: Manual pixel art for first 20 users to validate market
@@ -199,9 +234,9 @@ pnpm test --filter=web         # Platform tests only
 
 ### Important Files During Migration
 - **Migration Status**: `/docs/migration/feature-audit.md`
-- **Daily Workflow**: `/docs/migration/migration-workflow.md` 
-- **Test Results**: `migration-test-report.json` (generated)
+- **Daily Workflow**: `/docs/migration/migration-workflow.md`
 - **Hook Setup**: `./setup-hooks.sh`
+- **Browser Verification**: Manual testing in development server
 
 ---
 *Last Updated: 2025-01-26*  

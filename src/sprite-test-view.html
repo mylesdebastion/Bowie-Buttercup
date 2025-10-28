@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprite Test View - SparkleClassic</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        h1 {
+            color: #ff6b6b;
+            border-bottom: 2px solid #444;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #ffaa55;
+            margin-top: 30px;
+        }
+
+        .section {
+            background: #222;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+
+        .sprite-preview {
+            background: #333;
+            border: 2px solid #555;
+            margin: 10px 0;
+            padding: 10px;
+            display: inline-block;
+            image-rendering: pixelated;
+        }
+
+        .sprite-preview canvas {
+            image-rendering: pixelated;
+            border: 1px solid #666;
+        }
+
+        .control-group {
+            margin: 15px 0;
+        }
+
+        label {
+            display: block;
+            color: #aaa;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+
+        .status.success {
+            background: #2a5;
+            color: #fff;
+        }
+
+        .status.error {
+            background: #d32;
+            color: #fff;
+        }
+
+        .status.info {
+            background: #25a;
+            color: #fff;
+        }
+
+        .animation-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .anim-item {
+            text-align: center;
+        }
+
+        .anim-item canvas {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .anim-item label {
+            font-size: 11px;
+            color: #888;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .grid-cell {
+            background: #333;
+            border: 1px solid #555;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .grid-cell canvas {
+            image-rendering: pixelated;
+        }
+
+        .grid-cell label {
+            display: block;
+            margin-top: 5px;
+            font-size: 10px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎮 Sprite Test View</h1>
+    <p>Testing sprite sheet loading and rendering for modular game</p>
+
+    <div id="statusContainer"></div>
+
+    <div class="section">
+        <h2>📦 Sprite Sheet Loading</h2>
+
+        <div class="control-group">
+            <label>Bowie Cat (Sheet A)</label>
+            <div id="bowieStatus" class="status info">Loading...</div>
+            <div id="bowieThumb" class="sprite-preview"></div>
+        </div>
+
+        <div class="control-group">
+            <label>Buttercup Cat (Sheet B)</label>
+            <div id="buttercupStatus" class="status info">Loading...</div>
+            <div id="buttercupThumb" class="sprite-preview"></div>
+        </div>
+
+        <div class="control-group">
+            <label>Bonbon Dog (NPC)</label>
+            <div id="dogStatus" class="status info">Loading...</div>
+            <div id="dogThumb" class="sprite-preview"></div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🎬 Animation Previews</h2>
+        <div id="animationContainer" class="animation-row"></div>
+    </div>
+
+    <div class="section">
+        <h2>🔲 Sprite Grid (3x3)</h2>
+        <div id="gridContainer" class="grid"></div>
+    </div>
+
+    <script type="module">
+        // Sprite sheet paths - relative to src/sprite-test-view.html
+        const SPRITE_PATHS = {
+            bowie: '../bowie_cat_3x3.png',
+            buttercup: '../happy_buttercup_cat_3x3.png',
+            dog: '../bonbon_dog_3x3.png'
+        };
+
+        // Loaded sprite sheets
+        const sheets = {
+            bowie: null,
+            buttercup: null,
+            dog: null
+        };
+
+        // Animation state names (from 3x3 grid)
+        const SPRITE_GRID = [
+            ['dodge_roll', 'run_1', 'idle_sit'],
+            ['run_2', 'run_3', 'idle_sit_front'],
+            ['crouch', 'jump_up', 'fall_down']
+        ];
+
+        /**
+         * Load sprite sheet from URL
+         */
+        function loadSpriteSheet(name, url) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+
+                img.onload = () => {
+                    console.log(`✅ Loaded ${name}: ${img.width}x${img.height}`);
+                    sheets[name] = img;
+
+                    const statusEl = document.getElementById(`${name}Status`);
+                    if (statusEl) {
+                        statusEl.className = 'status success';
+                        statusEl.textContent = `✅ Loaded (${img.width}x${img.height})`;
+                    }
+
+                    resolve(img);
+                };
+
+                img.onerror = (error) => {
+                    console.error(`❌ Failed to load ${name} from ${url}:`, error);
+
+                    const statusEl = document.getElementById(`${name}Status`);
+                    if (statusEl) {
+                        statusEl.className = 'status error';
+                        statusEl.textContent = `❌ Failed to load from ${url}`;
+                    }
+
+                    reject(new Error(`Failed to load ${name}`));
+                };
+
+                console.log(`🔄 Loading ${name} from ${url}...`);
+                img.src = url;
+            });
+        }
+
+        /**
+         * Generate thumbnail preview
+         */
+        function generateThumbnail(img, size = 96) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(img, 0, 0, size, size);
+            return canvas;
+        }
+
+        /**
+         * Extract sprite cell from 3x3 grid
+         */
+        function extractSpriteCell(img, row, col, size = 64) {
+            const cellWidth = img.width / 3;
+            const cellHeight = img.height / 3;
+
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+
+            ctx.drawImage(
+                img,
+                col * cellWidth, row * cellHeight, cellWidth, cellHeight,
+                0, 0, size, size
+            );
+
+            return canvas;
+        }
+
+        /**
+         * Create looping animation
+         */
+        function createAnimation(img, frames, size = 48) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+
+            const cellWidth = img.width / 3;
+            const cellHeight = img.height / 3;
+
+            let frameIndex = 0;
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const frame = frames[frameIndex % frames.length];
+                ctx.drawImage(
+                    img,
+                    frame.col * cellWidth, frame.row * cellHeight, cellWidth, cellHeight,
+                    0, 0, size, size
+                );
+
+                frameIndex++;
+            }
+
+            animate();
+            setInterval(animate, 200); // 5 FPS animation
+
+            return canvas;
+        }
+
+        /**
+         * Display sprite grid
+         */
+        function displaySpriteGrid(img, containerID) {
+            const container = document.getElementById(containerID);
+            container.innerHTML = '';
+
+            SPRITE_GRID.forEach((rowData, row) => {
+                rowData.forEach((cellName, col) => {
+                    const cellDiv = document.createElement('div');
+                    cellDiv.className = 'grid-cell';
+
+                    const canvas = extractSpriteCell(img, row, col, 64);
+                    cellDiv.appendChild(canvas);
+
+                    const label = document.createElement('label');
+                    label.textContent = cellName;
+                    cellDiv.appendChild(label);
+
+                    container.appendChild(cellDiv);
+                });
+            });
+        }
+
+        /**
+         * Display animations
+         */
+        function displayAnimations() {
+            const container = document.getElementById('animationContainer');
+            container.innerHTML = '';
+
+            if (!sheets.dog) {
+                container.innerHTML = '<p>No sprite sheet loaded for animations</p>';
+                return;
+            }
+
+            // Dog run animation (row 1, cols 0-2)
+            const runAnim = createAnimation(sheets.dog, [
+                {row: 1, col: 0},
+                {row: 1, col: 1},
+                {row: 1, col: 2}
+            ], 64);
+
+            const runDiv = document.createElement('div');
+            runDiv.className = 'anim-item';
+            runDiv.appendChild(runAnim);
+            const runLabel = document.createElement('label');
+            runLabel.textContent = 'Dog Run';
+            runDiv.appendChild(runLabel);
+            container.appendChild(runDiv);
+
+            // Idle animation
+            const idleAnim = createAnimation(sheets.dog, [
+                {row: 0, col: 2}
+            ], 64);
+
+            const idleDiv = document.createElement('div');
+            idleDiv.className = 'anim-item';
+            idleDiv.appendChild(idleAnim);
+            const idleLabel = document.createElement('label');
+            idleLabel.textContent = 'Dog Idle';
+            idleDiv.appendChild(idleLabel);
+            container.appendChild(idleDiv);
+
+            // Jump animation
+            const jumpAnim = createAnimation(sheets.dog, [
+                {row: 2, col: 1},
+                {row: 2, col: 2}
+            ], 64);
+
+            const jumpDiv = document.createElement('div');
+            jumpDiv.className = 'anim-item';
+            jumpDiv.appendChild(jumpAnim);
+            const jumpLabel = document.createElement('label');
+            jumpLabel.textContent = 'Dog Jump/Fall';
+            jumpDiv.appendChild(jumpLabel);
+            container.appendChild(jumpDiv);
+        }
+
+        /**
+         * Initialize sprite test view
+         */
+        async function init() {
+            console.log('🎨 Initializing Sprite Test View');
+
+            const statusContainer = document.getElementById('statusContainer');
+            statusContainer.innerHTML = '<div class="status info">🔄 Loading sprite sheets...</div>';
+
+            try {
+                // Load all sprite sheets
+                await Promise.all([
+                    loadSpriteSheet('bowie', SPRITE_PATHS.bowie),
+                    loadSpriteSheet('buttercup', SPRITE_PATHS.buttercup),
+                    loadSpriteSheet('dog', SPRITE_PATHS.dog)
+                ]);
+
+                statusContainer.innerHTML = '<div class="status success">✅ All sprite sheets loaded successfully!</div>';
+
+                // Generate thumbnails
+                if (sheets.bowie) {
+                    document.getElementById('bowieThumb').appendChild(
+                        generateThumbnail(sheets.bowie, 128)
+                    );
+                }
+
+                if (sheets.buttercup) {
+                    document.getElementById('buttercupThumb').appendChild(
+                        generateThumbnail(sheets.buttercup, 128)
+                    );
+                }
+
+                if (sheets.dog) {
+                    document.getElementById('dogThumb').appendChild(
+                        generateThumbnail(sheets.dog, 128)
+                    );
+
+                    // Display sprite grid
+                    displaySpriteGrid(sheets.dog, 'gridContainer');
+
+                    // Display animations
+                    displayAnimations();
+                }
+
+            } catch (error) {
+                console.error('❌ Error loading sprite sheets:', error);
+                statusContainer.innerHTML = '<div class="status error">❌ Error loading sprite sheets. Check console for details.</div>';
+            }
+        }
+
+        // Start when page loads
+        init();
+    </script>
+</body>
+</html>

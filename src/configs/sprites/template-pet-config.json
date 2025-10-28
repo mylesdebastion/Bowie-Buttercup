@@ -1,0 +1,132 @@
+{
+  "__COMMENT__": "Template for creating new pet sprite configurations",
+  "__INSTRUCTIONS__": "1. Replace 'pet-template' with your unique pet ID, 2. Update name and description, 3. Set spriteSheet filename, 4. Configure all 9 required animation cells",
+
+  "id": "pet-template",
+  "name": "Template Pet",
+  "description": "Description of your pet's personality and appearance",
+  "spriteSheet": "your_sprite_sheet_3x3.png",
+  "sheet": "CUSTOM",
+  "version": "1.0.0",
+  "author": "Your Name",
+
+  "cells": [
+    {
+      "__REQUIRED__": "dodge_roll animation",
+      "r": 1,
+      "c": 1,
+      "crop": [0, 0, 32, 32],
+      "assign": "dodge_roll",
+      "pivot": [0.5, 1],
+      "flipX": false,
+      "description": "Rolling dodge animation"
+    },
+    {
+      "__REQUIRED__": "run_1 animation",
+      "r": 1,
+      "c": 2,
+      "crop": [32, 0, 32, 32],
+      "assign": "run_1",
+      "pivot": [0.5, 1],
+      "flipX": false,
+      "description": "Run cycle frame 1"
+    },
+    {
+      "__REQUIRED__": "idle_sit animation",
+      "r": 1,
+      "c": 3,
+      "crop": [64, 0, 32, 32],
+      "assign": "idle_sit",
+      "pivot": [0.5, 1],
+      "flipX": false,
+      "description": "Idle sitting pose (side view)"
+    },
+    {
+      "__REQUIRED__": "run_2 animation",
+      "r": 2,
+      "c": 1,
+      "crop": [0, 32, 32, 32],
+      "assign": "run_2",
+      "pivot": [0.5, 1],
+      "flipX": false,
+      "description": "Run cycle frame 2"
+    },
+    {
+      "__REQUIRED__": "run_3 animation",
+      "r": 2,
+      "c": 2,
+      "crop": [32, 32, 32, 32],
+      "assign": "run_3",
+      "pivot": [0.5, 1],
+      "flipX": false,
+      "description": "Run cycle frame 3"
+    },
+    {
+      "__REQUIRED__": "idle_sit_front animation",
+      "r": 2,
+      "c": 3,
+      "crop": [64, 32, 32, 32],
+      "assign": "idle_sit_front",
+      "pivot": [0.5, 1],
+      "flipX": false,
+      "description": "Idle sitting pose (front view)"
+    },
+    {
+      "__REQUIRED__": "crouch animation",
+      "r": 3,
+      "c": 1,
+      "crop": [0, 64, 32, 32],
+      "assign": "crouch",
+      "pivot": [0.5, 1],
+      "flipX": false,
+      "description": "Crouching pose"
+    },
+    {
+      "__REQUIRED__": "jump_up animation",
+      "r": 3,
+      "c": 2,
+      "crop": [32, 64, 32, 32],
+      "assign": "jump_up",
+      "pivot": [0.5, 1],
+      "flipX": false,
+      "description": "Jumping up animation"
+    },
+    {
+      "__REQUIRED__": "fall_down animation",
+      "r": 3,
+      "c": 3,
+      "crop": [64, 64, 32, 32],
+      "assign": "fall_down",
+      "pivot": [0.5, 1],
+      "flipX": false,
+      "description": "Falling down animation"
+    }
+  ],
+
+  "animations": {
+    "run": {
+      "frames": ["run_1", "run_2", "run_3"],
+      "speed": 100,
+      "loop": true,
+      "description": "Running animation cycle"
+    },
+    "idle": {
+      "frames": ["idle_sit"],
+      "speed": 150,
+      "loop": true,
+      "description": "Idle sitting animation"
+    },
+    "jump": {
+      "frames": ["jump_up"],
+      "speed": 150,
+      "loop": false,
+      "description": "Jumping animation"
+    },
+    "fall": {
+      "frames": ["fall_down"],
+      "speed": 150,
+      "loop": false,
+      "description": "Falling animation"
+    }
+  }
+}

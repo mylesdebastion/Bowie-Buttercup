@@ -1,0 +1,32 @@
+{
+  "name": "playwright-skill-gamedev",
+  "version": "1.0.0",
+  "description": "Automated testing for 2D browser-based platformer games with Playwright - test player controls, collision detection, performance, and game mechanics",
+  "author": "Claude Code Community",
+  "main": "run.js",
+  "scripts": {
+    "setup": "npm install && npx playwright install chromium",
+    "install-all-browsers": "npx playwright install chromium firefox webkit"
+  },
+  "keywords": [
+    "playwright",
+    "game-testing",
+    "platformer",
+    "browser-games",
+    "automation",
+    "canvas",
+    "webgl",
+    "phaser",
+    "pixijs",
+    "performance-testing",
+    "claude-skill",
+    "2d-games"
+  ],
+  "dependencies": {
+    "playwright": "^1.48.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "license": "MIT"
+}
