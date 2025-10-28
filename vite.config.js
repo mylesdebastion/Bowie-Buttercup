@@ -63,7 +63,53 @@ export default defineConfig({
     port: 3000,
     open: true,
     host: true,
-    cors: true
+    cors: true,
+    // Middleware for vanity URL routing
+    middlewareMode: false,
+    proxy: {}
+  },
+
+  // Custom server configuration for vanity URLs
+  configureServer(server) {
+    server.middlewares.use((req, res, next) => {
+      const url = req.url || '';
+
+      // Skip API routes
+      if (url.startsWith('/api/')) {
+        return next();
+      }
+
+      // Skip static assets (files with extensions)
+      if (url.includes('.') && !url.endsWith('.html')) {
+        return next();
+      }
+
+      // Skip root path
+      if (url === '/' || url === '') {
+        return next();
+      }
+
+      // Skip explicit paths to src/
+      if (url.startsWith('/src/')) {
+        return next();
+      }
+
+      // Match vanity URL pattern: /petname-safeword or /petname-safeword-number
+      const vanityUrlPattern = /^\/([a-z0-9-]+)$/;
+      const match = url.match(vanityUrlPattern);
+
+      if (match && match[1]) {
+        const slug = match[1];
+
+        // Validate slug format (must have at least one hyphen for petname-safeword)
+        if (slug.includes('-')) {
+          console.log(`🔀 Vanity URL detected: ${url} → /src/index.html (slug: ${slug})`);
+          req.url = '/src/index.html';
+        }
+      }
+
+      next();
+    });
   },
 
   // Preview server (for testing builds)
