@@ -9,6 +9,7 @@ import { GameLoop } from './core/game-loop.js';
 import { getStateManager } from './core/StateManager.js';
 import { getAssetLoader } from './core/asset-loader.js';
 import { ItemSystem } from './entities/items.js';
+import { getConfigLoader } from './core/ConfigLoader.js';
 
 // Global game instance
 let gameInstance = null;
@@ -20,7 +21,11 @@ class CatPlatformerGame {
     this.stateManager = getStateManager();
     this.gameLoop = null;
     this.assetLoader = getAssetLoader();
+    this.configLoader = getConfigLoader();
     this.initialized = false;
+
+    // Game configuration (loaded from vanity URL, query param, or default)
+    this.gameConfig = null;
 
     // Game systems
     this.itemSystem = new ItemSystem(this.stateManager);
@@ -46,6 +51,18 @@ class CatPlatformerGame {
 
     console.log('🎮 BMaD Trace: Starting Cat Platformer init (Modular Edition)...');
     console.log('🔍 BMaD Trace: Canvas element exists?', !!document.getElementById('gameCanvas'));
+
+    // Load game configuration from vanity URL, query param, or default
+    this.gameConfig = await this.configLoader.loadConfig();
+    console.log('🎮 Game Configuration:', this.gameConfig);
+
+    // Update page title with pet name
+    if (this.gameConfig.petName) {
+      document.title = `${this.gameConfig.petName}'s Adventure - SparkleClassic`;
+    }
+
+    // Store config in StateManager for access throughout the game
+    this.stateManager.set('game.config', this.gameConfig);
 
     // Setup canvas
     this.setupCanvas();
