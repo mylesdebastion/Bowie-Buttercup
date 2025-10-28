@@ -1057,6 +1057,8 @@
                                 if (game.mysteryBlock.hits >= 3) {
                                     game.spawnMysteryMouse(headTileX * 16, headTileY * 16);
                                     game.mysteryBlock.used = true;
+                                    // Make the block disappear (turn into empty space)
+                                    game.level[headTileY][headTileX] = 0;
                                 }
                             }
                         }
