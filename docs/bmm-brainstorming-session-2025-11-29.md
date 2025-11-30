@@ -6,22 +6,32 @@
 
 ## Session Start
 
-**Session Status:** 🔄 IN PROGRESS - Paused at Step 2 (Technique Selection)
+**Session Status:** ✅ COMPLETE - All phases finished
 
 **Completed Steps:**
 - ✅ Step 1: Session Setup - Goals and context captured
 - ✅ Advanced Elicitation: Pre-mortem Analysis, SWOT Analysis, Stakeholder Mapping
 - ✅ Partner Alignment Analysis: 7 questions answered by both partners, gaps identified
+- ✅ Step 2: Technique Selection - AI-Recommended Techniques chosen
+- ✅ Technique 1: First Principles Thinking - Major breakthrough on MVP strategy
+- ✅ Technique 2: Assumption Reversal - Identified 28 assumptions, deep dive on AI consistency & time investment
 
-**Next Step:** Step 2 - Select brainstorming techniques to generate solutions for:
-- Pricing/labor alignment (critical gap)
-- Radical simplification of 15 epics
-- Quick monetization path
-- Technical debt management
+**Next Step:** Technique 3 - Resource Constraints (radical epic prioritization)
+
+**Remaining:**
+- Technique 4: SCAMPER (optional simplification)
+- Convergent Phase: Organize and prioritize ideas
+- Action Planning: Define next steps
 
 **Resume Command:** `/bmad:bmm:workflows:brainstorm-project` and reference this document
 
-**Brainstorming Approach:** TBD - User will select approach in Step 2
+**Brainstorming Approach:** AI-Recommended Techniques (selected in Step 2)
+
+**Selected Techniques:**
+1. First Principles Thinking (Creative) - 20 min - Strip assumptions, rebuild pricing from reality
+2. Assumption Reversal (Deep) - 15 min - Challenge manual workflow and AI automation assumptions
+3. Resource Constraints (Structured) - 15 min - Force brutal MVP prioritization of 15 epics
+4. SCAMPER Method (Structured) - 15 min (optional) - Systematically simplify epics and technical debt
 
 **Session Focus:**
 This session addresses critical business and technical alignment for SparkleClassic, focusing on:
@@ -253,90 +263,479 @@ agreement.
 
 ---
 
-**Total Ideas Generated:** {{total_ideas}}
+**Total Ideas Generated:** 14 core ideas + 28 assumptions surfaced
 
 ### Key Themes Identified:
 
-{{key_themes}}
+**Theme 1: Ship Fast, Validate Reality**
+- Stop refactoring, ship working monolithic version with minimal vanity URL addition
+- Test assumptions with real data (AI consistency, actual time per game, stranger pricing validation)
+- Perfect is the enemy of done - customers care about experience, not code architecture
+
+**Theme 2: The Workflow is Already AI-Assisted (Not Manual)**
+- "Manual pixel art" was a misconception - already using ChatGPT/Google Nano for sprite generation
+- Need to test AI consistency across diverse pet types (size, fur, colors)
+- 15-20 min timeline depends on AI success rate (90%/70%/50% scenarios)
+
+**Theme 3: Validation Requires Strangers, Not Friends**
+- Friends/family testing provides false validation (biased, won't pay)
+- Real test: Etsy listing + $50 ads + see if ONE stranger buys at $28.99
+- Skip the 15-20 "product testers" entirely
+
+**Theme 4: Reframe Success Metrics Beyond $/Hour**
+- Value includes: creative collaboration with Aurelia, learning, shipping, partnership building
+- Phase-based investment: 3-6 months at low rates to reach $75/hr steady state
+- Question: Is this pure business or creative collab with revenue bonus?
+
+**Theme 5: Critical Unknowns Must Be Tested**
+- AI sprite generation consistency (highest operational risk)
+- Actual time per game with diverse pets
+- Real pricing validation with paying strangers
+- Etsy organic vs paid discovery dynamics
 
 ## Technique Sessions
 
-{{technique_sessions}}
+### 🎯 Technique 1: First Principles Thinking (Creative) - COMPLETED
+
+**Objective:** Strip away assumptions about pricing, workflow, and MVP to rebuild from fundamental truths.
+
+**Key Insights Discovered:**
+
+1. **The Workflow Isn't Manual - It's AI-Assisted**
+   - Already using ChatGPT/Google Nano for sprite generation from pet photos
+   - "Manual pixel art" assumption is actually "AI-assisted with human QC"
+   - Aurelia needs training on the process (2-3 sessions estimated)
+   - Target: 15-20 minutes total per game customization
+   - **Math:** 15-20 min at $28.99 = $86-115/hour effective rate (better than Myles' $60/hour concern!)
+   - At 60/40 split: Myles $52-69/hr, Aurelia $35-46/hr
+
+2. **The Real MVP Model (Etsy + Vanity URL)**
+   - Etsy handles payment/discovery (Aurelia is set on this)
+   - Customer sends pet photo via Etsy
+   - Aurelia/Myles process in backend (no customer-facing app needed for MVP)
+   - Customer receives vanity URL link to play their game
+   - **This eliminates need for Stripe integration, user auth, web app for MVP**
+
+3. **Friends/Family Testing Is a False Validation**
+   - 15-20 friends/family leads identified
+   - Won't pay because approached as "product testers"
+   - Won't validate pricing (biased feedback)
+   - **Real validation requires strangers on Etsy**
+   - Proposed test: List on Etsy, run $50 ads, see if ONE stranger buys at $28.99
+
+4. **The Technical Debt Trap - The REAL Blocker Revealed**
+   - Working monolithic HTML game exists (3,533 lines)
+   - Refactoring to modular architecture for weeks
+   - Modular version has broken sprites, lost testing UI, various bugs
+   - Set up Playwright visual testing to help AI fix refactor bugs
+   - **Classic developer trap: Refactoring before validating business model**
+   - Monolithic version WAS MVP-ready, only missing vanity URL delivery
+
+5. **The Vanity URL Shortcut**
+   - Don't need to refactor game code to add vanity URLs
+   - Sprites loaded at lines 3375-3411 in monolithic file
+   - Simple config injection approach: Add GAME_CONFIG object, replace hardcoded paths
+   - Can generate custom HTML per customer or use simple server
+   - **Only need to modify ~10 lines, not understand all 3,533**
+   - Time to ship: 3-5 days (vs 2-4 weeks finishing refactor)
+
+**Ideas Generated:**
+
+- **PAUSE modular refactor** - Save branch, return to working monolithic version
+- **Add minimal vanity URL delivery** - Config injection + simple deployment
+- **Week 1 Test:** Aurelia practices sprite workflow with 3 pets, time each one
+- **Week 2 Test:** Create Etsy listing, run $50 ads, validate pricing with real stranger
+- **Ship "imperfect" architecture** - Customers don't care about code quality, only experience
+- **Move fast on main branch** - Create feature/vanity-url-mvp branch off main
+- **Cherry-pick BMad v6** - Bring framework and relevant docs to new branch
+
+**Pricing Conflict Resolution:**
+- If 15-20 min workflow is proven, $28.99 pricing makes mathematical sense
+- Need real data from Aurelia's timed practice sessions
+- Stranger validation on Etsy will answer if price is right
+
+**Time Investment Reality:**
+- 1-2 hours/day each = 14-28 hours/week combined
+- At 15-20 min per game = potential 42-112 games/week (theoretical max)
+- Realistic target: 5-10 games/week initially while learning
+
+---
+
+### 🔄 Technique 2: Assumption Reversal (Deep) - COMPLETED
+
+**Objective:** Challenge and flip core assumptions to reveal hidden beliefs that might be limiting thinking.
+
+**Assumptions Identified (28 total):**
+
+**Confident Assumptions:**
+- #12: Pet owners are our target market ✅
+- #6: Cute factor + personalization is enough value (if price is right) ✅
+- #14: One week is enough time for vanity URL ✅
+
+**Nervous/Uncertain Assumptions:**
+1. ~~"Need manual pixel art for first 20 users"~~ (FLIPPED - it's AI-assisted)
+2. "Aurelia needs formal training before generating sprites"
+3. **"AI image generation will be consistent across different pet sizes/dimensions"** ⚠️ HIGH RISK
+4. "15-20 minutes per game is achievable"
+5. "Customers need sophisticated, bug-free game to justify $28.99"
+7. "Desktop ZIP delivery is too much friction"
+8. "Web app with vanity URL is required for MVP"
+9. "Etsy is the right channel for acquisition"
+10. "Need to test with friends/family first before strangers"
+11. "People will pay $28.99 for custom pet game"
+13. ~~"Need modular architecture before shipping"~~ (FLIPPED)
+15. "Can't ship with the bugs we know about"
+16. "Can scale beyond doing work ourselves" (SOPs for others)
+17. "Add-ons will generate extra $10 per customer"
+18. "Social media will generate income"
+19. "Etsy provides organic discovery" (vs paid ads required)
+20. "Cash flow supports paying Aurelia monthly within 3 months"
+21. "Customers will play the game more than once" (replay value)
+22. "Customers will share with friends" (viral potential)
+23. "Customers want to OWN the game" (vs play once)
+24. "Both partners can sustain 1-2 hours/day for 3+ months"
+25. "Manual workflow is temporary - will automate later"
+26. "Aurelia's training will be quick (2-3 sessions)"
+27. "3 months is enough to know if business is viable"
+28. **"Myles' success goal ($1k/month for 2-3 hrs/week) is achievable"** ⚠️ HIGH RISK
+
+**Deep Dive: Assumption #3 - AI Image Generation Consistency**
+
+**Risk Analysis:**
+- **90% AI Success Rate (Optimistic):** 20 min avg → $87/hr effective rate ✅
+- **70% AI Success Rate (Realistic?):** 28 min avg → $62/hr effective rate ⚠️
+- **50% AI Success Rate (Pessimistic):** 34 min avg → $51/hr effective rate ❌
+
+**Unknowns:**
+- Success rate with diverse pets (size, fur length, colors, photo quality)
+- Manual touch-up time required for failed generations
+- Quality bar decisions (ship meh sprites vs redo vs reject orders)
+- Neither partner has tested AI consistency with varied pet types yet
+
+**Critical Test Needed:**
+- Aurelia generates sprites for 10 different pet types
+- Time each attempt (first try vs iterations vs manual touch-up)
+- Measure actual success rate and average time
+- **This test answers both Assumption #3 AND validates 15-20 min timeline**
+
+**Deep Dive: Assumption #28 - Time Investment vs Worth It**
+
+**Reframed Question:** Not just $/hour - what makes this worthwhile?
+
+**Phase-Based Time Investment Reality:**
+- **Phase 1 (Weeks 1-2):** 17-27 hours for $28.99 = $1-1.70/hr setup investment
+- **Phase 2 (Months 1-3):** 12-25 hrs/month for $145-290 = $6-24/hr learning phase
+- **Phase 3 (Months 4-6):** 12-20 hrs/month for $580-870 = $29-72/hr scaling phase
+- **Phase 4 (Months 7-12):** 12-13 hrs/month for $1,000 = $77-83/hr steady state ✅
+
+**The Investment Question:**
+- Willing to invest 50-100 hours over 3-6 months at low rates ($5-20/hr) to reach $75/hr?
+- Or need Day 1 profitability?
+
+**Value Beyond $/Hour:**
+- Creative collaboration with Aurelia (intrinsic value)
+- Learning AI-assisted development (skill building)
+- Shipping real product to real customers (portfolio/pride)
+- Partnership strengthening (relationship value)
+- Future potential/opportunities (option value)
+
+**Questions for Reflection:**
+1. What's YOUR AI sprite success rate so far? (How many attempts per good sprite?)
+2. Can you/Aurelia do manual pixel touch-ups if needed?
+3. Where does this project sit? (Pure business / Creative collab / Learning / Portfolio / Lifestyle)
+4. What combo of $/hour + fun + learning + partnership makes it "worth it"?
+5. What's your "good enough" threshold for a side hustle?
+
+**Key Insight:**
+If this is "creative collab fun" with Aurelia, the $/hour calculation might be the WRONG metric. The value might be in the collaboration, learning, and shipping together - with revenue as a bonus, not the primary goal.
+
+---
 
 ## Idea Categorization
 
 ### Immediate Opportunities
 
-_Ideas ready to implement now_
+_Ideas ready to implement now (Next 7-14 days)_
 
-{{immediate_opportunities}}
+**Development:**
+- Pause modular refactor, create feature/vanity-url-mvp branch off main
+- Add config injection to monolithic game (modify ~10 lines at lines 3375-3411)
+- Set up simple vanity URL deployment (static files or basic server approach)
+- Cherry-pick BMad v6 framework + relevant docs to new branch
+
+**Workflow Validation:**
+- Aurelia: Test AI sprite workflow with 10 diverse pet photos (different sizes, fur types, colors)
+- Time each attempt (first try vs iterations vs manual touch-up needed)
+- Measure actual AI success rate and average time per game
+- Define quality bar for sprite acceptance (ship vs redo vs reject)
+
+**Market Validation:**
+- Create Etsy listing with best example game (Bowie or Buttercup)
+- Run $50 Etsy ad campaign targeting "custom pet gifts"
+- Validate $28.99 pricing with ONE real stranger purchase
+- Skip friends/family testing entirely
+
+**Partner Alignment:**
+- Discuss time investment expectations with Aurelia (3-6 month phase-based view)
+- Share AI success rate scenarios (90%/70%/50%) and implications
+- Align on value beyond $/hour (creative collab, learning, fun vs pure business)
 
 ### Future Innovations
 
-_Ideas requiring development/research_
+_Ideas requiring development/research (Post-MVP validation)_
 
-{{future_innovations}}
+**Product Enhancements:**
+- Add-ons: favorite toy or bed customization ($10 extra per add-on)
+- Multiple pet characters in same game
+- Different game templates (not just platformer)
+- Social sharing features (leaderboards, friend challenges)
+
+**Business Model Evolution:**
+- Social media income streams (TikTok/Instagram content creation)
+- Subscription model (new game each month)
+- B2B: Pet stores/vets offering games as upsells
+- Licensing pixel art for other uses
+
+**Workflow Automation:**
+- Automate sprite generation pipeline (reduce human QC time)
+- Scale beyond manual production (hire artists, train team)
+- SOP documentation for others to execute workflow
+- Customer self-service portal (upload photo, get game)
+
+**Technical Improvements:**
+- Resume modular refactor (if business validates and scale requires it)
+- Build proper web app with Stripe + user accounts (MVP 2.0)
+- Mobile app version of games
+- Game customization beyond sprites (levels, music, themes)
 
 ### Moonshots
 
-_Ambitious, transformative concepts_
+_Ambitious, transformative concepts (12-24 months out)_
 
-{{moonshots}}
+- **Full AI Automation:** Photo → game in 60 seconds, zero human touch
+- **Gaming Platform:** Marketplace of custom pet games (not just ours)
+- **Pet Metaverse:** Persistent pet character across multiple games/experiences
+- **Physical Products:** Print pixel art sprites on merch, cards, posters
+- **Educational Games:** Reading/math games starring kids' pets
+- **VR/AR Integration:** See your pet character in augmented reality
 
 ### Insights and Learnings
 
 _Key realizations from the session_
 
-{{insights_learnings}}
+**Business Model Insights:**
+- Etsy + vanity URL is simpler MVP than Stripe + web app + user auth
+- Customer never interacts with backend - only Aurelia/Myles do
+- At 15-20 min per game and $28.99, effective rate is $86-115/hour (math works!)
+- Friends/family won't validate pricing - need strangers with money on the line
+
+**Technical Insights:**
+- Monolithic version was MVP-ready weeks ago - refactor was premature optimization
+- Vanity URL doesn't require refactoring game code - just config injection
+- Only need to modify ~10 lines to enable customization
+- "Technical debt" was blocking business validation, not enabling it
+
+**Partnership Insights:**
+- Pricing conflict ($28.99 vs $60/hr) resolves if 15-20 min workflow is proven
+- Both partners assumed AI would make it "quick and simple" - needs testing
+- Time/money math requires 3-6 month investment view, not instant ROI
+- Value might be in collaboration and learning, not just revenue
+
+**Workflow Insights:**
+- "Manual pixel art" was misconception - already AI-assisted with ChatGPT/Nano
+- AI consistency across diverse pets is untested (highest operational risk)
+- Success rate scenarios: 90% = great, 70% = tight, 50% = doesn't work
+- Quality bar decision needed: ship meh sprites vs redo vs reject orders
+
+**Market Insights:**
+- Pet owners pay $30-50+ for personalized products (not comparing to AAA games)
+- Value is in keepsake/novelty, not sophisticated game mechanics
+- Bugs might not matter if cute factor + personalization deliver emotional value
+- Need to test if Etsy provides organic discovery or requires paid ads every time
 
 ## Action Planning
 
 ### Top 3 Priority Ideas
 
-#### #1 Priority: {{priority_1_name}}
+#### #1 Priority: Test AI Sprite Workflow Reality
 
-- Rationale: {{priority_1_rationale}}
-- Next steps: {{priority_1_steps}}
-- Resources needed: {{priority_1_resources}}
-- Timeline: {{priority_1_timeline}}
+**Rationale:** This is the highest operational risk. If AI success rate is <70%, the entire business model timeline breaks. Must validate BEFORE building vanity URL system or listing on Etsy. This single test answers multiple critical questions: AI consistency, actual time per game, quality bar, and validates the 15-20 min assumption.
 
-#### #2 Priority: {{priority_2_name}}
+**Next steps:**
+1. Aurelia collects 10 diverse pet photos (small/large, different fur types, colors, photo quality variations)
+2. Aurelia uses ChatGPT/Google Nano to generate sprites using Myles' technique
+3. Time each attempt: first try → iterations → manual touch-up (if needed)
+4. Document: Success/fail, time taken, quality assessment
+5. Calculate actual AI success rate and average time per game
+6. Myles reviews results and defines quality bar (ship vs redo vs reject)
 
-- Rationale: {{priority_2_rationale}}
-- Next steps: {{priority_2_steps}}
-- Resources needed: {{priority_2_resources}}
-- Timeline: {{priority_2_timeline}}
+**Resources needed:**
+- 10 pet photos (from internet or friends, not customers yet)
+- ChatGPT Plus or Google Nano access
+- Myles' sprite generation technique/prompts documented
+- Spreadsheet to track: pet type, attempts, time, quality score
 
-#### #3 Priority: {{priority_3_name}}
+**Owner:** Aurelia (lead), Myles (support/review)
+**Target:** Complete within 3-5 days
 
-- Rationale: {{priority_3_rationale}}
-- Next steps: {{priority_3_steps}}
-- Resources needed: {{priority_3_resources}}
-- Timeline: {{priority_3_timeline}}
+---
+
+#### #2 Priority: Ship Monolithic + Vanity URL MVP
+
+**Rationale:** Working game exists on main branch. Only missing piece is vanity URL delivery. With ~10 line code change + simple deployment, can ship in 3-5 days instead of waiting 2-4 weeks for modular refactor. This unblocks first customer delivery and business model validation. Validates "good enough" hypothesis - customers care about experience, not code architecture.
+
+**Next steps:**
+1. Create feature/vanity-url-mvp branch off main branch
+2. Cherry-pick BMad v6 framework (.bmad/ folder) from modularization branch
+3. Cherry-pick relevant docs (not refactor-specific epics)
+4. Add GAME_CONFIG injection to monolithic index.html (lines 3375-3411)
+5. Replace hardcoded sprite paths with config references
+6. Set up simple vanity URL deployment (static files to Vercel/Netlify or basic Node server)
+7. Test with Bowie/Buttercup example at sparkleclassic.com/bowie
+8. Document deployment process for Aurelia to upload new games
+
+**Resources needed:**
+- Access to main branch (working monolithic game)
+- Hosting platform (Vercel/Netlify/Cloudflare Pages - free tier OK)
+- Domain: sparkleclassic.com (already owned)
+- 5-10 hours development time (Myles)
+
+**Owner:** Myles (lead)
+**Target:** Complete within 5-7 days (can start after Priority #1 results)
+
+---
+
+#### #3 Priority: Validate Pricing with Real Stranger on Etsy
+
+**Rationale:** All pricing discussion is theoretical until ONE stranger pays $28.99. This is the ultimate validation that matters more than friends/family opinions. Etsy test answers: Will strangers buy? Is $28.99 right price? Does Etsy discovery work? Does cute game deliver enough value? Small investment ($50 ads) for critical business model validation.
+
+**Next steps:**
+1. Create Etsy shop (if not exists) - SparkleClassic
+2. Create professional listing with best example game (Bowie or Buttercup)
+3. Write compelling product description (focus on keepsake/novelty, not game sophistication)
+4. Take quality screenshots/video of gameplay
+5. Set price: $28.99 (or $24.99 "early bird special")
+6. Set up Etsy ads with $50 budget targeting "custom pet gifts," "personalized pet," "pet lovers"
+7. Monitor: clicks, favorites, cart adds, actual purchases
+8. If purchase happens: Deliver game, get feedback, ask for review
+9. Document: What messaging worked? What questions did buyers ask? What hesitations?
+
+**Resources needed:**
+- Etsy seller account (one-time setup)
+- Quality game example (from Priority #2)
+- Product photos/video
+- $50 ad budget
+- Aurelia: Etsy shop setup, listing creation, customer communication
+
+**Owner:** Aurelia (lead), Myles (support)
+**Target:** Launch within 10-14 days (after Priorities #1 and #2 complete)
+
+---
+
+### Other Priority Actions (All Important, Lower Urgency)
+
+**Partner Alignment Discussion (Week 1):**
+- Share brainstorming session results with Aurelia
+- Discuss 3-6 month time investment expectations
+- Align on value beyond $/hour (creative collab vs pure business)
+- Review AI success rate scenarios and implications
+
+**Documentation (Ongoing):**
+- Document Myles' AI sprite generation technique as SOP
+- Create workflow checklist for Aurelia
+- Define quality bar for sprite acceptance criteria
+
+**Technical Prep (Week 2-3):**
+- Set up BMad v6 on vanity-url-mvp branch
+- Update relevant planning docs on new branch
+- Prepare deployment infrastructure
 
 ## Reflection and Follow-up
 
 ### What Worked Well
 
-{{what_worked}}
+**First Principles Thinking:**
+- Stripped away all assumptions about workflow, pricing, and MVP strategy
+- Revealed the monolithic + vanity URL shortcut (massive time savings)
+- Exposed the "AI-assisted vs manual" misconception
+- Math analysis made pricing conflict concrete and solvable
+
+**Assumption Reversal:**
+- Systematically surfaced 28 hidden assumptions
+- Deep dive on AI consistency risk was eye-opening
+- Reframed time investment as phase-based (not instant ROI)
+- Challenged "friends/family testing" assumption successfully
+
+**Overall Session:**
+- Advanced Elicitation (Pre-mortem, SWOT, Stakeholder Mapping) provided critical foundation
+- Partner alignment analysis revealed specific gaps to address
+- Combination of analytical + creative techniques worked well
+- Generated concrete, actionable next steps (not just vague ideas)
 
 ### Areas for Further Exploration
 
-{{areas_exploration}}
+**When resuming modular refactor (future session):**
+- Use Resource Constraints technique to prioritize 15 epics down to 2-3 essentials
+- Use SCAMPER to systematically simplify technical debt
+- Apply First Principles to "what does refactored version enable that monolithic doesn't?"
+
+**Business model refinement (after first customer):**
+- Explore add-on pricing models ($10 for toy/bed customization)
+- Social media income stream strategies
+- Scaling beyond manual production (when to hire/automate)
+
+**Market positioning (after pricing validation):**
+- Competitor analysis: custom pet products vs game products
+- Channel exploration: Etsy vs Instagram vs TikTok vs direct
+- Customer segmentation: who pays $28.99 vs who wants $10 version
 
 ### Recommended Follow-up Techniques
 
-{{recommended_techniques}}
+**For epic prioritization (when resuming refactor):**
+- Resource Constraints - Force "what if only 1 week?" prioritization
+- SCAMPER - Systematic Eliminate/Substitute/Reverse approach
+- Six Thinking Hats - Get Aurelia's perspective on technical decisions
+
+**For market/product decisions:**
+- Customer Journey Mapping - Understand pet owner decision process
+- Analogical Thinking - What can we learn from Etsy's top custom pet sellers?
+- What If Scenarios - Explore pricing tiers, subscription models, B2B opportunities
 
 ### Questions That Emerged
 
-{{questions_emerged}}
+**Critical questions requiring data:**
+1. What is the actual AI sprite success rate across diverse pet types?
+2. What is the real average time per game (not assumption)?
+3. Will a stranger pay $28.99 on Etsy?
+4. Does Etsy provide organic discovery or require paid ads?
+5. Can Aurelia sustain 1-2 hours/day for 3-6 months?
+6. Is this "creative collab fun" or "must be profitable"? (values clarification)
+
+**Strategic questions for later:**
+7. At what volume does manual workflow break (10 games/week? 20? 50?)?
+8. What triggers the decision to automate vs hire vs raise prices?
+9. Is this a lifestyle business or something to scale/sell?
+10. What's the exit strategy if it doesn't work in 3 months?
 
 ### Next Session Planning
 
-- **Suggested topics:** {{followup_topics}}
-- **Recommended timeframe:** {{timeframe}}
-- **Preparation needed:** {{preparation}}
+**After Priority #1 completes (AI workflow test):**
+- **Topic:** Review AI test results, adjust pricing/timeline/quality bar based on data
+- **Participants:** Myles + Aurelia together
+- **Preparation:** Aurelia completes 10 pet sprite tests with timing data
+- **Outcome:** Go/no-go decision on current business model, adjusted projections
+
+**After Priority #3 completes (first Etsy test):**
+- **Topic:** Market validation review - what worked, what didn't, pivot or persist?
+- **Participants:** Myles + Aurelia
+- **Preparation:** Analyze Etsy metrics (clicks, favorites, conversions, customer feedback)
+- **Outcome:** Decision on pricing, messaging, channel strategy
+
+**When ready to resume refactor:**
+- **Topic:** Epic prioritization using Resource Constraints + SCAMPER
+- **Participants:** Myles (lead), optional Aurelia input on priorities
+- **Preparation:** Review all 15 epics with fresh eyes post-MVP validation
+- **Outcome:** Simplified roadmap of 2-3 essential epics only
 
 ---
 
