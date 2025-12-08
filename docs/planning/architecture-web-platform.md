@@ -225,25 +225,32 @@ Template System:
 #### 2.1.5 Payment Service
 ```yaml
 Service: payment-service
-Purpose: Handle payments, subscriptions, and billing
+Purpose: Handle payments, add-on purchases, and DLC content
 Technology: Node.js + Stripe SDK
-Database: PostgreSQL (orders, customers)
+Database: PostgreSQL (orders, customers, entitlements)
 Scaling: Stateless, horizontal scaling
-Dependencies: Notification Service
+Dependencies: Notification Service, Game Service
 
 Endpoints:
   POST /payments/create-intent
   POST /payments/confirm
   POST /payments/refund
   GET /payments/history
-  POST /subscriptions/create
+  POST /add-ons/purchase
+  GET /add-ons/owned/:userId
+  POST /games/:id/unlock-content
 
 Stripe Integration:
-  - Payment Intents for one-time purchases
-  - Subscriptions for recurring billing
+  - Payment Intents for base games and add-ons
+  - Multi-item checkout for bundled content
   - Webhook handling for payment events
   - PCI compliance through Stripe
   - Multi-currency support
+
+Content Entitlement:
+  - Track owned add-ons per user/game
+  - Unlock levels, themes, abilities post-purchase
+  - Prevent duplicate purchases
 
 Security Features:
   - Payment data never stored locally
@@ -275,12 +282,13 @@ CREATE TABLE users (
 CREATE TABLE orders (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES users(id),
-    package_type VARCHAR(50) NOT NULL, -- basic, premium, subscription
+    package_type VARCHAR(50) NOT NULL, -- base_game, level_pack, theme, ability, premium_feature
     amount DECIMAL(10, 2) NOT NULL,
     currency VARCHAR(3) DEFAULT 'USD',
     status VARCHAR(50) DEFAULT 'pending', -- pending, completed, failed, refunded
     stripe_payment_intent_id VARCHAR(255),
-    stripe_subscription_id VARCHAR(255),
+    game_id UUID REFERENCES games(id), -- which game this purchase is for
+    content_id VARCHAR(255), -- specific add-on identifier (level_pack_1, theme_beach, etc.)
     metadata JSONB,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     completed_at TIMESTAMP

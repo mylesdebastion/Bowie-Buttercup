@@ -108,6 +108,26 @@ SparkleClassic is a web platform where users upload pet photos to generate perso
 - File type validation
 - Secure file uploads
 
+## Legal & Compliance Requirements
+
+### Photo Licensing Framework
+- **User Photo Uploads**: Non-exclusive license for processing and pixel art generation
+- **Required Terms**: "By uploading pet photos, you grant [Platform] a non-exclusive, worldwide, royalty-free license to process images for game generation"
+- **User Rights**: Users retain full ownership of original photos
+- **Pet Owner Verification**: Confirm user owns/has permission for uploaded pets
+
+### AI-Generated Content Rights  
+- **Pixel Art Ownership**: AI-generated pixel art falls in public domain (cannot be copyrighted)
+- **Game Templates**: Platform owns proprietary game engine and templates
+- **User Entitlements**: Personal use rights to customized games
+- **Commercial Use**: Requires separate licensing agreement
+
+### Required Legal Documentation
+- Comprehensive Terms of Service covering photo licensing
+- Privacy Policy for image processing and storage  
+- Add-on Content License Agreement for DLC purchases
+- Clear disclosure of AI content ownership rights
+
 ## User Journey (Manual Pixel Art Phase)
 
 1. **Landing Page**: User discovers platform
@@ -137,16 +157,20 @@ SparkleClassic is a web platform where users upload pet photos to generate perso
 
 ## Revenue Model
 
-### Package Pricing
-- **Basic Game**: $14.99 (3 levels, 1 theme)
-- **Premium Game**: $24.99 (7 levels, multiple themes, extras)
-- **Subscription**: $9.99/month (unlimited games, priority support)
+### Base Game + Add-On Structure (No Subscriptions)
+- **Base Game**: $14.99 (3 levels, 1 theme, standard abilities)
+- **Add-On Content**:
+  - Extra Level Packs: $2-5 each (3-5 levels per pack)
+  - New Themes: $3-7 each (Beach, Space, House, Park, Garden)
+  - Special Abilities: $2-4 each (Double jump, dash, wall climb, glide)
+  - Premium Features: $5-10 each (Custom physics, boss battles, special mechanics)
 
 ### Revenue Projections (Manual Phase)
-- 20 customers × $20 average = $400 first month
-- Validate demand before AI investment
-- Prove unit economics and customer satisfaction
-- Gather customer feedback for AI development
+- **Base Revenue**: 20 customers × $14.99 = $300 base
+- **Add-On Revenue**: 50% customers buy $10-25 in add-ons = $100-250 additional  
+- **Total Month 1**: $400-550 (improved from previous $400)
+- **Customer LTV**: $25-40 average (vs. previous $20 one-time)
+- **Advantages**: Multiple revenue touchpoints, higher engagement, content scalability
 
 ## Phase 2: AI Automation Roadmap
 
