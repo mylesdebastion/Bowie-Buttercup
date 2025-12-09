@@ -1,6 +1,6 @@
 # Story 1.1: Config Injection and Vanity URL Deployment
 
-**Status:** Review
+**Status:** In Progress
 **Epic:** vanity-url
 **Priority:** P0 (MVP Critical)
 
@@ -84,6 +84,18 @@ So that **customers receive their custom pet game and we can validate the busine
   - [x] Step-by-step for Aurelia with time estimates (~10 min total)
   - [x] Includes troubleshooting section
   - [x] Covers: prepare sprites, create config, generate, test, deploy, verify
+
+- [ ] **Task 8: Refactor to Dynamic Config Loading (DRY)**
+  - [ ] Modify index.html to detect pet name from URL path (e.g., `/bowie/` → `bowie`)
+  - [ ] Fetch config from `configs/{petName}.json` at runtime instead of baked-in
+  - [ ] Update vercel.json rewrites: `/:petName/` → `/index.html?pet=:petName`
+  - [ ] Delete `templates/` folder (no longer needed)
+  - [ ] Delete `scripts/generate-game.js` (no longer needed)
+  - [ ] Delete `games/` folder and remove from .gitignore
+  - [ ] Update deployment-guide.md (simpler: just add config + sprites, push)
+  - [ ] Test: Single index.html serves both /bowie/ and /buttercup/ correctly
+
+  **Rationale:** Current approach violates DRY - every bug fix requires regenerating all games. Dynamic loading means ONE game file to maintain.
 
 ### Technical Summary
 
