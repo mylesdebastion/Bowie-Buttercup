@@ -47,6 +47,3 @@ coverage/
 # Temporary folders
 tmp/
 temp/
-
-# Generated games (output of generate-game.js)
-games/

@@ -7,13 +7,12 @@ This guide explains how to create and deploy personalized pet games to sparklecl
 
 ---
 
-## Quick Reference (For Experienced Users)
+## Quick Reference
 
 ```bash
-# Generate a new game
-node scripts/generate-game.js <petname>
-
-# Deploy to Vercel
+# 1. Add pet sprite to root folder
+# 2. Create config file
+# 3. Deploy
 git add -A && git commit -m "Add <petname> game" && git push
 ```
 
@@ -21,11 +20,18 @@ Wait 1-2 minutes, then verify at: `https://sparkleclassic.com/<petname>/`
 
 ---
 
-## Complete Step-by-Step Guide
+## How It Works
+
+The game uses **dynamic config loading**:
+- Single `index.html` serves ALL pet games
+- URL path determines which pet: `/bowie/` loads `configs/bowie.json`
+- No generation step needed - just add config and deploy
+
+---
+
+## Step-by-Step Guide
 
 ### Step 1: Prepare Pet Sprites
-
-Before generating a game, you need the pet's sprite sheet:
 
 1. **Create sprite sheet** (3x3 grid, PNG format)
    - Row 1: Idle poses
@@ -45,11 +51,11 @@ Create a config file at `configs/<petname>.json`:
   "petName": "fluffy",
   "petDisplayName": "Fluffy",
   "sprites": {
-    "cat": "../fluffy_cat_3x3.png",
-    "foodBowl": "../pet_food_bowl.png",
-    "waterBowl": "../pet_water_bowl.png",
-    "dog": "../bonbon_dog_3x3.png",
-    "catTree": "../cat-tree.png"
+    "cat": "/fluffy_cat_3x3.png",
+    "foodBowl": "/pet_food_bowl.png",
+    "waterBowl": "/pet_water_bowl.png",
+    "dog": "/bonbon_dog_3x3.png",
+    "catTree": "/cat-tree.png"
   },
   "gameTitle": "Fluffy's Adventure",
   "primaryColor": "#FF6B6B"
@@ -59,154 +65,100 @@ Create a config file at `configs/<petname>.json`:
 **Config Fields:**
 - `petName`: URL slug (lowercase, no spaces) - used in URL
 - `petDisplayName`: Proper name shown in game
-- `sprites.cat`: Path to pet's sprite sheet (relative to games/<petname>/)
+- `sprites.cat`: Path to pet's sprite sheet (start with `/`)
 - `gameTitle`: Browser tab title and in-game display
 - `primaryColor`: Accent color (hex format)
 
-### Step 3: Generate the Game
-
-Open a terminal in the project folder and run:
+### Step 3: Test Locally
 
 ```bash
-node scripts/generate-game.js fluffy
+npm run dev
 ```
 
-You should see:
-```
-Using config from: D:\Github\Bowie-Buttercup\configs\fluffy.json
-
-Generated game for Fluffy
-   Output: D:\Github\Bowie-Buttercup\games\fluffy\index.html
-   Title: Fluffy's Adventure
-```
-
-### Step 4: Test Locally
-
-Open the generated game in a browser to verify it works:
-
-**Windows:**
-```bash
-start games/fluffy/index.html
-```
-
-**Mac:**
-```bash
-open games/fluffy/index.html
-```
+Then visit: `http://localhost:3000/fluffy/`
 
 **Check these items:**
 - [ ] Correct pet sprite shows as the player character
-- [ ] Game title matches pet name
+- [ ] Game title matches pet name (check browser tab)
 - [ ] All animations work (walk, jump, idle)
-- [ ] Food and water bowls appear correctly
 - [ ] No console errors (press F12 to check)
 
-### Step 5: Deploy to Vercel
+### Step 4: Deploy
 
-1. **Commit the new game:**
-   ```bash
-   git add configs/fluffy.json fluffy_cat_3x3.png
-   git add games/fluffy/
-   git commit -m "Add Fluffy's game"
-   git push
-   ```
+```bash
+git add configs/fluffy.json fluffy_cat_3x3.png
+git commit -m "Add Fluffy's game"
+git push
+```
 
-2. **Wait for deployment** (1-2 minutes)
-   - Vercel automatically deploys when you push to GitHub
-   - Check [Vercel Dashboard](https://vercel.com/dashboard) for status
+Wait 1-2 minutes for Vercel to deploy automatically.
 
-3. **Verify deployment:**
-   - Visit: `https://sparkleclassic.com/fluffy/`
-   - Test gameplay on the live URL
-   - Share with customer!
+### Step 5: Verify Live
+
+Visit: `https://sparkleclassic.com/fluffy/`
 
 ---
 
 ## Troubleshooting
 
 ### Game shows wrong sprite / default cat
-- Check the config file path is correct
-- Verify sprite file exists and is a valid PNG
-- Ensure paths in config use `../` prefix (relative to games/<petname>/)
+- Check the config file path starts with `/`
+- Verify sprite file exists in root directory
+- Check browser console for 404 errors on sprite load
+
+### Config not loading
+- Check URL matches config filename: `/fluffy/` needs `configs/fluffy.json`
+- Verify JSON is valid (no trailing commas, quotes around keys)
+- Check browser console for fetch errors
 
 ### Game doesn't load at all
 - Check browser console for errors (F12)
-- Verify games/<petname>/index.html exists
-- Regenerate with: `node scripts/generate-game.js <petname>`
+- Try loading root `index.html` directly to verify game works
+- Ensure Vite dev server is running (`npm run dev`)
 
 ### Vercel deployment not updating
 - Check GitHub push completed
 - Check Vercel dashboard for build errors
 - Wait 5 minutes and try again
-- Force redeploy from Vercel dashboard if needed
-
-### Sprites appear stretched or wrong size
-- Sprite sheet must be exactly 3x3 grid
-- Recommended size: 288x288 or 192x192 pixels
-- Each cell should be square (96x96 or 64x64)
 
 ---
 
-## File Structure Reference
+## File Structure
 
 ```
 Bowie-Buttercup/
+├── index.html              # Single game file (serves all pets)
 ├── configs/
-│   ├── bowie.json           # Bowie's config
-│   ├── buttercup.json       # Buttercup's config
-│   └── <petname>.json       # New pet configs go here
-├── games/
-│   ├── bowie/
-│   │   └── index.html       # Generated Bowie game
-│   ├── buttercup/
-│   │   └── index.html       # Generated Buttercup game
-│   └── <petname>/
-│       └── index.html       # Generated pet games
-├── templates/
-│   └── game-template.html   # Template for generation
-├── scripts/
-│   └── generate-game.js     # Game generation script
-├── bowie_cat_3x3.png        # Sprite sheets in root
+│   ├── bowie.json          # Bowie's config
+│   ├── buttercup.json      # Buttercup's config
+│   └── <petname>.json      # New pet configs
+├── bowie_cat_3x3.png       # Sprite sheets in root
 ├── happy_buttercup_cat_3x3.png
-└── <petname>_cat_3x3.png    # New sprites go here
+└── <petname>_cat_3x3.png   # New sprites
 ```
 
 ---
 
-## Delivery Checklist
+## Adding a New Pet (Summary)
 
-Before sharing the game URL with a customer:
+1. Add sprite: `<petname>_cat_3x3.png` to root
+2. Create config: `configs/<petname>.json`
+3. Test: `npm run dev` → `http://localhost:3000/<petname>/`
+4. Deploy: `git add -A && git commit -m "Add <petname>" && git push`
+5. Verify: `https://sparkleclassic.com/<petname>/`
 
-- [ ] Generated game locally
-- [ ] Tested in browser - all sprites correct
-- [ ] Committed and pushed to GitHub
-- [ ] Verified live URL works
-- [ ] Tested on mobile device
-- [ ] Saved customer info in order system
-
----
-
-## Time Estimate
-
-| Step | Time |
-|------|------|
-| Prepare sprites | Already done by AI workflow |
-| Create config | 2 minutes |
-| Generate game | 30 seconds |
-| Test locally | 2 minutes |
-| Deploy | 5 minutes (including wait time) |
-| **Total** | **~10 minutes** |
+**Total time: ~5 minutes**
 
 ---
 
 ## Support
 
-If you encounter issues not covered here:
-1. Check the browser console (F12) for error messages
-2. Verify all files exist in expected locations
-3. Try regenerating the game
+If you encounter issues:
+1. Check browser console (F12) for error messages
+2. Verify config JSON is valid
+3. Try the root URL first: `http://localhost:3000/`
 4. Contact Myles for technical support
 
 ---
 
-*Generated by BMad Method - 2025-12-08*
+*Updated for dynamic config loading - 2025-12-08*

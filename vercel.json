@@ -5,11 +5,11 @@
   "rewrites": [
     {
       "source": "/:petName",
-      "destination": "/games/:petName/index.html"
+      "destination": "/index.html"
     },
     {
       "source": "/:petName/",
-      "destination": "/games/:petName/index.html"
+      "destination": "/index.html"
     }
   ],
   "headers": [
@@ -32,7 +32,7 @@
       ]
     },
     {
-      "source": "/games/(.*)",
+      "source": "/configs/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
