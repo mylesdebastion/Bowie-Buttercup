@@ -16,15 +16,40 @@
     const DEFAULT_CONFIG = {
       petName: 'bowie',
       petDisplayName: 'Bowie',
-      sprites: {
-        cat: './bowie_cat_3x3.png',
-        foodBowl: './pet_food_bowl.png',
-        waterBowl: './pet_water_bowl.png',
-        dog: './bonbon_dog_3x3.png',
-        catTree: './cat-tree.png'
+      petType: 'cat',
+      sprite: '/assets/pets/bowie/sprite_3x3.png',
+      items: {
+        foodBowl: '/assets/shared/bowls/food_bowl.png',
+        waterBowl: '/assets/shared/bowls/water_bowl.png',
+        furniture: ['/assets/shared/furniture/cat_tree.png']
       },
       gameTitle: "Bowie's Adventure",
-      primaryColor: '#e94560'
+      theme: {
+        primaryColor: '#e94560'
+      }
+    }
+
+    // Helper to normalize config (supports both old and new schema)
+    function normalizeConfig(config) {
+      // If already using new schema, return as-is
+      if (config.sprite && config.items) return config
+
+      // Migrate old schema to new
+      if (config.sprites) {
+        return {
+          ...config,
+          sprite: config.sprites.cat,
+          items: {
+            foodBowl: config.sprites.foodBowl,
+            waterBowl: config.sprites.waterBowl,
+            furniture: config.sprites.catTree ? [config.sprites.catTree] : []
+          },
+          theme: {
+            primaryColor: config.primaryColor || '#e94560'
+          }
+        }
+      }
+      return config
     }
 
     // Will be populated by loadGameConfig()
@@ -52,7 +77,7 @@
 
       if (!petName) {
         console.log('No pet name in URL, using default config (Bowie)')
-        GAME_CONFIG = DEFAULT_CONFIG
+        GAME_CONFIG = normalizeConfig(DEFAULT_CONFIG)
         document.title = GAME_CONFIG.gameTitle
         return GAME_CONFIG
       }
@@ -67,14 +92,15 @@
           throw new Error(`Config not found: ${response.status}`)
         }
 
-        GAME_CONFIG = await response.json()
+        const rawConfig = await response.json()
+        GAME_CONFIG = normalizeConfig(rawConfig)
         console.log('Loaded config for:', GAME_CONFIG.petDisplayName)
         document.title = GAME_CONFIG.gameTitle
         return GAME_CONFIG
       } catch (error) {
         console.error('Failed to load config for', petName, ':', error.message)
         console.log('Falling back to default config')
-        GAME_CONFIG = DEFAULT_CONFIG
+        GAME_CONFIG = normalizeConfig(DEFAULT_CONFIG)
         document.title = GAME_CONFIG.gameTitle
         return GAME_CONFIG
       }
@@ -3463,41 +3489,45 @@
                 });
             };
 
-            // Load cat sheet A from GAME_CONFIG
-            const catSpritePath = GAME_CONFIG.sprites.cat
-            loadImage(catSpritePath)
+            // Load player sprite from GAME_CONFIG (new schema: sprite, fallback: sprites.cat)
+            const playerSpritePath = GAME_CONFIG.sprite || (GAME_CONFIG.sprites && GAME_CONFIG.sprites.cat)
+            loadImage(playerSpritePath)
                 .then(img => {
                     sheets.A.img = img;
                     analyzeAndSetupGrid(img, 'A');
                     updateSheetThumbnail('A', img);
-                    console.log('Loaded ' + catSpritePath + ' successfully');
+                    console.log('Loaded ' + playerSpritePath + ' successfully');
                 })
                 .catch(() => {
-                    console.log('Could not load ' + catSpritePath + ', using embedded default');
+                    console.log('Could not load ' + playerSpritePath + ', using embedded default');
                     loadEmbeddedDefault();
                 });
 
-            // Load food bowl sprite from GAME_CONFIG
-            const foodBowlPath = GAME_CONFIG.sprites.foodBowl
-            loadImage(foodBowlPath)
-                .then(img => {
-                    game.foodBowlImg = img;
-                    console.log('Loaded ' + foodBowlPath + ' successfully');
-                })
-                .catch(() => {
-                    console.log('Could not load ' + foodBowlPath + ', using fallback drawing');
-                });
+            // Load food bowl sprite from GAME_CONFIG (new schema: items.foodBowl)
+            const foodBowlPath = (GAME_CONFIG.items && GAME_CONFIG.items.foodBowl) || (GAME_CONFIG.sprites && GAME_CONFIG.sprites.foodBowl)
+            if (foodBowlPath) {
+                loadImage(foodBowlPath)
+                    .then(img => {
+                        game.foodBowlImg = img;
+                        console.log('Loaded ' + foodBowlPath + ' successfully');
+                    })
+                    .catch(() => {
+                        console.log('Could not load ' + foodBowlPath + ', using fallback drawing');
+                    });
+            }
 
-            // Load water bowl sprite from GAME_CONFIG
-            const waterBowlPath = GAME_CONFIG.sprites.waterBowl
-            loadImage(waterBowlPath)
-                .then(img => {
-                    game.waterBowlImg = img;
-                    console.log('Loaded ' + waterBowlPath + ' successfully');
-                })
-                .catch(() => {
-                    console.log('Could not load ' + waterBowlPath + ', using fallback drawing');
-                });
+            // Load water bowl sprite from GAME_CONFIG (new schema: items.waterBowl)
+            const waterBowlPath = (GAME_CONFIG.items && GAME_CONFIG.items.waterBowl) || (GAME_CONFIG.sprites && GAME_CONFIG.sprites.waterBowl)
+            if (waterBowlPath) {
+                loadImage(waterBowlPath)
+                    .then(img => {
+                        game.waterBowlImg = img;
+                        console.log('Loaded ' + waterBowlPath + ' successfully');
+                    })
+                    .catch(() => {
+                        console.log('Could not load ' + waterBowlPath + ', using fallback drawing');
+                    });
+            }
 
             // Try to load a second sheet if available (optional, not in GAME_CONFIG)
             loadImage('./cat_sheet_2.png')
@@ -3509,32 +3539,37 @@
                     console.log('No second sheet found');
                 });
 
-            // Load dog sprite sheet from GAME_CONFIG
-            const dogSpritePath = GAME_CONFIG.sprites.dog
-            loadImage(dogSpritePath)
-                .then(img => {
-                    sheets.dog.img = img;
-                    console.log('Dog sprite sheet loaded successfully:', img.width, 'x', img.height);
+            // Load dog/companion sprite sheet (optional - for NPC companion)
+            // Try items.companion first, then sprites.dog, then default path
+            const dogSpritePath = (GAME_CONFIG.items && GAME_CONFIG.items.companion) ||
+                                  (GAME_CONFIG.sprites && GAME_CONFIG.sprites.dog) ||
+                                  '/assets/pets/bonbon/sprite_3x3.png'
+            if (dogSpritePath) {
+                loadImage(dogSpritePath)
+                    .then(img => {
+                        sheets.dog.img = img;
+                        console.log('Dog sprite sheet loaded successfully:', img.width, 'x', img.height);
 
-                    // Update dog thumbnail
-                    const thumbContainer = document.getElementById('dogThumb');
-                    if (thumbContainer) {
-                        thumbContainer.innerHTML = '';
-                        const thumbCanvas = document.createElement('canvas');
-                        thumbCanvas.width = 96;
-                        thumbCanvas.height = 96;
-                        const thumbCtx = thumbCanvas.getContext('2d');
-                        thumbCtx.imageSmoothingEnabled = false;
-                        thumbCtx.drawImage(img, 0, 0, 96, 96);
-                        thumbContainer.appendChild(thumbCanvas);
-                    }
+                        // Update dog thumbnail
+                        const thumbContainer = document.getElementById('dogThumb');
+                        if (thumbContainer) {
+                            thumbContainer.innerHTML = '';
+                            const thumbCanvas = document.createElement('canvas');
+                            thumbCanvas.width = 96;
+                            thumbCanvas.height = 96;
+                            const thumbCtx = thumbCanvas.getContext('2d');
+                            thumbCtx.imageSmoothingEnabled = false;
+                            thumbCtx.drawImage(img, 0, 0, 96, 96);
+                            thumbContainer.appendChild(thumbCanvas);
+                        }
 
-                    // Animate dog run preview
-                    animateDogRunPreview();
-                })
-                .catch((err) => {
-                    console.log('Could not load ' + dogSpritePath + ':', err);
-                });
+                        // Animate dog run preview
+                        animateDogRunPreview();
+                    })
+                    .catch((err) => {
+                        console.log('Could not load ' + dogSpritePath + ':', err);
+                    });
+            }
         }
         
         // Animate dog run preview
