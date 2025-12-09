@@ -7,6 +7,82 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     <title>Cat Platformer</title>
+    <script>
+    // GAME_CONFIG - Loaded dynamically based on URL
+    // URL pattern: /petname/ or ?pet=petname
+    // Fetches config from /configs/petname.json
+
+    // Default config (used when running from root or config fetch fails)
+    const DEFAULT_CONFIG = {
+      petName: 'bowie',
+      petDisplayName: 'Bowie',
+      sprites: {
+        cat: './bowie_cat_3x3.png',
+        foodBowl: './pet_food_bowl.png',
+        waterBowl: './pet_water_bowl.png',
+        dog: './bonbon_dog_3x3.png',
+        catTree: './cat-tree.png'
+      },
+      gameTitle: "Bowie's Adventure",
+      primaryColor: '#e94560'
+    }
+
+    // Will be populated by loadGameConfig()
+    let GAME_CONFIG = null
+
+    // Detect pet name from URL
+    function getPetNameFromURL() {
+      // Check query param first: ?pet=bowie
+      const urlParams = new URLSearchParams(window.location.search)
+      const petParam = urlParams.get('pet')
+      if (petParam) return petParam.toLowerCase()
+
+      // Check URL path: /bowie/ or /bowie
+      const path = window.location.pathname
+      const match = path.match(/^\/([a-zA-Z0-9_-]+)\/?$/)
+      if (match) return match[1].toLowerCase()
+
+      // Default to null (will use DEFAULT_CONFIG)
+      return null
+    }
+
+    // Load config dynamically
+    async function loadGameConfig() {
+      const petName = getPetNameFromURL()
+
+      if (!petName) {
+        console.log('No pet name in URL, using default config (Bowie)')
+        GAME_CONFIG = DEFAULT_CONFIG
+        document.title = GAME_CONFIG.gameTitle
+        return GAME_CONFIG
+      }
+
+      try {
+        // Fetch config from /configs/petname.json
+        const configUrl = `/configs/${petName}.json`
+        console.log('Loading config from:', configUrl)
+        const response = await fetch(configUrl)
+
+        if (!response.ok) {
+          throw new Error(`Config not found: ${response.status}`)
+        }
+
+        GAME_CONFIG = await response.json()
+        console.log('Loaded config for:', GAME_CONFIG.petDisplayName)
+        document.title = GAME_CONFIG.gameTitle
+        return GAME_CONFIG
+      } catch (error) {
+        console.error('Failed to load config for', petName, ':', error.message)
+        console.log('Falling back to default config')
+        GAME_CONFIG = DEFAULT_CONFIG
+        document.title = GAME_CONFIG.gameTitle
+        return GAME_CONFIG
+      }
+    }
+
+    // Config loading promise - await this before using GAME_CONFIG
+    const configReady = loadGameConfig()
+    </script>
     <style>
         * {
             margin: 0;
@@ -3368,13 +3444,16 @@
         }
         
         // Start game immediately if not in editor mode
-        if (currentMode === 'play' && !game) {
-            startGame();
-        }
-        
+        // Wait for config to load first
+        configReady.then(() => {
+            if (currentMode === 'play' && !game) {
+                startGame();
+            }
+        });
+
         // Load default sprite sheets from files
+        // Uses GAME_CONFIG for paths to enable per-customer customization
         function loadDefaultSheets() {
-            // Try to load bowie_cat_3x3.png - use relative path
             const loadImage = (url) => {
                 return new Promise((resolve, reject) => {
                     const img = new Image();
@@ -3383,41 +3462,44 @@
                     img.src = url;
                 });
             };
-            
-            // Load cat sheet A
-            loadImage('./bowie_cat_3x3.png')
+
+            // Load cat sheet A from GAME_CONFIG
+            const catSpritePath = GAME_CONFIG.sprites.cat
+            loadImage(catSpritePath)
                 .then(img => {
                     sheets.A.img = img;
                     analyzeAndSetupGrid(img, 'A');
                     updateSheetThumbnail('A', img);
-                    console.log('Loaded bowie_cat_3x3.png successfully');
+                    console.log('Loaded ' + catSpritePath + ' successfully');
                 })
                 .catch(() => {
-                    console.log('Could not load bowie_cat_3x3.png, using embedded default');
+                    console.log('Could not load ' + catSpritePath + ', using embedded default');
                     loadEmbeddedDefault();
                 });
-            
-            // Load food bowl sprite
-            loadImage('./pet_food_bowl.png')
+
+            // Load food bowl sprite from GAME_CONFIG
+            const foodBowlPath = GAME_CONFIG.sprites.foodBowl
+            loadImage(foodBowlPath)
                 .then(img => {
                     game.foodBowlImg = img;
-                    console.log('Loaded pet_food_bowl.png successfully');
+                    console.log('Loaded ' + foodBowlPath + ' successfully');
                 })
                 .catch(() => {
-                    console.log('Could not load pet_food_bowl.png, using fallback drawing');
+                    console.log('Could not load ' + foodBowlPath + ', using fallback drawing');
                 });
 
-            // Load water bowl sprite
-            loadImage('./pet_water_bowl.png')
+            // Load water bowl sprite from GAME_CONFIG
+            const waterBowlPath = GAME_CONFIG.sprites.waterBowl
+            loadImage(waterBowlPath)
                 .then(img => {
                     game.waterBowlImg = img;
-                    console.log('Loaded pet_water_bowl.png successfully');
+                    console.log('Loaded ' + waterBowlPath + ' successfully');
                 })
                 .catch(() => {
-                    console.log('Could not load pet_water_bowl.png, using fallback drawing');
+                    console.log('Could not load ' + waterBowlPath + ', using fallback drawing');
                 });
 
-            // Try to load a second sheet if available
+            // Try to load a second sheet if available (optional, not in GAME_CONFIG)
             loadImage('./cat_sheet_2.png')
                 .then(img => {
                     sheets.B.img = img;
@@ -3426,13 +3508,14 @@
                 .catch(() => {
                     console.log('No second sheet found');
                 });
-            
-            // Load dog sprite sheet
-            loadImage('./bonbon_dog_3x3.png')
+
+            // Load dog sprite sheet from GAME_CONFIG
+            const dogSpritePath = GAME_CONFIG.sprites.dog
+            loadImage(dogSpritePath)
                 .then(img => {
                     sheets.dog.img = img;
                     console.log('Dog sprite sheet loaded successfully:', img.width, 'x', img.height);
-                    
+
                     // Update dog thumbnail
                     const thumbContainer = document.getElementById('dogThumb');
                     if (thumbContainer) {
@@ -3445,12 +3528,12 @@
                         thumbCtx.drawImage(img, 0, 0, 96, 96);
                         thumbContainer.appendChild(thumbCanvas);
                     }
-                    
+
                     // Animate dog run preview
                     animateDogRunPreview();
                 })
                 .catch((err) => {
-                    console.log('Could not load bonbon_dog_3x3.png:', err);
+                    console.log('Could not load ' + dogSpritePath + ':', err);
                 });
         }
         
@@ -3527,8 +3610,10 @@
             img.src = defaultSheetData;
         }
         
-        // Load sheets on startup
-        loadDefaultSheets();
+        // Load sheets on startup - wait for config first
+        configReady.then(() => {
+            loadDefaultSheets();
+        });
     </script>
 </body>
 </html>

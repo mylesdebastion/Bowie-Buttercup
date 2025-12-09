@@ -63,7 +63,10 @@ export default defineConfig({
     port: 3000,
     open: true,
     host: true,
-    cors: true
+    cors: true,
+    fs: {
+      strict: false
+    }
   },
 
   // Preview server (for testing builds)
@@ -82,6 +85,33 @@ export default defineConfig({
 
   // Plugin configuration
   plugins: [
+    // Vanity URL routing for local development
+    // Rewrites /bowie/, /buttercup/, etc. to /index.html
+    {
+      name: 'vanity-url-routing',
+      configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+          // Skip static files and known directories
+          if (req.url.includes('.') ||
+              req.url.startsWith('/configs/') ||
+              req.url.startsWith('/src/') ||
+              req.url.startsWith('/node_modules/') ||
+              req.url.startsWith('/public/') ||
+              req.url.startsWith('/docs/') ||
+              req.url.startsWith('/@') ||
+              req.url === '/') {
+            return next()
+          }
+          // Match /petname or /petname/
+          const match = req.url.match(/^\/([a-zA-Z0-9_-]+)\/?$/)
+          if (match) {
+            console.log(`[vanity-url] Routing ${req.url} -> /index.html`)
+            req.url = '/index.html'
+          }
+          next()
+        })
+      }
+    },
     // Custom plugin to handle game-specific assets
     {
       name: 'game-assets',
