@@ -1,15 +1,15 @@
 {
-  "petName": "bowie",
-  "petDisplayName": "Bowie",
-  "petType": "cat",
-  "sprite": "/assets/pets/bowie/sprite_3x3.png",
+  "petName": "bonbon",
+  "petDisplayName": "BonBon",
+  "petType": "dog",
+  "sprite": "/assets/pets/bonbon/sprite_3x3.png",
   "items": {
     "foodBowl": "/assets/shared/bowls/food_bowl.png",
     "waterBowl": "/assets/shared/bowls/water_bowl.png",
     "furniture": ["/assets/shared/furniture/cat_tree.png"]
   },
-  "gameTitle": "Bowie's Adventure",
+  "gameTitle": "BonBon's Adventure",
   "theme": {
-    "primaryColor": "#e94560"
+    "primaryColor": "#8B4513"
   }
 }

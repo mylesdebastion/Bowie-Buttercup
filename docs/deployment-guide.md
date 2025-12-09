@@ -10,7 +10,7 @@ This guide explains how to create and deploy personalized pet games to sparklecl
 ## Quick Reference
 
 ```bash
-# 1. Add pet sprite to root folder
+# 1. Add pet sprite to assets/pets/<petname>/
 # 2. Create config file
 # 3. Deploy
 git add -A && git commit -m "Add <petname> game" && git push
@@ -29,6 +29,37 @@ The game uses **dynamic config loading**:
 
 ---
 
+## Asset Organization
+
+```
+Bowie-Buttercup/
+├── assets/
+│   ├── pets/                      # Per-pet assets
+│   │   ├── bowie/
+│   │   │   └── sprite_3x3.png     # Bowie's character sprite
+│   │   ├── buttercup/
+│   │   │   ├── sprite_3x3.png     # Main sprite
+│   │   │   └── sprite_sad_3x3.png # Alternate sprite (optional)
+│   │   └── bonbon/
+│   │       └── sprite_3x3.png     # BonBon's dog sprite
+│   │
+│   └── shared/                    # Shared across all pets
+│       ├── bowls/
+│       │   ├── food_bowl.png
+│       │   └── water_bowl.png
+│       └── furniture/
+│           └── cat_tree.png
+│
+├── configs/                       # Pet configuration files
+│   ├── bowie.json
+│   ├── buttercup.json
+│   └── bonbon.json
+│
+└── index.html                     # Single game file (serves all pets)
+```
+
+---
+
 ## Step-by-Step Guide
 
 ### Step 1: Prepare Pet Sprites
@@ -38,9 +69,11 @@ The game uses **dynamic config loading**:
    - Row 2: Walk animation frames
    - Row 3: Jump/fall frames
 
-2. **Name the file**: `<petname>_cat_3x3.png` (e.g., `fluffy_cat_3x3.png`)
+2. **Name the file**: `sprite_3x3.png`
 
-3. **Place in root directory**: Copy the sprite file to the main project folder
+3. **Create pet folder**: `assets/pets/<petname>/`
+
+4. **Place sprite**: Copy to `assets/pets/<petname>/sprite_3x3.png`
 
 ### Step 2: Create Pet Config File
 
@@ -50,24 +83,30 @@ Create a config file at `configs/<petname>.json`:
 {
   "petName": "fluffy",
   "petDisplayName": "Fluffy",
-  "sprites": {
-    "cat": "/fluffy_cat_3x3.png",
-    "foodBowl": "/pet_food_bowl.png",
-    "waterBowl": "/pet_water_bowl.png",
-    "dog": "/bonbon_dog_3x3.png",
-    "catTree": "/cat-tree.png"
+  "petType": "cat",
+  "sprite": "/assets/pets/fluffy/sprite_3x3.png",
+  "items": {
+    "foodBowl": "/assets/shared/bowls/food_bowl.png",
+    "waterBowl": "/assets/shared/bowls/water_bowl.png",
+    "furniture": ["/assets/shared/furniture/cat_tree.png"]
   },
   "gameTitle": "Fluffy's Adventure",
-  "primaryColor": "#FF6B6B"
+  "theme": {
+    "primaryColor": "#FF6B6B"
+  }
 }
 ```
 
 **Config Fields:**
 - `petName`: URL slug (lowercase, no spaces) - used in URL
 - `petDisplayName`: Proper name shown in game
-- `sprites.cat`: Path to pet's sprite sheet (start with `/`)
+- `petType`: `cat` or `dog` (for future features)
+- `sprite`: Path to pet's sprite sheet (start with `/assets/pets/`)
+- `items.foodBowl`: Path to food bowl sprite
+- `items.waterBowl`: Path to water bowl sprite
+- `items.furniture`: Array of furniture sprites (optional)
 - `gameTitle`: Browser tab title and in-game display
-- `primaryColor`: Accent color (hex format)
+- `theme.primaryColor`: Accent color (hex format)
 
 ### Step 3: Test Locally
 
@@ -86,7 +125,7 @@ Then visit: `http://localhost:3000/fluffy/`
 ### Step 4: Deploy
 
 ```bash
-git add configs/fluffy.json fluffy_cat_3x3.png
+git add assets/pets/fluffy/ configs/fluffy.json
 git commit -m "Add Fluffy's game"
 git push
 ```
@@ -99,11 +138,51 @@ Visit: `https://sparkleclassic.com/fluffy/`
 
 ---
 
+## Adding Custom Items
+
+### Per-Pet Custom Items
+
+Add custom items to a specific pet's folder:
+
+```
+assets/pets/fluffy/
+├── sprite_3x3.png       # Main character
+├── toys/
+│   └── yarn_ball.png    # Custom toy
+└── accessories/
+    └── bow.png          # Future: accessories
+```
+
+Then reference in config:
+
+```json
+{
+  "items": {
+    "toys": ["/assets/pets/fluffy/toys/yarn_ball.png"],
+    "companion": "/assets/pets/bonbon/sprite_3x3.png"
+  }
+}
+```
+
+### Shared Items
+
+Add items that all pets can use to:
+
+```
+assets/shared/
+├── bowls/
+├── furniture/
+├── toys/              # Shared toys
+└── backgrounds/       # Future: custom backgrounds
+```
+
+---
+
 ## Troubleshooting
 
 ### Game shows wrong sprite / default cat
-- Check the config file path starts with `/`
-- Verify sprite file exists in root directory
+- Check the config `sprite` path starts with `/assets/pets/`
+- Verify sprite file exists: `assets/pets/<petname>/sprite_3x3.png`
 - Check browser console for 404 errors on sprite load
 
 ### Config not loading
@@ -113,7 +192,7 @@ Visit: `https://sparkleclassic.com/fluffy/`
 
 ### Game doesn't load at all
 - Check browser console for errors (F12)
-- Try loading root `index.html` directly to verify game works
+- Try loading root URL to verify game works
 - Ensure Vite dev server is running (`npm run dev`)
 
 ### Vercel deployment not updating
@@ -123,29 +202,14 @@ Visit: `https://sparkleclassic.com/fluffy/`
 
 ---
 
-## File Structure
-
-```
-Bowie-Buttercup/
-├── index.html              # Single game file (serves all pets)
-├── configs/
-│   ├── bowie.json          # Bowie's config
-│   ├── buttercup.json      # Buttercup's config
-│   └── <petname>.json      # New pet configs
-├── bowie_cat_3x3.png       # Sprite sheets in root
-├── happy_buttercup_cat_3x3.png
-└── <petname>_cat_3x3.png   # New sprites
-```
-
----
-
 ## Adding a New Pet (Summary)
 
-1. Add sprite: `<petname>_cat_3x3.png` to root
-2. Create config: `configs/<petname>.json`
-3. Test: `npm run dev` → `http://localhost:3000/<petname>/`
-4. Deploy: `git add -A && git commit -m "Add <petname>" && git push`
-5. Verify: `https://sparkleclassic.com/<petname>/`
+1. Create folder: `assets/pets/<petname>/`
+2. Add sprite: `assets/pets/<petname>/sprite_3x3.png`
+3. Create config: `configs/<petname>.json`
+4. Test: `npm run dev` → `http://localhost:3000/<petname>/`
+5. Deploy: `git add -A && git commit -m "Add <petname>" && git push`
+6. Verify: `https://sparkleclassic.com/<petname>/`
 
 **Total time: ~5 minutes**
 
@@ -161,4 +225,4 @@ If you encounter issues:
 
 ---
 
-*Updated for dynamic config loading - 2025-12-08*
+*Updated for organized asset structure - 2025-12-08*

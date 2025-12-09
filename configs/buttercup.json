@@ -1,13 +1,15 @@
 {
   "petName": "buttercup",
   "petDisplayName": "Buttercup",
-  "sprites": {
-    "cat": "/happy_buttercup_cat_3x3.png",
-    "foodBowl": "/pet_food_bowl.png",
-    "waterBowl": "/pet_water_bowl.png",
-    "dog": "/bonbon_dog_3x3.png",
-    "catTree": "/cat-tree.png"
+  "petType": "cat",
+  "sprite": "/assets/pets/buttercup/sprite_3x3.png",
+  "items": {
+    "foodBowl": "/assets/shared/bowls/food_bowl.png",
+    "waterBowl": "/assets/shared/bowls/water_bowl.png",
+    "furniture": ["/assets/shared/furniture/cat_tree.png"]
   },
   "gameTitle": "Buttercup's Adventure",
-  "primaryColor": "#FFD93D"
+  "theme": {
+    "primaryColor": "#FFD93D"
+  }
 }
