@@ -5,9 +5,9 @@ on:
     branches: [ main, develop, 'feature/**' ]
   pull_request:
     branches: [ main, develop ]
-  schedule:
-    # Run nightly tests at 2 AM UTC
-    - cron: '0 2 * * *'
+  # schedule:
+  #   # Run nightly tests at 2 AM UTC - SUSPENDED
+  #   - cron: '0 2 * * *'
   workflow_dispatch:
     inputs:
       test_type:
