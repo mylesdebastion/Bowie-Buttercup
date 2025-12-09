@@ -2915,9 +2915,14 @@
         }
 
         async function initWithIntro() {
-            await runIntroSequence();
-            startGame();
+            // Start loading assets in parallel with intro (don't wait)
             loadDefaultSheets();
+
+            // Run intro sequence (this takes ~6 seconds)
+            await runIntroSequence();
+
+            // By now, assets should be loaded - start the game
+            startGame();
         }
         // ========== END INTRO ANIMATION SYSTEM ==========
 
@@ -3971,7 +3976,7 @@
             img.src = defaultSheetData;
         }
 
-        // Note: loadDefaultSheets() is called by initWithIntro() after intro completes
+        // Note: loadDefaultSheets() is called by initWithIntro() in parallel with intro
     </script>
 </body>
 </html>
