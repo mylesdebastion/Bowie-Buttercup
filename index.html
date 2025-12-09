@@ -543,9 +543,125 @@
             align-items: center;
             justify-content: center;
         }
+
+        /* Intro Overlay Styles */
+        #introOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #1a1a2e;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease-out;
+        }
+
+        #introOverlay.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #introOverlay.hidden {
+            display: none;
+        }
+
+        .intro-logo {
+            position: absolute;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out, transform 0.6s ease-out;
+            max-width: 80vw;
+            max-height: 50vh;
+        }
+
+        .intro-logo.visible {
+            opacity: 1;
+        }
+
+        .intro-logo.pulse {
+            animation: logoPulse 0.3s ease-in-out;
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .intro-sparkles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #f8d866;
+            opacity: 0;
+            animation: sparkleAnim 1.5s ease-in-out infinite;
+        }
+
+        @keyframes sparkleAnim {
+            0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1) rotate(180deg); }
+        }
+
+        .intro-progress {
+            position: absolute;
+            bottom: 15%;
+            width: 200px;
+            height: 8px;
+            background: #0f3460;
+            border: 2px solid #e94560;
+            image-rendering: pixelated;
+        }
+
+        .intro-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #e94560, #ff6b9d, #e94560);
+            background-size: 200% 100%;
+            animation: progressShimmer 1s linear infinite;
+            width: 0%;
+            transition: width 0.3s ease-out;
+        }
+
+        @keyframes progressShimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .intro-text {
+            position: absolute;
+            bottom: 10%;
+            font-family: monospace;
+            font-size: 12px;
+            color: #888;
+            letter-spacing: 2px;
+        }
     </style>
 </head>
 <body>
+    <!-- Intro Overlay -->
+    <div id="introOverlay">
+        <div class="intro-sparkles" id="introSparkles"></div>
+        <img src="logo_sparkleclassic.png" class="intro-logo" id="logoMain" alt="Sparkle Classic">
+        <img src="mylesheartaurelia.png" class="intro-logo" id="logoHeart" alt="Myles Heart Aurelia">
+        <div class="intro-progress">
+            <div class="intro-progress-bar" id="introProgressBar"></div>
+        </div>
+        <div class="intro-text" id="introText">Loading...</div>
+        <div class="intro-text" style="bottom: 5%; opacity: 0.5; font-size: 10px;">click or press any key to skip</div>
+    </div>
+
     <div id="gameContainer">
         <div id="leftPanel" class="hidden">
             <div class="tab-buttons">
@@ -2653,7 +2769,158 @@
         
         let game = null;
         let animationId = null;
-        
+        let introComplete = false;
+
+        // ========== INTRO ANIMATION SYSTEM ==========
+        const introConfig = {
+            totalDuration: 6000,      // Total intro time in ms
+            sparkleCount: 20,         // Number of sparkles
+            messages: [
+                'Loading...',
+                'Preparing treats...',
+                'Fluffing pixels...',
+                'Almost ready...',
+                'Let\'s play!'
+            ]
+        };
+
+        function createSparkles() {
+            const container = document.getElementById('introSparkles');
+            if (!container) return;
+
+            for (let i = 0; i < introConfig.sparkleCount; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = Math.random() * 2 + 's';
+                sparkle.style.background = ['#f8d866', '#ff6b9d', '#e94560', '#fff'][Math.floor(Math.random() * 4)];
+                container.appendChild(sparkle);
+            }
+        }
+
+        function runIntroSequence() {
+            return new Promise((resolve) => {
+                const overlay = document.getElementById('introOverlay');
+                const logoMain = document.getElementById('logoMain');
+                const logoHeart = document.getElementById('logoHeart');
+                const progressBar = document.getElementById('introProgressBar');
+                const introText = document.getElementById('introText');
+
+                if (!overlay || !logoMain || !logoHeart) {
+                    resolve();
+                    return;
+                }
+
+                let skipped = false;
+                let cleanupTimers = [];
+
+                // Skip intro on click or keypress
+                const skipIntro = () => {
+                    if (skipped) return;
+                    skipped = true;
+                    cleanupTimers.forEach(t => clearTimeout(t));
+                    cleanupTimers.forEach(t => clearInterval(t));
+                    overlay.classList.add('fade-out');
+                    setTimeout(() => {
+                        overlay.classList.add('hidden');
+                        introComplete = true;
+                        resolve();
+                    }, 400);
+                    overlay.removeEventListener('click', skipIntro);
+                    document.removeEventListener('keydown', skipIntro);
+                };
+
+                overlay.addEventListener('click', skipIntro);
+                document.addEventListener('keydown', skipIntro);
+
+                // Handle image load errors gracefully
+                logoMain.onerror = () => { logoMain.style.display = 'none'; };
+                logoHeart.onerror = () => { logoHeart.style.display = 'none'; };
+
+                createSparkles();
+
+                const startTime = Date.now();
+
+                // Helper to track timeouts for cleanup
+                const safeTimeout = (fn, delay) => {
+                    const id = setTimeout(() => { if (!skipped) fn(); }, delay);
+                    cleanupTimers.push(id);
+                    return id;
+                };
+
+                // Update progress continuously
+                const progressInterval = setInterval(() => {
+                    if (skipped) {
+                        clearInterval(progressInterval);
+                        return;
+                    }
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min((elapsed / introConfig.totalDuration) * 100, 100);
+                    if (progressBar) {
+                        progressBar.style.width = progress + '%';
+                    }
+
+                    const msgIndex = Math.min(
+                        Math.floor(progress / (100 / introConfig.messages.length)),
+                        introConfig.messages.length - 1
+                    );
+                    if (introText) {
+                        introText.textContent = introConfig.messages[msgIndex];
+                    }
+
+                    if (progress >= 100) {
+                        clearInterval(progressInterval);
+                    }
+                }, 50);
+                cleanupTimers.push(progressInterval);
+
+                // Simple sequence: Logo 1 → fade → Logo 2 → fade out
+                // Show Sparkle Classic logo first
+                safeTimeout(() => {
+                    logoMain.classList.add('visible');
+                    logoMain.classList.add('pulse');
+                }, 100);
+
+                // At midpoint, crossfade to Heart logo
+                safeTimeout(() => {
+                    logoMain.classList.remove('visible', 'pulse');
+                    safeTimeout(() => {
+                        logoHeart.classList.add('visible');
+                        logoHeart.classList.add('pulse');
+                    }, 600);
+                }, introConfig.totalDuration * 0.4);
+
+                // End intro sequence
+                safeTimeout(() => {
+                    clearInterval(progressInterval);
+
+                    if (progressBar) progressBar.style.width = '100%';
+                    if (introText) introText.textContent = 'Let\'s play!';
+
+                    // Fade out overlay
+                    safeTimeout(() => {
+                        overlay.classList.add('fade-out');
+
+                        safeTimeout(() => {
+                            overlay.classList.add('hidden');
+                            introComplete = true;
+                            document.removeEventListener('keydown', skipIntro);
+                            resolve();
+                        }, 800);
+                    }, 500);
+
+                }, introConfig.totalDuration);
+            });
+        }
+
+        async function initWithIntro() {
+            await runIntroSequence();
+            startGame();
+            loadDefaultSheets();
+        }
+        // ========== END INTRO ANIMATION SYSTEM ==========
+
         function gameLoop() {
             const now = Date.now();
             const dt = Math.min(now - game.lastTime, 100);
@@ -3529,11 +3796,10 @@
             }
         }
         
-        // Start game immediately if not in editor mode
-        // Wait for config to load first
+        // Start game with intro sequence after config loads
         configReady.then(() => {
             if (currentMode === 'play' && !game) {
-                startGame();
+                initWithIntro();
             }
         });
 
@@ -3704,11 +3970,8 @@
             };
             img.src = defaultSheetData;
         }
-        
-        // Load sheets on startup - wait for config first
-        configReady.then(() => {
-            loadDefaultSheets();
-        });
+
+        // Note: loadDefaultSheets() is called by initWithIntro() after intro completes
     </script>
 </body>
 </html>
