@@ -43,7 +43,8 @@
     "dev:modular": "start src/index.html",
     "build:analyze": "cross-env ANALYZE=true vite build",
     "build:prod": "cross-env NODE_ENV=production vite build",
-    "deploy": "node scripts/deploy.js"
+    "deploy": "node scripts/deploy.js",
+    "generate-game": "node scripts/generate-game.js"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^1.0.0",

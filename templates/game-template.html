@@ -8,43 +8,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <title>Cat Platformer</title>
     <script>
-    // GAME_CONFIG - Injected per customer by generate-game.js
-    // This object configures which sprites and settings to use
-    // For template generation, this entire block is replaced
-    const GAME_CONFIG = {
-      petName: 'bowie',
-      petDisplayName: 'Bowie',
-      sprites: {
-        cat: './bowie_cat_3x3.png',
-        foodBowl: './pet_food_bowl.png',
-        waterBowl: './pet_water_bowl.png',
-        dog: './bonbon_dog_3x3.png',
-        catTree: './cat-tree.png'
-      },
-      gameTitle: "Bowie's Adventure",
-      primaryColor: '#e94560'
-    }
-
-    // Fallback for missing config (safety net)
-    if (typeof GAME_CONFIG === 'undefined') {
-      console.error('GAME_CONFIG not defined - using defaults')
-      window.GAME_CONFIG = {
-        petName: 'bowie',
-        petDisplayName: 'Bowie',
-        sprites: {
-          cat: './bowie_cat_3x3.png',
-          foodBowl: './pet_food_bowl.png',
-          waterBowl: './pet_water_bowl.png',
-          dog: './bonbon_dog_3x3.png',
-          catTree: './cat-tree.png'
-        },
-        gameTitle: "Bowie's Adventure",
-        primaryColor: '#e94560'
-      }
-    }
-
-    // Set document title from config
-    document.title = GAME_CONFIG.gameTitle
+    /* GAME_CONFIG_PLACEHOLDER */
     </script>
     <style>
         * {
