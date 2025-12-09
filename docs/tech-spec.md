@@ -2,9 +2,24 @@
 
 **Author:** Myles
 **Date:** 2025-12-08
+**Status:** ✅ IMPLEMENTED (with improvements)
 **Project Level:** Quick Flow
 **Change Type:** Feature Addition
 **Development Context:** Brownfield - Monolithic HTML5 Game
+
+---
+
+> **Implementation Note (2025-12-08):**
+>
+> This spec proposed a `generate-game.js` script approach. We implemented a **simpler solution**:
+> **dynamic config loading** where a single `index.html` reads config at runtime based on URL path.
+>
+> **Actual implementation:**
+> - URL `/bowie/` → fetches `configs/bowie.json` → loads those sprites
+> - `normalizeConfig()` handles backwards compatibility
+> - No generation step needed - just add config + sprite + git push
+>
+> See `CLAUDE.md` for current workflow documentation.
 
 ---
 
