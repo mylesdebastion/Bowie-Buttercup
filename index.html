@@ -783,37 +783,39 @@
         </div>
         
         <div id="gameArea">
-            <button id="fullscreenBtn" onclick="toggleFullscreen()">⛶</button>
-            <canvas id="gameCanvas"></canvas>
-            <div id="mobileControls">
-                <div id="dpad">
-                    <div class="dpad-button" style="top: 10px; left: 50px; width: 50px;" data-key="ArrowUp">▲</div>
-                    <div class="dpad-button" style="bottom: 10px; left: 50px; width: 50px;" data-key="ArrowDown">▼</div>
-                    <div class="dpad-button" style="top: 50px; left: 10px; height: 50px;" data-key="ArrowLeft">◄</div>
-                    <div class="dpad-button" style="top: 50px; right: 10px; height: 50px;" data-key="ArrowRight">►</div>
+            <div id="gameWrapper">
+                <canvas id="gameCanvas"></canvas>
+                <div id="mobileControls">
+                    <div id="dpad">
+                        <div class="dpad-button" style="top: 10px; left: 50px; width: 50px;" data-key="ArrowUp">▲</div>
+                        <div class="dpad-button" style="bottom: 10px; left: 50px; width: 50px;" data-key="ArrowDown">▼</div>
+                        <div class="dpad-button" style="top: 50px; left: 10px; height: 50px;" data-key="ArrowLeft">◄</div>
+                        <div class="dpad-button" style="top: 50px; right: 10px; height: 50px;" data-key="ArrowRight">►</div>
+                    </div>
+                    <div id="actionButtons">
+                        <button class="touch-button" id="jumpBtn" data-key=" ">Jump</button>
+                        <button class="touch-button" id="dodgeBtn" data-key="Shift">Dodge</button>
+                    </div>
                 </div>
-                <div id="actionButtons">
-                    <button class="touch-button" id="jumpBtn" data-key=" ">Jump</button>
-                    <button class="touch-button" id="dodgeBtn" data-key="Shift">Dodge</button>
+                <div id="hud">
+                    <div>Score: <span id="score">0</span></div>
+                    <div>Lives: <span id="lives">3</span></div>
+                    <div>Time: <span id="time">0</span>s</div>
                 </div>
-            </div>
-            <div id="hud">
-                <div>Score: <span id="score">0</span></div>
-                <div>Lives: <span id="lives">3</span></div>
-                <div>Time: <span id="time">0</span>s</div>
-            </div>
-            <div id="debugOverlay">
-                <div>FPS: <span id="fps">0</span></div>
-                <div>Pos: <span id="playerPos">0,0</span></div>
-                <div>Vel: <span id="playerVel">0,0</span></div>
-                <div>State: <span id="playerState">idle</span></div>
-            </div>
-            <div id="winOverlay">
-                <h2>Level Complete!</h2>
-                <div>Time: <span id="winTime">0</span>s</div>
-                <div>Score: <span id="winScore">0</span></div>
-                <div>Hits: <span id="winHits">0</span></div>
-                <button onclick="restartLevel()">Play Again</button>
+                <div id="debugOverlay">
+                    <div>FPS: <span id="fps">0</span></div>
+                    <div>Pos: <span id="playerPos">0,0</span></div>
+                    <div>Vel: <span id="playerVel">0,0</span></div>
+                    <div>State: <span id="playerState">idle</span></div>
+                </div>
+                <div id="winOverlay">
+                    <h2>Level Complete!</h2>
+                    <div>Time: <span id="winTime">0</span>s</div>
+                    <div>Score: <span id="winScore">0</span></div>
+                    <div>Hits: <span id="winHits">0</span></div>
+                    <button onclick="restartLevel()">Play Again</button>
+                </div>
+                <button id="fullscreenBtn" onclick="toggleFullscreen()">⛶</button>
             </div>
         </div>
     </div>
@@ -3694,75 +3696,48 @@
         });
         
         function resizeCanvas() {
-            // For mobile, use full viewport
-            if (isMobile) {
-                const viewportWidth = window.innerWidth;
-                const viewportHeight = window.innerHeight;
-                
-                // Base game dimensions
-                const baseWidth = 400;
-                const baseHeight = 240;
-                
-                // Calculate scale to fit full screen
-                const scaleX = viewportWidth / baseWidth;
-                const scaleY = viewportHeight / baseHeight;
-                
-                // Use contain scaling (fit within viewport maintaining aspect ratio)
-                const fitScale = Math.min(scaleX, scaleY);
-                
-                // Set canvas dimensions
-                const width = baseWidth * fitScale;
-                const height = baseHeight * fitScale;
-                
-                canvas.width = baseWidth;
-                canvas.height = baseHeight;
-                canvas.style.width = Math.floor(width) + 'px';
-                canvas.style.height = Math.floor(height) + 'px';
-                
-                // Center canvas if needed
-                canvas.style.position = 'absolute';
-                canvas.style.left = '50%';
-                canvas.style.top = '50%';
-                canvas.style.transform = 'translate(-50%, -50%)';
-                
-                // Update global scale
-                scale = fitScale;
-            } else {
-                // Desktop sizing logic
-                const leftPanelWidth = document.getElementById('leftPanel').classList.contains('hidden') ? 0 : 370;
-                const maxWidth = window.innerWidth - leftPanelWidth - (isFullscreen ? 0 : 40);
-                const maxHeight = window.innerHeight - (isFullscreen ? 0 : 40);
-                
-                // Base game dimensions
-                const baseWidth = 400;
-                const baseHeight = 240;
-                
-                // Calculate scale to fit screen
-                let fitScale = Math.min(maxWidth / baseWidth, maxHeight / baseHeight);
-                
-                // Use integer scaling for pixel-perfect rendering on desktop
-                if (!isFullscreen) {
-                    fitScale = Math.floor(fitScale);
-                    fitScale = Math.max(1, Math.min(fitScale, scale));
-                }
-                
-                let width = baseWidth * fitScale;
-                let height = baseHeight * fitScale;
-                
-                canvas.width = baseWidth;
-                canvas.height = baseHeight;
-                canvas.style.width = width + 'px';
-                canvas.style.height = height + 'px';
-                canvas.style.position = '';
-                canvas.style.left = '';
-                canvas.style.top = '';
-                canvas.style.transform = '';
-                
-                // Update global scale
-                if (isFullscreen) {
-                    scale = fitScale;
-                }
-            }
+            // Desktop/Mobile Unified Sizing Logic
+            const leftPanelWidth = document.getElementById('leftPanel').classList.contains('hidden') ? 0 : 370;
+            const availableWidth = window.innerWidth - leftPanelWidth;
+            const availableHeight = window.innerHeight;
+
+            // Base game dimensions
+            const baseWidth = 400;
+            const baseHeight = 240;
+
+            // Calculate scale to fit screen WIDTH (Cover Width)
+            // This ensures the game fills the full width of the screen, potentially cropping height
+            // or requiring scrolling, as requested by "extend to the full width".
+            // However, to keep it playable, we'll use the larger of the two scales to fill.
+            let fitScale = Math.max(availableWidth / baseWidth, availableHeight / baseHeight);
+
+            // On desktop, allow fractional scaling to fill the screen
+            // But ensure at least 1x
+            fitScale = Math.max(1, fitScale);
+
+            const displayWidth = Math.floor(baseWidth * fitScale);
+            const displayHeight = Math.floor(baseHeight * fitScale);
+
+            // Resize Wrapper
+            const wrapper = document.getElementById('gameWrapper');
+            wrapper.style.width = displayWidth + 'px';
+            wrapper.style.height = displayHeight + 'px';
+
+            // KEY FIX: Set internal canvas resolution to MATCH the display size (High Res)
+            // This prevents the browser from fuzzily upscaling a tiny canvas.
+            canvas.width = displayWidth;
+            canvas.height = displayHeight;
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+
+            // Apply the scale to the context so drawing commands still use 400x240 coordinates
+            ctx.scale(fitScale, fitScale);
+
+            // Disable smoothing again because resizing resets the context
+            ctx.imageSmoothingEnabled = false;
+
+            // Update global scale
+            scale = fitScale;
         }
         
         window.addEventListener('resize', () => {
