@@ -134,10 +134,12 @@
         
         #gameContainer {
             display: flex;
+            width: 100vw;
             height: 100vh;
-            height: 100dvh; /* Dynamic viewport height for mobile */
-            transition: all 0.3s ease;
-            position: relative;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+            overflow: hidden;
         }
         
         #gameContainer.fullscreen #leftPanel {
