@@ -4403,8 +4403,13 @@
 
         // Note: loadDefaultSheets() is called by initWithIntro() in parallel with intro
         // Safety check to force landing page if on root
+        // Safety check to force landing page ONLY if strictly on root (no path, no query)
         window.addEventListener('load', () => {
-            if (!window.location.search || window.location.search === '?') {
+            const hasPath = window.location.pathname.length > 1 && window.location.pathname !== '/';
+            const hasQuery = window.location.search && window.location.search !== '?';
+
+            // Only force landing page if NO path (like /bowie) and NO query (like ?pet=bowie)
+            if (!hasPath && !hasQuery) {
                 const landing = document.getElementById('landingPage');
                 const intro = document.getElementById('introOverlay');
                 if (landing) landing.style.display = 'flex';
