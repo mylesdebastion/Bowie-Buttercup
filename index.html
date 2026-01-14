@@ -1,113 +1,256 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     <title>Cat Platformer - QUEEN Branch Test</title>
     <script>
-    // GAME_CONFIG - Loaded dynamically based on URL
-    // URL pattern: /petname/ or ?pet=petname
-    // Fetches config from /configs/petname.json
+        // GAME_CONFIG - Loaded dynamically based on URL
+        // URL pattern: /petname/ or ?pet=petname
+        // Fetches config from /configs/petname.json
 
-    // Default config (used when running from root or config fetch fails)
-    const DEFAULT_CONFIG = {
-      petName: 'bowie',
-      petDisplayName: 'Bowie',
-      petType: 'cat',
-      sprite: '/assets/pets/bowie/sprite_3x3.png',
-      items: {
-        foodBowl: '/assets/shared/bowls/food_bowl.png',
-        waterBowl: '/assets/shared/bowls/water_bowl.png',
-        furniture: ['/assets/shared/furniture/cat_tree.png']
-      },
-      gameTitle: "Bowie's Adventure",
-      theme: {
-        primaryColor: '#e94560'
-      }
-    }
-
-    // Helper to normalize config (supports both old and new schema)
-    function normalizeConfig(config) {
-      // If already using new schema, return as-is
-      if (config.sprite && config.items) return config
-
-      // Migrate old schema to new
-      if (config.sprites) {
-        return {
-          ...config,
-          sprite: config.sprites.cat,
-          items: {
-            foodBowl: config.sprites.foodBowl,
-            waterBowl: config.sprites.waterBowl,
-            furniture: config.sprites.catTree ? [config.sprites.catTree] : []
-          },
-          theme: {
-            primaryColor: config.primaryColor || '#e94560'
-          }
-        }
-      }
-      return config
-    }
-
-    // Will be populated by loadGameConfig()
-    let GAME_CONFIG = null
-
-    // Detect pet name from URL
-    function getPetNameFromURL() {
-      // Check query param first: ?pet=bowie
-      const urlParams = new URLSearchParams(window.location.search)
-      const petParam = urlParams.get('pet')
-      if (petParam) return petParam.toLowerCase()
-
-      // Check URL path: /bowie/ or /bowie
-      const path = window.location.pathname
-      const match = path.match(/^\/([a-zA-Z0-9_-]+)\/?$/)
-      if (match) return match[1].toLowerCase()
-
-      // Default to null (will use DEFAULT_CONFIG)
-      return null
-    }
-
-    // Load config dynamically
-    async function loadGameConfig() {
-      const petName = getPetNameFromURL()
-
-      if (!petName) {
-        console.log('No pet name in URL, using default config (Bowie)')
-        GAME_CONFIG = normalizeConfig(DEFAULT_CONFIG)
-        document.title = GAME_CONFIG.gameTitle
-        return GAME_CONFIG
-      }
-
-      try {
-        // Fetch config from /configs/petname.json
-        const configUrl = `/configs/${petName}.json`
-        console.log('Loading config from:', configUrl)
-        const response = await fetch(configUrl)
-
-        if (!response.ok) {
-          throw new Error(`Config not found: ${response.status}`)
+        // Default config (used when running from root or config fetch fails)
+        const DEFAULT_CONFIG = {
+            petName: 'bowie',
+            petDisplayName: 'Bowie',
+            petType: 'cat',
+            sprite: '/assets/pets/bowie/sprite_3x3.png',
+            items: {
+                foodBowl: '/assets/shared/bowls/food_bowl.png',
+                waterBowl: '/assets/shared/bowls/water_bowl.png',
+                furniture: ['/assets/shared/furniture/cat_tree.png']
+            },
+            gameTitle: "Bowie's Adventure",
+            theme: {
+                primaryColor: '#e94560'
+            }
         }
 
-        const rawConfig = await response.json()
-        GAME_CONFIG = normalizeConfig(rawConfig)
-        console.log('Loaded config for:', GAME_CONFIG.petDisplayName)
-        document.title = GAME_CONFIG.gameTitle
-        return GAME_CONFIG
-      } catch (error) {
-        console.error('Failed to load config for', petName, ':', error.message)
-        console.log('Falling back to default config')
-        GAME_CONFIG = normalizeConfig(DEFAULT_CONFIG)
-        document.title = GAME_CONFIG.gameTitle
-        return GAME_CONFIG
-      }
-    }
+        // Helper to normalize config (supports both old and new schema)
+        function normalizeConfig(config) {
+            // If already using new schema, return as-is
+            if (config.sprite && config.items) return config
 
-    // Config loading promise - await this before using GAME_CONFIG
-    const configReady = loadGameConfig()
+            // Migrate old schema to new
+            if (config.sprites) {
+                return {
+                    ...config,
+                    sprite: config.sprites.cat,
+                    items: {
+                        foodBowl: config.sprites.foodBowl,
+                        waterBowl: config.sprites.waterBowl,
+                        furniture: config.sprites.catTree ? [config.sprites.catTree] : []
+                    },
+                    theme: {
+                        primaryColor: config.primaryColor || '#e94560'
+                    }
+                }
+            }
+            return config
+        }
+
+        // Will be populated by loadGameConfig()
+        let GAME_CONFIG = null
+
+        // Detect pet name from URL
+        function getPetNameFromURL() {
+            // Check query param first: ?pet=bowie
+            const urlParams = new URLSearchParams(window.location.search)
+            const petParam = urlParams.get('pet')
+            if (petParam) return petParam.toLowerCase()
+
+            // Check URL path: /bowie/ or /bowie
+            const path = window.location.pathname
+            const match = path.match(/^\/([a-zA-Z0-9_-]+)\/?$/)
+            if (match) return match[1].toLowerCase()
+
+            // Default to null (will use DEFAULT_CONFIG)
+            return null
+        }
+
+        // Load config dynamically
+        // Load config dynamically
+        async function loadGameConfig() {
+            const petName = getPetNameFromURL()
+
+            if (!petName) {
+                // No pet name in URL -> Show Landing Page
+                console.log('Root URL detected. Showing Landing Page.')
+                const landing = document.getElementById('landingPage');
+                if (landing) landing.style.display = 'flex';
+
+                const intro = document.getElementById('introOverlay');
+                if (intro) {
+                    intro.style.display = 'none';
+                    intro.classList.add('hidden');
+                }
+
+                // Start landing page animation
+                startLandingPreview()
+
+                return null // No config to load
+            }
+
+            try {
+                // Fetch config from /configs/petname.json
+                const configUrl = `/configs/${petName}.json`
+                console.log('Loading config from:', configUrl)
+                const response = await fetch(configUrl)
+
+                if (!response.ok) {
+                    throw new Error(`Config not found: ${response.status}`)
+                }
+
+                const rawConfig = await response.json()
+                GAME_CONFIG = normalizeConfig(rawConfig)
+                console.log('Loaded config for:', GAME_CONFIG.petDisplayName)
+                document.title = GAME_CONFIG.gameTitle
+                return GAME_CONFIG
+            } catch (error) {
+                console.error('Failed to load config for', petName, ':', error.message)
+                console.log('Falling back to default config')
+                GAME_CONFIG = normalizeConfig(DEFAULT_CONFIG)
+                document.title = GAME_CONFIG.gameTitle
+                return GAME_CONFIG
+            }
+        }
+
+        // Config loading promise - await this before using GAME_CONFIG
+        const configReady = loadGameConfig()
+
+        // Simple landing page preview animation
+        function startLandingPreview() {
+            const canvas = document.getElementById('landingPreviewCanvas')
+            if (!canvas) return
+            const ctx = canvas.getContext('2d')
+            ctx.imageSmoothingEnabled = false
+
+            const img = new Image()
+            img.src = 'assets/pets/bowie/sprite_3x3.png'
+
+            // Wait for image load
+            img.onload = () => {
+                // Determine sprite size (sheet is 3x3)
+                const spriteW = img.width / 3
+                const spriteH = img.height / 3
+
+                // Physics state
+                let physics = {
+                    y: 0,           // Vertical position (0 = ground, negative = up)
+                    vy: 0,          // Vertical velocity
+                    gravity: 1500,  // Gravity strength
+                    jumpForce: 600, // Jump strength
+                    grounded: true,
+                    state: 'idle',   // idle, jump, fall, land
+                    timer: 0
+                }
+
+                let lastTime = performance.now()
+
+                function animate(currentTime) {
+                    // Calculate dt
+                    const dt = Math.min((currentTime - lastTime) / 1000, 0.1) // Max dt 0.1s
+                    lastTime = currentTime
+
+                    // --- Update Physics ---
+
+                    if (physics.grounded) {
+                        physics.timer += dt
+
+                        // Wait a bit before jumping again
+                        if (physics.timer > 0.5) {
+                            physics.vy = -physics.jumpForce
+                            physics.grounded = false
+                            physics.state = 'jump'
+                            physics.timer = 0
+                        } else {
+                            // Prep/Land animation
+                            physics.state = 'idle'
+                        }
+                    } else {
+                        // Apply gravity
+                        physics.vy += physics.gravity * dt
+                        physics.y += physics.vy * dt
+
+                        // Update state based on velocity
+                        if (physics.vy < 0) {
+                            physics.state = 'jump'
+                        } else {
+                            physics.state = 'fall'
+                        }
+
+                        // Ground collision
+                        if (physics.y >= 0) {
+                            physics.y = 0
+                            physics.vy = 0
+                            physics.grounded = true
+                            physics.state = 'idle' // Briefly show idle/land frame
+                        }
+                    }
+
+                    // --- Draw ---
+
+                    // Transparent bg
+                    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+                    // Draw ground
+                    const groundHeight = 20;
+                    const groundY = canvas.height - groundHeight;
+
+                    ctx.fillStyle = '#59405C'
+                    ctx.fillRect(0, groundY, canvas.width, groundHeight)
+
+                    // Determine Frame based on State
+                    // Grid is 3x3. 
+                    // 'jump_up' -> { r: 3, c: 2 } which is Index 7 -> col 1, row 2 (0-based)
+                    // 'fall_down' -> { r: 3, c: 3 } which is Index 8 -> col 2, row 2 (0-based)
+                    // 'run/crouch' -> row 2 defaults
+
+                    let col = 1
+                    let row = 2 // Default to run/jump row
+
+                    if (physics.state === 'jump') {
+                        row = 2; col = 1; // Jump frame
+                    } else if (physics.state === 'fall') {
+                        row = 2; col = 2; // Fall frame
+                    } else {
+                        // Grounded/Prep - use crouch or idle
+                        row = 2; col = 0; // Crouch/Prep frame
+                    }
+
+                    // Dynamic Scale to fit
+                    const maxH = groundY - 20
+                    let scale = Math.min(3, maxH / spriteH)
+
+                    // Dimensions
+                    const destW = spriteW * scale
+                    const destH = spriteH * scale
+
+                    // Center horizontal
+                    const x = (canvas.width - destW) / 2
+
+                    // Vertical position with physics offset
+                    // physics.y is negative (up), so we ADD it to the ground position
+                    const y = (groundY - destH) + physics.y
+
+                    ctx.drawImage(
+                        img,
+                        col * spriteW, row * spriteH, spriteW, spriteH, // Source
+                        x, y, destW, destH // Dest
+                    )
+
+                    requestAnimationFrame(animate)
+                }
+
+                requestAnimationFrame(animate)
+            }
+        }
+
     </script>
     <style>
         * {
@@ -115,7 +258,7 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: monospace;
             background: #1a1a2e;
@@ -131,7 +274,7 @@
             -webkit-user-select: none;
             user-select: none;
         }
-        
+
         #gameContainer {
             display: flex;
             width: 100vw;
@@ -141,15 +284,15 @@
             background: #000;
             overflow: hidden;
         }
-        
+
         #gameContainer.fullscreen #leftPanel {
             display: none;
         }
-        
+
         #gameContainer.fullscreen #gameArea {
             background: #000;
         }
-        
+
         #leftPanel {
             width: 350px;
             background: #16213e;
@@ -158,11 +301,11 @@
             border-right: 2px solid #0f3460;
             transition: transform 0.3s ease;
         }
-        
+
         #leftPanel.hidden {
             display: none;
         }
-        
+
         #gameArea {
             flex: 1;
             display: flex;
@@ -171,7 +314,7 @@
             justify-content: center;
             position: relative;
         }
-        
+
         canvas {
             image-rendering: pixelated;
             image-rendering: -moz-crisp-edges;
@@ -180,20 +323,20 @@
             display: block;
             touch-action: none;
         }
-        
+
         /* Remove border on mobile for full viewport usage */
         @media (max-width: 768px) {
             canvas {
                 border: none;
             }
         }
-        
+
         .tab-buttons {
             display: flex;
             gap: 5px;
             margin-bottom: 10px;
         }
-        
+
         .tab-button {
             flex: 1;
             padding: 8px;
@@ -205,47 +348,47 @@
             font-size: 14px;
             transition: background 0.2s;
         }
-        
+
         .tab-button:hover {
             background: #1e5f8e;
         }
-        
+
         .tab-button.active {
             background: #e94560;
         }
-        
+
         .tab-content {
             display: none;
         }
-        
+
         .tab-content.active {
             display: block;
         }
-        
+
         .section {
             background: #0f3460;
             padding: 10px;
             margin-bottom: 10px;
             border-radius: 4px;
         }
-        
+
         .section h3 {
             margin-bottom: 10px;
             color: #f39c12;
             font-size: 14px;
         }
-        
+
         .control-group {
             margin-bottom: 8px;
         }
-        
+
         .control-group label {
             display: block;
             margin-bottom: 3px;
             font-size: 12px;
             color: #aaa;
         }
-        
+
         input[type="range"],
         input[type="number"],
         input[type="text"],
@@ -258,13 +401,13 @@
             font-family: monospace;
             font-size: 12px;
         }
-        
+
         input[type="file"] {
             width: 100%;
             margin-bottom: 5px;
             font-size: 11px;
         }
-        
+
         button {
             padding: 6px 12px;
             background: #e94560;
@@ -276,11 +419,11 @@
             margin: 2px;
             transition: background 0.2s;
         }
-        
+
         button:hover {
             background: #ff6b6b;
         }
-        
+
         .sprite-preview {
             background: #222;
             border: 1px solid #444;
@@ -291,7 +434,7 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .grid-cell {
             display: inline-block;
             margin: 2px;
@@ -299,33 +442,33 @@
             background: #1a1a2e;
             border: 1px solid #444;
         }
-        
+
         .cell-controls {
             display: flex;
             gap: 5px;
             margin-top: 5px;
         }
-        
+
         .cell-controls input[type="number"] {
             width: 60px;
         }
-        
+
         #hud {
             position: absolute;
             top: 10px;
             left: 10px;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0, 0, 0, 0.7);
             padding: 10px;
             color: #fff;
             font-size: 14px;
             z-index: 100;
         }
-        
+
         #debugOverlay {
             position: absolute;
             bottom: 10px;
             right: 10px;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0, 0, 0, 0.7);
             padding: 10px;
             color: #0f0;
             font-size: 11px;
@@ -333,14 +476,14 @@
             display: none;
             z-index: 100;
         }
-        
+
         .checkbox-group {
             display: flex;
             align-items: center;
             gap: 5px;
             margin: 5px 0;
         }
-        
+
         .collapsible {
             cursor: pointer;
             user-select: none;
@@ -348,76 +491,76 @@
             background: #1e5f8e;
             margin-bottom: 5px;
         }
-        
+
         .collapsible:after {
             content: ' ▼';
         }
-        
+
         .collapsible.collapsed:after {
             content: ' ▶';
         }
-        
+
         .collapsible-content {
             transition: max-height 0.3s;
             overflow: hidden;
         }
-        
-        .collapsed + .collapsible-content {
+
+        .collapsed+.collapsible-content {
             max-height: 0;
         }
-        
+
         .animation-preview {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
             margin-top: 10px;
         }
-        
+
         .anim-preview-item {
             text-align: center;
         }
-        
+
         .anim-preview-item canvas {
             border: 1px solid #444;
             margin-bottom: 3px;
         }
-        
+
         .anim-preview-item label {
             font-size: 10px;
         }
-        
+
         .import-export-buttons {
             display: flex;
             gap: 5px;
             margin-top: 10px;
         }
-        
+
         #winOverlay {
             display: none;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.9);
+            background: rgba(0, 0, 0, 0.9);
             padding: 20px;
             border: 2px solid #f39c12;
             text-align: center;
             z-index: 200;
         }
-        
+
         #winOverlay h2 {
             color: #f39c12;
             margin-bottom: 10px;
         }
-        
+
         .high-contrast {
             filter: contrast(1.5);
         }
-        
+
         .high-contrast canvas {
             filter: drop-shadow(0 0 2px #000);
         }
-        
+
         #fullscreenBtn {
             position: absolute;
             top: 10px;
@@ -431,19 +574,19 @@
             font-size: 16px;
             border-radius: 4px;
         }
-        
+
         #fullscreenBtn:hover {
             background: rgba(0, 0, 0, 0.9);
             border-color: #666;
         }
-        
+
         /* Hide fullscreen button on mobile */
         @media (max-width: 768px) {
             #fullscreenBtn {
                 display: none;
             }
         }
-        
+
         #mobileControls {
             display: none;
             position: fixed;
@@ -455,7 +598,7 @@
             z-index: 110;
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
-        
+
         .touch-button {
             background: rgba(255, 255, 255, 0.2);
             border: 2px solid rgba(255, 255, 255, 0.4);
@@ -473,12 +616,12 @@
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
-        
+
         .touch-button.pressed {
             background: rgba(255, 255, 255, 0.4);
             border-color: rgba(255, 255, 255, 0.6);
         }
-        
+
         #dpad {
             position: absolute;
             width: 150px;
@@ -490,7 +633,7 @@
             pointer-events: auto;
             transition: all 0.3s ease;
         }
-        
+
         #actionButtons {
             position: absolute;
             right: 20px;
@@ -501,7 +644,7 @@
             pointer-events: auto;
             transition: all 0.3s ease;
         }
-        
+
         .dpad-button {
             position: absolute;
             width: 50px;
@@ -518,12 +661,12 @@
             touch-action: none;
             user-select: none;
         }
-        
+
         .dpad-button.pressed {
             background: rgba(255, 255, 255, 0.5);
             border-color: rgba(255, 255, 255, 0.8);
         }
-        
+
         #jumpBtn {
             position: absolute;
             width: 80px;
@@ -534,7 +677,7 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         #dodgeBtn {
             position: absolute;
             width: 60px;
@@ -591,8 +734,15 @@
         }
 
         @keyframes logoPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
         }
 
         .intro-sparkles {
@@ -613,8 +763,17 @@
         }
 
         @keyframes sparkleAnim {
-            0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
-            50% { opacity: 1; transform: scale(1) rotate(180deg); }
+
+            0%,
+            100% {
+                opacity: 0;
+                transform: scale(0) rotate(0deg);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1) rotate(180deg);
+            }
         }
 
         .intro-progress {
@@ -637,21 +796,311 @@
         }
 
         @keyframes progressShimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
         }
 
         .intro-text {
             position: absolute;
             bottom: 10%;
-            font-family: monospace;
-            font-size: 12px;
-            color: #888;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            color: #fff;
             letter-spacing: 2px;
+            text-shadow: 1px 1px 0 #000;
+        }
+
+        /* Landing Page Styles */
+        #landingPage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%);
+            color: #59405C;
+            z-index: 10001;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            /* Center vertically */
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .landing-content {
+            max-width: 800px;
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .landing-logo {
+            max-width: 300px;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            font-size: 18px;
+            color: #e94560;
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .comparison-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+
+        .comparison-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .photo-frame,
+        .game-frame {
+            width: 200px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            flex-direction: column;
+        }
+
+        .photo-frame {
+            background: transparent;
+            border: none;
+            overflow: visible;
+        }
+
+        .photo-frame::before {
+            content: '';
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
+            z-index: -1;
+            border-radius: 50%;
+        }
+
+        .game-frame {
+            background: transparent;
+            border: 4px solid #fff;
+            box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .pet-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .game-frame canvas {
+            image-rendering: pixelated;
+        }
+
+        .arrow {
+            font-size: 40px;
+            color: #fff;
+            text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+            animation: pulseArrow 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulseArrow {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.7;
+            }
+        }
+
+        .label {
+            font-size: 14px;
+            color: #aaa;
+            font-weight: bold;
+        }
+
+        .play-demo-btn {
+            padding: 15px 40px;
+            font-size: 24px;
+            background: #FF6B9D;
+            color: white;
+            border: 4px solid #fff;
+            border-radius: 0;
+            /* Boxy retro look */
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+            box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.15);
+            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
+        }
+
+        .play-demo-btn:hover {
+            background: #FF8BAE;
+            transform: translateY(-2px);
+            box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.15);
+        }
+
+        .sub-cta {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #888;
+        }
+
+        .sub-cta a {
+            color: #f39c12;
+            text-decoration: none;
+        }
+
+        .features-section {
+            display: flex;
+            gap: 20px;
+            margin-top: 60px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .feature {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 20px;
+            border-radius: 15px;
+            flex: 1;
+            min-width: 200px;
+            max-width: 250px;
+            border: 2px solid #fff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .feature h3 {
+            color: #D95284;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .feature p {
+            font-size: 14px;
+            line-height: 1.4;
+            color: #59405C;
+        }
+
+        @media (max-width: 600px) {
+            .landing-content {
+                padding: 10px;
+                margin-top: 20px;
+            }
+
+            .landing-logo {
+                max-width: 80%;
+            }
+
+            .tagline {
+                font-size: 16px;
+                margin-bottom: 20px;
+            }
+
+            .comparison-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .arrow {
+                transform: rotate(90deg);
+                margin: 5px 0;
+                font-size: 30px;
+            }
+
+            .features-section {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .feature {
+                width: 90%;
+                max-width: none;
+
+            }
+
+
         }
     </style>
 </head>
+
 <body>
+    <!-- Landing Page (Hidden by default, shown if root URL) -->
+    <div id="landingPage" style="display: none;">
+        <div class="landing-content">
+            <div class="hero-section">
+                <img src="logo_sparkleclassic.png" alt="Sparkle Classic" class="landing-logo">
+                <p class="tagline">Your Pet in a Platformer</p>
+
+                <div class="comparison-container">
+                    <div class="comparison-item">
+                        <div class="photo-frame">
+                            <!-- Placeholder for IRL photo - User to replace or we use a default -->
+                            <img src="assets/pets/bowie/bowie-transparent-bg.png"
+                                onerror="this.src='assets/pets/bowie/sprite_3x3.png'; this.style.imageRendering='pixelated'"
+                                alt="Real Life Bowie" class="pet-photo">
+                            <span class="label">Real Life</span>
+                        </div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="comparison-item">
+                        <div class="game-frame">
+                            <canvas id="landingPreviewCanvas" width="150" height="150"></canvas>
+                            <span class="label">In Game</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cta-container">
+                    <button class="play-demo-btn" onclick="window.location.href='/bowie/'">Play Demo (Bowie)</button>
+                    <p class="sub-cta">or <a href="#" onclick="alert('Coming Soon!')">Create Your Own</a></p>
+                </div>
+            </div>
+
+            <div class="features-section">
+                <div class="feature">
+                    <h3>100% Personalized</h3>
+                    <p>Turn your pet into the star of their own video game.</p>
+                </div>
+                <div class="feature">
+                    <h3>Classic Platforming</h3>
+                    <p>Run, jump, and collect treats in a retro-style adventure.</p>
+                </div>
+                <div class="feature">
+                    <h3>Shareable</h3>
+                    <p>Send your custom game link to friends and family.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Intro Overlay -->
     <div id="introOverlay">
         <div class="intro-sparkles" id="introSparkles"></div>
@@ -670,7 +1119,7 @@
                 <button class="tab-button" onclick="switchTab('editor')">Editor</button>
                 <button class="tab-button active" onclick="switchTab('play')">Play</button>
             </div>
-            
+
             <div id="editorTab" class="tab-content">
                 <div class="section">
                     <h3>Sprite Sheets</h3>
@@ -687,21 +1136,22 @@
                     <div class="control-group">
                         <label>Dog Sheet (NPC)</label>
                         <div id="dogThumb" class="sprite-preview"></div>
-                        <canvas id="dogRunPreview" width="120" height="40" style="image-rendering: pixelated; border: 1px solid #444; margin-top: 5px;"></canvas>
+                        <canvas id="dogRunPreview" width="120" height="40"
+                            style="image-rendering: pixelated; border: 1px solid #444; margin-top: 5px;"></canvas>
                         <div style="font-size: 10px; color: #888;">Dog Run Animation</div>
                     </div>
                 </div>
-                
+
                 <div class="section">
                     <h3>Grid Editor</h3>
                     <div id="gridEditor"></div>
                 </div>
-                
+
                 <div class="section">
                     <h3>Animation Preview</h3>
                     <div id="animationPreview" class="animation-preview"></div>
                 </div>
-                
+
                 <div class="section">
                     <h3>Import/Export</h3>
                     <div class="import-export-buttons">
@@ -712,7 +1162,7 @@
                     <textarea id="jsonData" style="width:100%; height:100px; margin-top:5px; display:none;"></textarea>
                 </div>
             </div>
-            
+
             <div id="playTab" class="tab-content active">
                 <div class="section">
                     <h3>Game Controls</h3>
@@ -728,7 +1178,7 @@
                         <div>Mute: M</div>
                     </div>
                 </div>
-                
+
                 <div class="section">
                     <div class="collapsible" onclick="toggleCollapse(this)">Physics Tuning</div>
                     <div class="collapsible-content">
@@ -758,7 +1208,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="section">
                     <h3>Accessibility</h3>
                     <div class="checkbox-group">
@@ -774,23 +1224,26 @@
                         <input type="range" id="uiScale" min="1" max="4" value="2">
                     </div>
                 </div>
-                
+
                 <div class="section">
                     <h3>Key Remapping</h3>
                     <button onclick="openKeyRemapping()">Configure Keys</button>
                 </div>
             </div>
         </div>
-        
+
         <div id="gameArea">
             <div id="gameWrapper">
                 <canvas id="gameCanvas"></canvas>
                 <div id="mobileControls">
                     <div id="dpad">
                         <div class="dpad-button" style="top: 10px; left: 50px; width: 50px;" data-key="ArrowUp">▲</div>
-                        <div class="dpad-button" style="bottom: 10px; left: 50px; width: 50px;" data-key="ArrowDown">▼</div>
-                        <div class="dpad-button" style="top: 50px; left: 10px; height: 50px;" data-key="ArrowLeft">◄</div>
-                        <div class="dpad-button" style="top: 50px; right: 10px; height: 50px;" data-key="ArrowRight">►</div>
+                        <div class="dpad-button" style="bottom: 10px; left: 50px; width: 50px;" data-key="ArrowDown">▼
+                        </div>
+                        <div class="dpad-button" style="top: 50px; left: 10px; height: 50px;" data-key="ArrowLeft">◄
+                        </div>
+                        <div class="dpad-button" style="top: 50px; right: 10px; height: 50px;" data-key="ArrowRight">►
+                        </div>
                     </div>
                     <div id="actionButtons">
                         <button class="touch-button" id="jumpBtn" data-key=" ">Jump</button>
@@ -819,12 +1272,12 @@
             </div>
         </div>
     </div>
-    
+
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         ctx.imageSmoothingEnabled = false;
-        
+
         let currentMode = 'play';
         let scale = 2;
         let highContrast = false;
@@ -833,31 +1286,31 @@
         let debugMode = false;
         let isFullscreen = false;
         let isMobile = false;
-        
+
         const sheets = {
             A: { img: null, cells: [] },
             B: { img: null, cells: [] },
             dog: { img: null, cells: [] }
         };
-        
+
         const defaultMapping = {
             sheet: 'A',
             cells: [
-                {r:1, c:1, crop:[0,0,32,32], assign:'dodge_roll', pivot:[0.5,1], flipX:false},
-                {r:1, c:2, crop:[32,0,32,32], assign:'run_1', pivot:[0.5,1], flipX:false},
-                {r:1, c:3, crop:[64,0,32,32], assign:'idle_sit', pivot:[0.5,1], flipX:false},
-                {r:2, c:1, crop:[0,32,32,32], assign:'run_2', pivot:[0.5,1], flipX:false},
-                {r:2, c:2, crop:[32,32,32,32], assign:'run_3', pivot:[0.5,1], flipX:false},
-                {r:2, c:3, crop:[64,32,32,32], assign:'idle_sit_front', pivot:[0.5,1], flipX:false},
-                {r:3, c:1, crop:[0,64,32,32], assign:'crouch', pivot:[0.5,1], flipX:false},
-                {r:3, c:2, crop:[32,64,32,32], assign:'jump_up', pivot:[0.5,1], flipX:false},
-                {r:3, c:3, crop:[64,64,32,32], assign:'fall_down', pivot:[0.5,1], flipX:false}
+                { r: 1, c: 1, crop: [0, 0, 32, 32], assign: 'dodge_roll', pivot: [0.5, 1], flipX: false },
+                { r: 1, c: 2, crop: [32, 0, 32, 32], assign: 'run_1', pivot: [0.5, 1], flipX: false },
+                { r: 1, c: 3, crop: [64, 0, 32, 32], assign: 'idle_sit', pivot: [0.5, 1], flipX: false },
+                { r: 2, c: 1, crop: [0, 32, 32, 32], assign: 'run_2', pivot: [0.5, 1], flipX: false },
+                { r: 2, c: 2, crop: [32, 32, 32, 32], assign: 'run_3', pivot: [0.5, 1], flipX: false },
+                { r: 2, c: 3, crop: [64, 32, 32, 32], assign: 'idle_sit_front', pivot: [0.5, 1], flipX: false },
+                { r: 3, c: 1, crop: [0, 64, 32, 32], assign: 'crouch', pivot: [0.5, 1], flipX: false },
+                { r: 3, c: 2, crop: [32, 64, 32, 32], assign: 'jump_up', pivot: [0.5, 1], flipX: false },
+                { r: 3, c: 3, crop: [64, 64, 32, 32], assign: 'fall_down', pivot: [0.5, 1], flipX: false }
             ],
             fireball: null
         };
-        
+
         let currentMapping = JSON.parse(JSON.stringify(defaultMapping));
-        
+
         const physics = {
             gravity: 500,
             jumpForce: 250,
@@ -866,7 +1319,7 @@
             coyoteTime: 80,
             jumpBuffer: 100
         };
-        
+
         const keyMap = {
             left: ['ArrowLeft', 'a', 'A'],
             right: ['ArrowRight', 'd', 'D'],
@@ -879,10 +1332,10 @@
             debug: ['`'],
             mute: ['m', 'M']
         };
-        
+
         const keys = {};
         const animations = {};
-        
+
         class Player {
             constructor() {
                 this.x = 100;
@@ -911,21 +1364,21 @@
                 this.climbing = false;
                 this.climbX = 0;
             }
-            
+
             update(dt) {
                 if (this.dead) return;
-                
+
                 const wasGrounded = this.grounded;
                 this.grounded = this.checkGrounded();
-                
+
                 if (this.grounded && !wasGrounded) {
                     this.land();
                 }
-                
+
                 if (this.grounded) {
                     this.lastGroundedTime = Date.now();
                 }
-                
+
                 if (this.dodging) {
                     this.dodgeTimer -= dt;
                     if (this.dodgeTimer <= 0) {
@@ -933,51 +1386,51 @@
                         this.invulnerable = false;
                     }
                 }
-                
+
                 if (this.invulnerable && !this.dodging) {
                     this.invulnTimer -= dt;
                     if (this.invulnTimer <= 0) {
                         this.invulnerable = false;
                     }
                 }
-                
+
                 this.handleInput(dt);
-                
+
                 this.vy += physics.gravity * dt / 1000;
-                
+
                 this.prevY = this.y;
                 this.x += this.vx * dt / 1000;
                 this.y += this.vy * dt / 1000;
-                
+
                 this.checkCollisions();
-                
+
                 if (!this.dodging) {
                     this.vx *= Math.pow(physics.friction, dt / 16);
                 }
-                
+
                 this.updateState();
                 this.updateAnimation(dt);
             }
-            
+
             handleInput(dt) {
                 // Check for cat tree climbing
                 if (game) {
-                    const tileX = Math.floor((this.x + this.width/2) / 16);
-                    const tileY = Math.floor((this.y + this.height/2) / 16);
-                    const nearTree = game.level[tileY] && (game.level[tileY][tileX] === 4 || 
-                                     game.level[tileY][tileX + 1] === 4 || game.level[tileY][tileX - 1] === 4);
-                    
+                    const tileX = Math.floor((this.x + this.width / 2) / 16);
+                    const tileY = Math.floor((this.y + this.height / 2) / 16);
+                    const nearTree = game.level[tileY] && (game.level[tileY][tileX] === 4 ||
+                        game.level[tileY][tileX + 1] === 4 || game.level[tileY][tileX - 1] === 4);
+
                     if (nearTree && isKeyPressed('jump') && isKeyPressed('jump')) {
                         this.climbing = true;
                         this.climbX = Math.floor(tileX) * 16 + 8;
                         this.vx = 0;
                     }
                 }
-                
+
                 if (this.climbing) {
                     this.x = this.climbX;
                     this.vx = 0;
-                    
+
                     if (isKeyPressed('jump')) {
                         // Climb up
                         this.vy = -100;
@@ -987,17 +1440,17 @@
                     } else {
                         this.vy = 0;
                     }
-                    
+
                     if (isKeyPressed('left') || isKeyPressed('right')) {
                         // Jump off tree
                         this.climbing = false;
                         this.vy = -physics.jumpForce * 0.8;
                         this.vx = isKeyPressed('left') ? -physics.moveSpeed : physics.moveSpeed;
                     }
-                    
+
                     return;
                 }
-                
+
                 if (isKeyPressed('left')) {
                     this.vx = -physics.moveSpeed;
                     this.facing = -1;
@@ -1008,43 +1461,43 @@
                     this.facing = 1;
                     this.sitting = false;
                 }
-                
+
                 if (isKeyPressed('jump')) {
                     this.jumpBufferTime = Date.now();
                 }
-                
-                const canJump = this.grounded || 
+
+                const canJump = this.grounded ||
                     (Date.now() - this.lastGroundedTime < physics.coyoteTime);
                 const wantsJump = Date.now() - this.jumpBufferTime < physics.jumpBuffer;
-                
+
                 if (canJump && wantsJump) {
                     this.vy = -physics.jumpForce;
                     this.jumpBufferTime = 0;
                     this.sitting = false;
                     this.crouching = false;
                 }
-                
+
                 if (!isKeyPressed('jump') && this.vy < 0) {
                     this.vy *= 0.5;
                 }
-                
+
                 if (isKeyPressed('crouch')) {
                     this.crouching = true;
                     this.sitting = false;
                 } else {
                     this.crouching = false;
                 }
-                
+
                 if (isKeyPressed('sit')) {
                     this.sitting = true;
                     this.crouching = false;
                 }
-                
+
                 if (isKeyPressed('dodge') && !this.dodging && this.grounded) {
                     this.dodge();
                 }
             }
-            
+
             dodge() {
                 this.dodging = true;
                 this.invulnerable = true;
@@ -1052,16 +1505,16 @@
                 this.vx = this.facing * physics.moveSpeed * 2;
                 this.height = 16;
             }
-            
+
             land() {
                 if (!reducedMotion && game) {
                     game.createParticles(this.x, this.y + this.height, 5);
                 }
             }
-            
+
             updateState() {
                 const oldState = this.state;
-                
+
                 if (this.dodging) {
                     this.state = 'dodge_roll';
                 } else if (this.crouching) {
@@ -1075,74 +1528,74 @@
                 } else {
                     this.state = 'idle_sit';
                 }
-                
+
                 if (oldState !== this.state) {
                     this.animFrame = 0;
                     this.animTimer = 0;
                 }
-                
+
                 if (!this.dodging && this.height === 16) {
                     this.height = 28;
                 }
             }
-            
+
             updateAnimation(dt) {
                 this.animTimer += dt;
-                
+
                 const animSpeed = this.state === 'run' ? 100 : 150;
-                
+
                 if (this.animTimer >= animSpeed) {
                     this.animTimer = 0;
                     this.animFrame++;
-                    
+
                     const frameCount = this.getFrameCount();
                     if (this.animFrame >= frameCount) {
                         this.animFrame = 0;
                     }
                 }
             }
-            
+
             getFrameCount() {
-                switch(this.state) {
+                switch (this.state) {
                     case 'run': return 3;
                     case 'dodge_roll': return 1;
                     default: return 1;
                 }
             }
-            
+
             checkGrounded() {
                 // Check floor (but not for Level 3 which has pits)
                 // Use typeof check to ensure game exists before accessing properties
                 const isLevel3 = (typeof game !== 'undefined' && game && game.currentLevel === 3);
-                
+
                 if (!isLevel3 && this.y >= 400 - this.height) {
                     // Other levels have a solid floor at y=400
                     return true;
                 }
-                
+
                 // Check if standing on a platform tile
-                const tileX = Math.floor((this.x + this.width/2) / 16);
+                const tileX = Math.floor((this.x + this.width / 2) / 16);
                 const tileY = Math.floor((this.y + this.height + 2) / 16);
-                
+
                 // Check if the tile exists and is solid (value 1 or 3 for moving platforms)
                 if (typeof game !== 'undefined' && game && game.level && game.level[tileY]) {
                     const tileValue = game.level[tileY][tileX];
-                    
+
                     // Solid tiles (1 = platform, 3 = moving platform)
                     if (tileValue === 1 || tileValue === 3) {
                         return true;
                     }
-                    
+
                     // IMPORTANT FIX: Explicitly handle pit tiles (value 0)
                     // Player should fall through pits, not walk over them
                     if (tileValue === 0) {
                         return false;
                     }
                 }
-                
+
                 return false;
             }
-            
+
             checkCollisions() {
                 // Check for falling into pit (Level 3)
                 // Increased depth from 420 to 450 so cat falls deeper into pit
@@ -1150,34 +1603,34 @@
                     this.respawnAtCheckpoint();
                     return;
                 }
-                
+
                 // Floor collision (skip for Level 3 which has pits)
                 const isLevel3 = (typeof game !== 'undefined' && game && game.currentLevel === 3);
-                
+
                 if (!isLevel3 && this.y > 400 - this.height) {
                     // Other levels have a solid floor at y=400
                     this.y = 400 - this.height;
                     this.vy = 0;
                     this.grounded = true;
                 }
-                
+
                 // Platform tile collisions
                 if (typeof game !== 'undefined' && game && game.level) {
                     // Check multiple points along the player's bottom edge
                     let foundPlatform = false;
                     let overPit = false;
                     let centerOverPit = false;
-                    
+
                     // First pass: Check if center of player is over a pit
                     const centerX = this.x + this.width / 2;
                     const centerTileX = Math.floor(centerX / 16);
                     const centerTileY = Math.floor((this.y + this.height) / 16);
                     const centerTile = game.level[centerTileY] && game.level[centerTileY][centerTileX];
-                    
+
                     if (centerTile === 0) {
                         centerOverPit = true;
                     }
-                    
+
                     // If center is over pit, don't allow landing at all
                     if (centerOverPit) {
                         overPit = true;
@@ -1189,15 +1642,15 @@
                             const checkX = this.x + xOffset;
                             const tileX = Math.floor(checkX / 16);
                             const tileY = Math.floor((this.y + this.height) / 16);
-                            
+
                             const tile = game.level[tileY] && game.level[tileY][tileX];
-                            
+
                             // Check for pit tiles
                             if (tile === 0) {
                                 overPit = true;
                                 continue; // Keep checking other points
                             }
-                            
+
                             if (tile === 1) {
                                 // Regular platform
                                 if (this.vy > 0 && this.prevY + this.height <= tileY * 16 + 4) {
@@ -1220,14 +1673,14 @@
                                     game.playSound('jump');
                                     // Create bounce particles
                                     if (!reducedMotion) {
-                                        game.createParticles(this.x + this.width/2, this.y + this.height, 10);
+                                        game.createParticles(this.x + this.width / 2, this.y + this.height, 10);
                                     }
                                     break;
                                 }
                             }
                         }
                     }
-                    
+
                     // Set grounded state based on what we found
                     if (foundPlatform) {
                         this.grounded = true;
@@ -1235,12 +1688,12 @@
                         // Explicitly NOT grounded when over a pit
                         this.grounded = false;
                     }
-                    
+
                     // Side collisions with platforms
                     const leftTileX = Math.floor(this.x / 16);
                     const rightTileX = Math.floor((this.x + this.width) / 16);
-                    const sideCenterTileY = Math.floor((this.y + this.height/2) / 16);
-                    
+                    const sideCenterTileY = Math.floor((this.y + this.height / 2) / 16);
+
                     // Left collision
                     if (game.level[sideCenterTileY] && game.level[sideCenterTileY][leftTileX] === 1) {
                         if (this.vx < 0) {
@@ -1248,7 +1701,7 @@
                             this.vx = 0;
                         }
                     }
-                    
+
                     // Right collision  
                     if (game.level[sideCenterTileY] && game.level[sideCenterTileY][rightTileX] === 1) {
                         if (this.vx > 0) {
@@ -1256,10 +1709,10 @@
                             this.vx = 0;
                         }
                     }
-                    
+
                     // Head collision
                     const headTileY = Math.floor(this.y / 16);
-                    const headTileX = Math.floor((this.x + this.width/2) / 16);
+                    const headTileX = Math.floor((this.x + this.width / 2) / 16);
 
                     if (game.level[headTileY] && game.level[headTileY][headTileX] === 1) {
                         if (this.vy < 0) {
@@ -1281,105 +1734,105 @@
                             }
                         }
                     }
-                    
+
                     // Lava collision
                     const lavaCheckY = Math.floor((this.y + this.height - 2) / 16);
-                    const lavaCheckX = Math.floor((this.x + this.width/2) / 16);
-                    
+                    const lavaCheckX = Math.floor((this.x + this.width / 2) / 16);
+
                     if (game.level[lavaCheckY] && game.level[lavaCheckY][lavaCheckX] === 2) {
                         this.hurt();
                     }
                 }
-                
+
                 // World bounds
                 if (this.x < 0) this.x = 0;
                 if (this.x > 800 - this.width) this.x = 800 - this.width;
             }
-            
+
             respawnAtCheckpoint() {
                 this.x = this.respawnX;
                 this.y = this.respawnY;
                 this.vx = 0;
                 this.vy = 0;
                 this.climbing = false;
-                game.createParticles(this.x + this.width/2, this.y, 20);
+                game.createParticles(this.x + this.width / 2, this.y, 20);
             }
-            
+
             hurt() {
                 if (this.invulnerable || this.dead) return;
-                
+
                 this.invulnerable = true;
                 this.invulnTimer = 1000;
-                
+
                 game.lives--;
                 game.hits++;
-                
+
                 if (game.lives <= 0) {
                     this.die();
                 }
             }
-            
+
             die() {
                 this.dead = true;
                 this.state = 'dead';
                 setTimeout(() => game.restart(), 2000);
             }
-            
+
             draw(ctx) {
                 ctx.save();
-                
+
                 if (this.invulnerable) {
                     ctx.globalAlpha = Math.sin(Date.now() * 0.01) > 0 ? 1 : 0.5;
                 }
-                
+
                 const sprite = this.getSprite();
                 if (sprite && sprite.img) {
-                    ctx.translate(this.x + this.width/2, this.y + this.height);
-                    
+                    ctx.translate(this.x + this.width / 2, this.y + this.height);
+
                     if (this.facing === -1) {
                         ctx.scale(-1, 1);
                     }
-                    
+
                     const crop = sprite.crop;
                     ctx.drawImage(
                         sprite.img,
                         crop[0], crop[1], crop[2], crop[3],
-                        -this.width/2, -this.height, this.width, this.height
+                        -this.width / 2, -this.height, this.width, this.height
                     );
                 } else {
                     ctx.fillStyle = this.invulnerable ? '#ff0000' : '#ffffff';
                     ctx.fillRect(this.x, this.y, this.width, this.height);
                 }
-                
+
                 ctx.restore();
             }
-            
+
             getSprite() {
                 const mapping = this.getMappingForState();
                 if (!mapping) return null;
-                
+
                 const sheet = sheets[currentMapping.sheet];
                 if (!sheet || !sheet.img) return null;
-                
+
                 return {
                     img: sheet.img,
                     crop: mapping.crop,
                     pivot: mapping.pivot
                 };
             }
-            
+
             getMappingForState() {
                 let searchState = this.state;
-                
+
                 if (this.state === 'run') {
                     const frameMap = ['run_1', 'run_2', 'run_3'];
                     searchState = frameMap[this.animFrame % 3];
                 }
-                
+
                 return currentMapping.cells.find(c => c.assign === searchState);
             }
         }
-        
+
         class Particle {
             constructor(x, y) {
                 this.x = x + (Math.random() - 0.5) * 10;
@@ -1389,20 +1842,20 @@
                 this.life = 500;
                 this.maxLife = 500;
             }
-            
+
             update(dt) {
                 this.x += this.vx * dt / 1000;
                 this.y += this.vy * dt / 1000;
                 this.vy += 300 * dt / 1000;
                 this.life -= dt;
             }
-            
+
             draw(ctx) {
                 ctx.fillStyle = `rgba(255, 255, 255, ${this.life / this.maxLife})`;
                 ctx.fillRect(this.x, this.y, 2, 2);
             }
         }
-        
+
         class Fireball {
             constructor(x, y, vx, vy) {
                 this.x = x;
@@ -1412,37 +1865,37 @@
                 this.width = 12;
                 this.height = 12;
             }
-            
+
             update(dt) {
                 this.x += this.vx * dt / 1000;
                 this.y += this.vy * dt / 1000;
                 this.vy += 200 * dt / 1000;
-                
+
                 // Check collision with platform tiles
                 if (game) {
-                    const tileX = Math.floor((this.x + this.width/2) / 16);
-                    const tileY = Math.floor((this.y + this.height/2) / 16);
-                    
+                    const tileX = Math.floor((this.x + this.width / 2) / 16);
+                    const tileY = Math.floor((this.y + this.height / 2) / 16);
+
                     if (game.level[tileY] && game.level[tileY][tileX] === 1) {
                         // Fireball hits platform, reset it
                         this.reset();
                         return;
                     }
                 }
-                
+
                 // Reset if falls off screen
                 if (this.y > 450) {
                     this.reset();
                 }
             }
-            
+
             reset() {
                 this.y = -50;
                 this.x = 100 + Math.random() * 600;
                 this.vx = (Math.random() - 0.5) * 100;
                 this.vy = 0;
             }
-            
+
             draw(ctx) {
                 if (currentMapping.fireball) {
                     const sheet = sheets[currentMapping.fireball.sheet];
@@ -1456,28 +1909,28 @@
                         return;
                     }
                 }
-                
+
                 ctx.fillStyle = '#ff6600';
                 ctx.beginPath();
                 ctx.arc(this.x + 6, this.y + 6, 6, 0, Math.PI * 2);
                 ctx.fill();
-                
+
                 ctx.fillStyle = '#ffcc00';
                 ctx.beginPath();
                 ctx.arc(this.x + 6, this.y + 6, 3, 0, Math.PI * 2);
                 ctx.fill();
             }
-            
+
             checkCollision(player) {
                 if (player.invulnerable) return false;
-                
+
                 return this.x < player.x + player.width &&
-                       this.x + this.width > player.x &&
-                       this.y < player.y + player.height &&
-                       this.y + this.height > player.y;
+                    this.x + this.width > player.x &&
+                    this.y < player.y + player.height &&
+                    this.y + this.height > player.y;
             }
         }
-        
+
         class Dog {
             constructor(x, y) {
                 this.x = x;
@@ -1500,7 +1953,7 @@
                 this.bounceCount = 0;
                 this.runningAway = false;
             }
-            
+
             spawn() {
                 // Random spawn position
                 this.x = Math.random() > 0.5 ? -50 : 850;
@@ -1509,7 +1962,7 @@
                 this.spawnTimer = 0;
                 this.facing = this.x < 400 ? 1 : -1;
             }
-            
+
             update(dt) {
                 if (!this.active) {
                     this.spawnTimer += dt;
@@ -1519,7 +1972,7 @@
                     }
                     return;
                 }
-                
+
                 // If running away (level 4), just keep moving right
                 if (this.runningAway) {
                     this.vx = 500;
@@ -1530,7 +1983,7 @@
                         this.animTimer = 0;
                         this.animFrame = (this.animFrame + 1) % 3;
                     }
-                    
+
                     // Check if dog has left the screen
                     if (this.x > 850) {
                         // Move to next level
@@ -1544,15 +1997,15 @@
                     }
                     return;
                 }
-                
+
                 this.jumpCooldown -= dt;
-                
+
                 // Check if can see player
                 const player = game.player;
                 const dx = player.x - this.x;
                 const dy = player.y - this.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
-                
+
                 // Line of sight check - but in level 4, dog doesn't chase
                 if (game && game.currentLevel === 4) {
                     this.chasing = false;
@@ -1562,13 +2015,13 @@
                 } else if (dist > this.sightRange * 1.5) {
                     this.chasing = false;
                 }
-                
+
                 // Movement AI
                 if (this.chasing) {
                     // Chase player
                     this.facing = Math.sign(dx);
                     this.vx = this.facing * this.moveSpeed;
-                    
+
                     // Jump if player is above and grounded
                     if (dy < -20 && this.grounded && this.jumpCooldown <= 0) {
                         this.vy = -200;
@@ -1577,18 +2030,18 @@
                 } else {
                     // Wander and look for treats
                     this.vx = this.facing * this.moveSpeed * 0.5;
-                    
+
                     // Random direction change
                     if (Math.random() < 0.01) {
                         this.facing *= -1;
                     }
                 }
-                
+
                 // Physics
                 this.vy += 500 * dt / 1000;
                 this.x += this.vx * dt / 1000;
                 this.y += this.vy * dt / 1000;
-                
+
                 // Ground collision
                 this.grounded = false;
                 if (this.y > 400 - this.height) {
@@ -1596,18 +2049,18 @@
                     this.vy = 0;
                     this.grounded = true;
                 }
-                
+
                 // Platform collisions
                 if (game) {
-                    const tileX = Math.floor((this.x + this.width/2) / 16);
+                    const tileX = Math.floor((this.x + this.width / 2) / 16);
                     const tileY = Math.floor((this.y + this.height) / 16);
-                    
+
                     if (game.level[tileY] && (game.level[tileY][tileX] === 1 || game.level[tileY][tileX] === 3)) {
                         if (this.vy > 0) {
                             this.y = tileY * 16 - this.height;
                             this.vy = 0;
                             this.grounded = true;
-                            
+
                             // Bounce on couch
                             if (game.level[tileY][tileX] === 3) {
                                 this.vy = -300;
@@ -1615,47 +2068,47 @@
                         }
                     }
                 }
-                
+
                 // Despawn if too far off screen
                 if (this.x < -200 || this.x > 1000) {
                     this.active = false;
                     this.spawnTimer = 10000; // Wait before next spawn
                 }
-                
+
                 // Update animation state
                 if (Math.abs(this.vx) > 10) {
                     this.state = 'run';
                 } else {
                     this.state = 'idle';
                 }
-                
+
                 // Debug: Log sprite status once
                 if (!this.loggedSpriteStatus && sheets.dog) {
                     console.log('Dog sprite status:', sheets.dog.img ? 'Loaded' : 'Not loaded');
                     this.loggedSpriteStatus = true;
                 }
-                
+
                 this.animTimer += dt;
                 if (this.animTimer > 150) {
                     this.animTimer = 0;
                     this.animFrame = (this.animFrame + 1) % 3;
                 }
-                
+
                 // Eat nearby treats
                 this.eatTreats();
-                
+
                 // Check collision with player
                 this.checkPlayerCollision();
             }
-            
+
             eatTreats() {
                 if (!game) return;
-                
+
                 game.fishTreats.forEach(treat => {
                     if (!treat.collected) {
-                        const dx = Math.abs(this.x + this.width/2 - treat.x - 6);
-                        const dy = Math.abs(this.y + this.height/2 - treat.y - 5);
-                        
+                        const dx = Math.abs(this.x + this.width / 2 - treat.x - 6);
+                        const dy = Math.abs(this.y + this.height / 2 - treat.y - 5);
+
                         if (dx < 20 && dy < 20) {
                             treat.collected = true;
                             // Dog gets excited animation
@@ -1664,24 +2117,24 @@
                     }
                 });
             }
-            
+
             checkPlayerCollision() {
                 if (!game || this.runningAway) return;
-                
+
                 const player = game.player;
-                const dx = Math.abs(this.x + this.width/2 - player.x - player.width/2);
-                const dy = Math.abs(this.y + this.height/2 - player.y - player.height/2);
-                
+                const dx = Math.abs(this.x + this.width / 2 - player.x - player.width / 2);
+                const dy = Math.abs(this.y + this.height / 2 - player.y - player.height / 2);
+
                 if (dx < (this.width + player.width) / 2 && dy < (this.height + player.height) / 2) {
                     // Check if player is above dog (bouncing on it) in level 4
                     if (game.currentLevel === 4 && player.y < this.y && player.vy > 0) {
                         // Player bounces on dog
                         player.vy = -400; // Strong upward bounce
                         this.bounceCount++;
-                        
+
                         // Visual feedback
                         this.animTimer = 0;
-                        
+
                         if (this.bounceCount >= 3) {
                             // Dog runs away after 3 bounces
                             this.runningAway = true;
@@ -1692,88 +2145,88 @@
                         player.climbing = false;
                         return;
                     }
-                    
+
                     // Normal collision - bounce player away
                     const angle = Math.atan2(player.y - this.y, player.x - this.x);
                     player.vx = Math.cos(angle) * 300;
                     player.vy = Math.sin(angle) * 200 - 100;
                     player.climbing = false;
-                    
+
                     // Create particles
                     if (!reducedMotion) {
-                        game.createParticles(player.x + player.width/2, player.y + player.height/2, 10);
+                        game.createParticles(player.x + player.width / 2, player.y + player.height / 2, 10);
                     }
-                    
+
                     game.playSound('hurt');
                 }
             }
-            
+
             draw(ctx) {
                 if (!this.active) return;
-                
+
                 ctx.save();
-                ctx.translate(this.x + this.width/2, this.y + this.height);
-                
+                ctx.translate(this.x + this.width / 2, this.y + this.height);
+
                 if (this.facing === -1) {
                     ctx.scale(-1, 1);
                 }
-                
+
                 // Draw dog sprite (fallback to rectangle if no sprite)
                 const dogSheet = sheets.dog;
                 if (dogSheet && dogSheet.img) {
                     // Use sprite from sheet - bonbon_dog_3x3.png layout
                     const spriteMap = {
-                        'idle': {r: 2, c: 2}, // Middle dog sitting
-                        'run': [{r: 2, c: 1}, {r: 2, c: 2}, {r: 2, c: 3}] // Row 2 for run animation
+                        'idle': { r: 2, c: 2 }, // Middle dog sitting
+                        'run': [{ r: 2, c: 1 }, { r: 2, c: 2 }, { r: 2, c: 3 }] // Row 2 for run animation
                     };
-                    
+
                     let sprite = spriteMap[this.state];
                     if (Array.isArray(sprite)) {
                         sprite = sprite[this.animFrame % sprite.length];
                     }
-                    
+
                     const cellSize = Math.floor(dogSheet.img.width / 3);
                     const sx = (sprite.c - 1) * cellSize;
                     const sy = (sprite.r - 1) * cellSize;
-                    
+
                     // Draw with proper scaling
                     ctx.drawImage(
                         dogSheet.img,
                         sx, sy, cellSize, cellSize,
-                        -this.width/2, -this.height, this.width, this.height
+                        -this.width / 2, -this.height, this.width, this.height
                     );
                 } else {
                     // Fallback dog drawing
                     ctx.fillStyle = '#8B4513';
-                    ctx.fillRect(-this.width/2, -this.height, this.width, this.height);
-                    
+                    ctx.fillRect(-this.width / 2, -this.height, this.width, this.height);
+
                     // Eyes
                     ctx.fillStyle = '#000';
                     ctx.fillRect(-8, -this.height + 5, 3, 3);
                     ctx.fillRect(5, -this.height + 5, 3, 3);
-                    
+
                     // Tail
                     ctx.fillStyle = '#8B4513';
                     if (this.chasing) {
                         // Wagging tail when chasing
                         const wag = Math.sin(Date.now() * 0.01) * 10;
-                        ctx.fillRect(this.width/2 - 5, -this.height/2 + wag, 10, 4);
+                        ctx.fillRect(this.width / 2 - 5, -this.height / 2 + wag, 10, 4);
                     } else {
-                        ctx.fillRect(this.width/2 - 5, -this.height/2, 10, 4);
+                        ctx.fillRect(this.width / 2 - 5, -this.height / 2, 10, 4);
                     }
                 }
-                
+
                 ctx.restore();
-                
+
                 // Draw "!" when chasing
                 if (this.chasing) {
                     ctx.fillStyle = '#FF0000';
                     ctx.font = '16px monospace';
-                    ctx.fillText('!', this.x + this.width/2 - 4, this.y - 10);
+                    ctx.fillText('!', this.x + this.width / 2 - 4, this.y - 10);
                 }
             }
         }
-        
+
         class Mouse {
             constructor(x, y) {
                 this.x = x;
@@ -1788,33 +2241,33 @@
                 this.caught = false;
                 this.jumpCooldown = 0;
             }
-            
+
             update(dt) {
                 if (this.caught) return;
-                
+
                 this.jumpCooldown -= dt;
                 this.moveTimer += dt;
-                
+
                 // Change direction randomly
                 if (this.moveTimer > 1000 + Math.random() * 2000) {
                     this.moveTimer = 0;
                     this.direction = Math.random() > 0.5 ? 1 : -1;
-                    
+
                     // Sometimes jump
                     if (Math.random() > 0.7 && this.grounded && this.jumpCooldown <= 0) {
                         this.vy = -150;
                         this.jumpCooldown = 1000;
                     }
                 }
-                
+
                 // Move
                 this.vx = this.direction * 50;
-                
+
                 // Physics
                 this.vy += 500 * dt / 1000;
                 this.x += this.vx * dt / 1000;
                 this.y += this.vy * dt / 1000;
-                
+
                 // Ground collision
                 this.grounded = false;
                 if (this.y > 400 - this.height) {
@@ -1822,12 +2275,12 @@
                     this.vy = 0;
                     this.grounded = true;
                 }
-                
+
                 // Platform collisions
                 if (game && game.currentLevel === 2) {
-                    const tileX = Math.floor((this.x + this.width/2) / 16);
+                    const tileX = Math.floor((this.x + this.width / 2) / 16);
                     const tileY = Math.floor((this.y + this.height) / 16);
-                    
+
                     if (game.level[tileY] && game.level[tileY][tileX] === 1) {
                         if (this.vy > 0) {
                             this.y = tileY * 16 - this.height;
@@ -1836,64 +2289,64 @@
                         }
                     }
                 }
-                
+
                 // World bounds
                 if (this.x < 0 || this.x > 800 - this.width) {
                     this.direction *= -1;
                     this.x = Math.max(0, Math.min(this.x, 800 - this.width));
                 }
             }
-            
+
             draw(ctx) {
                 if (this.caught) return;
-                
+
                 // Draw simple pixel mouse
                 ctx.fillStyle = '#808080';
                 ctx.fillRect(this.x, this.y, this.width, this.height);
-                
+
                 // Tail
                 ctx.fillRect(this.x - 4, this.y + 2, 4, 2);
-                
+
                 // Eyes
                 ctx.fillStyle = '#000';
                 ctx.fillRect(this.x + 1, this.y + 1, 1, 1);
                 ctx.fillRect(this.x + 3, this.y + 1, 1, 1);
-                
+
                 // Ears
                 ctx.fillStyle = '#808080';
                 ctx.fillRect(this.x + 1, this.y - 2, 2, 2);
                 ctx.fillRect(this.x + 5, this.y - 2, 2, 2);
             }
-            
+
             checkCaught(player) {
                 if (this.caught) return false;
-                
+
                 // Only catch if player is moving
                 if (Math.abs(player.vx) < 10) return false;
-                
+
                 const dx = Math.abs(this.x - player.x);
                 const dy = Math.abs(this.y - player.y);
-                
+
                 if (dx < player.width && dy < player.height) {
                     this.caught = true;
                     return true;
                 }
                 return false;
             }
-            
+
             checkCollisionWithStaticCat(player) {
                 if (this.caught) return false;
-                
+
                 // Only collide if cat is stationary
                 if (Math.abs(player.vx) > 10) return false;
-                
+
                 const dx = Math.abs(this.x - player.x);
                 const dy = Math.abs(this.y - player.y);
-                
+
                 return dx < player.width && dy < player.height;
             }
         }
-        
+
         class Game {
             constructor() {
                 this.player = new Player();
@@ -1923,7 +2376,7 @@
 
                 this.initLevel();
             }
-            
+
             initLevel() {
                 if (this.currentLevel === 1) {
                     this.initFireballs();
@@ -1956,7 +2409,7 @@
                     this.catHasDrunk = false;
                 }
             }
-            
+
             initFireballs() {
                 this.fireballs = [];
                 for (let i = 0; i < 3; i++) {
@@ -1968,29 +2421,29 @@
                     ));
                 }
             }
-            
+
             initMice() {
                 this.mice = [];
                 // Create 8 mice at various positions
                 const mousePositions = [
-                    {x: 200, y: 350},
-                    {x: 350, y: 350},
-                    {x: 500, y: 350},
-                    {x: 180, y: 300},
-                    {x: 320, y: 280},
-                    {x: 450, y: 250},
-                    {x: 600, y: 350},
-                    {x: 700, y: 350}
+                    { x: 200, y: 350 },
+                    { x: 350, y: 350 },
+                    { x: 500, y: 350 },
+                    { x: 180, y: 300 },
+                    { x: 320, y: 280 },
+                    { x: 450, y: 250 },
+                    { x: 600, y: 350 },
+                    { x: 700, y: 350 }
                 ];
-                
+
                 mousePositions.forEach(pos => {
                     this.mice.push(new Mouse(pos.x, pos.y));
                 });
             }
-            
+
             createLevel() {
                 const level = [];
-                
+
                 if (this.currentLevel === 1) {
                     // Level 1 - Platformer with fireballs
                     for (let y = 0; y < 30; y++) {
@@ -2094,7 +2547,7 @@
                             }
                         }
                     }
-                    
+
                     // Add cat tree at x=40
                     this.addCatTree(level, 40, 25, 5);
                 } else if (this.currentLevel === 4) {
@@ -2135,10 +2588,10 @@
                         }
                     }
                 }
-                
+
                 return level;
             }
-            
+
             addCatTree(level, x, groundY, height) {
                 // Cat tree trunk (climbable)
                 for (let y = groundY - height; y < groundY; y++) {
@@ -2147,7 +2600,7 @@
                         level[y][x + 1] = 4;
                     }
                 }
-                
+
                 // Platform on top
                 const topY = groundY - height - 1;
                 if (level[topY]) {
@@ -2158,16 +2611,16 @@
                     }
                 }
             }
-            
+
             createFishTreats() {
                 return [
-                    {x: 240, y: 280, collected: false},
-                    {x: 360, y: 250, collected: false},
-                    {x: 520, y: 330, collected: false},
-                    {x: 600, y: 200, collected: false}
+                    { x: 240, y: 280, collected: false },
+                    { x: 360, y: 250, collected: false },
+                    { x: 520, y: 330, collected: false },
+                    { x: 600, y: 200, collected: false }
                 ];
             }
-            
+
             update(dt) {
                 // Update speed boost timer
                 if (this.speedBoostTimer > 0) {
@@ -2176,21 +2629,21 @@
                         this.speedBoost = 1;
                     }
                 }
-                
+
                 // Apply speed boost to physics
                 const originalSpeed = physics.moveSpeed;
                 physics.moveSpeed = originalSpeed * this.speedBoost;
-                
+
                 this.player.update(dt);
-                
+
                 // Restore original speed
                 physics.moveSpeed = originalSpeed;
-                
+
                 this.particles = this.particles.filter(p => {
                     p.update(dt);
                     return p.life > 0;
                 });
-                
+
                 // Level 1 - Fireballs
                 if (this.currentLevel === 1) {
                     this.fireballs.forEach(f => {
@@ -2218,24 +2671,24 @@
                         this.nextLevel();
                     }
                 }
-                
+
                 // Level 2 - Mice
                 if (this.currentLevel === 2) {
                     this.mice.forEach(mouse => {
                         mouse.update(dt);
-                        
+
                         // Check if caught
                         if (mouse.checkCaught(this.player)) {
                             this.score += 200;
                             this.playSound('collect');
-                            
+
                             // Check win condition
                             const uncaughtMice = this.mice.filter(m => !m.caught).length;
                             if (uncaughtMice === 0) {
                                 this.nextLevel();
                             }
                         }
-                        
+
                         // Check collision with static cat
                         if (mouse.checkCollisionWithStaticCat(this.player)) {
                             if (this.treatsCollected > 0) {
@@ -2246,7 +2699,7 @@
                         }
                     });
                 }
-                
+
                 // Level 3 - Challenge with pits
                 if (this.currentLevel === 3) {
                     // Check goal (bed)
@@ -2255,7 +2708,7 @@
                         this.nextLevel();
                     }
                 }
-                
+
                 // Level 4 - Dog bounce
                 if (this.currentLevel === 4) {
                     if (this.dog) {
@@ -2263,26 +2716,26 @@
                     }
                 } else if (this.currentLevel === 5) {
                     // Check if cat is near water bowl
-                    if (!this.catHasDrunk && 
+                    if (!this.catHasDrunk &&
                         Math.abs(this.player.x - this.waterBowl.x) < 40 &&
                         Math.abs(this.player.y - this.waterBowl.y) < 40) {
                         this.catHasDrunk = true;
                     }
-                    
+
                     // Check if cat is near food plate
-                    if (!this.catHasEaten && 
+                    if (!this.catHasEaten &&
                         Math.abs(this.player.x - this.foodPlate.x) < 40 &&
                         Math.abs(this.player.y - this.foodPlate.y) < 40) {
                         this.catHasEaten = true;
                     }
-                    
+
                     // Win condition: cat has eaten and drunk
                     if (this.catHasEaten && this.catHasDrunk && !this.goalReached) {
                         this.goalReached = true;
                         this.showWinScreen();
                     }
                 }
-                
+
                 // Collect treats
                 this.fishTreats.forEach(fish => {
                     if (!fish.collected) {
@@ -2292,18 +2745,18 @@
                             fish.collected = true;
                             this.score += 100;
                             this.treatsCollected++;
-                            
+
                             // Add speed boost
                             this.speedBoost = Math.min(2, this.speedBoost + 0.15);
                             this.speedBoostTimer = 5000; // 5 seconds
-                            
+
                             this.playSound('collect');
                         }
                     }
                 });
-                
+
                 this.updateCamera();
-                
+
                 this.frameCount++;
                 this.fpsTimer += dt;
                 if (this.fpsTimer >= 1000) {
@@ -2312,17 +2765,17 @@
                     this.fpsTimer = 0;
                 }
             }
-            
+
             ejectTreats() {
                 const treatCount = Math.min(3, this.treatsCollected);
                 this.treatsCollected = Math.max(0, this.treatsCollected - treatCount);
-                
+
                 // Create flying treats
                 for (let i = 0; i < treatCount; i++) {
                     const angle = (Math.PI * 2 / treatCount) * i;
                     const speed = 150;
                     this.fishTreats.push({
-                        x: this.player.x + this.player.width/2,
+                        x: this.player.x + this.player.width / 2,
                         y: this.player.y,
                         vx: Math.cos(angle) * speed,
                         vy: Math.sin(angle) * speed - 100,
@@ -2330,12 +2783,12 @@
                         flying: true
                     });
                 }
-                
+
                 // Reduce speed boost
                 this.speedBoost = Math.max(1, this.speedBoost - treatCount * 0.15);
                 this.playSound('hurt');
             }
-            
+
             nextLevel() {
                 this.currentLevel++;
                 if (this.currentLevel > 4) {
@@ -2343,7 +2796,7 @@
                     this.showWinScreen();
                     return;
                 }
-                
+
                 this.player.x = 100;
                 this.player.y = 300;
                 this.player.respawnX = 100;
@@ -2354,30 +2807,30 @@
                 this.initLevel();
                 this.goalReached = false;
             }
-            
+
             updateCamera() {
                 const targetX = this.player.x - canvas.width / 2 / scale;
                 const targetY = this.player.y - canvas.height / 2 / scale;
-                
+
                 this.camera.x += (targetX - this.camera.x) * 0.1;
                 this.camera.y += (targetY - this.camera.y) * 0.1;
-                
+
                 this.camera.x = Math.max(0, Math.min(this.camera.x, 800 - canvas.width / scale));
                 this.camera.y = Math.max(0, Math.min(this.camera.y, 480 - canvas.height / scale));
             }
-            
+
             draw() {
                 // Different background for level 2
                 ctx.fillStyle = this.currentLevel === 2 ? '#4A5F7A' : '#87CEEB';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
+
                 ctx.save();
                 // Don't scale here since canvas is already sized correctly
                 ctx.translate(-this.camera.x, -this.camera.y);
-                
+
                 this.drawParallax();
                 this.drawLevel();
-                
+
                 // Draw treats as goldfish crackers
                 this.fishTreats.forEach(fish => {
                     if (!fish.collected) {
@@ -2386,7 +2839,7 @@
                             fish.x += fish.vx * 0.016;
                             fish.y += fish.vy * 0.016;
                             fish.vy += 500 * 0.016;
-                            
+
                             // Stop when hits ground
                             if (fish.y > 390) {
                                 fish.y = 390;
@@ -2395,18 +2848,18 @@
                                 fish.vy = 0;
                             }
                         }
-                        
+
                         // Draw goldfish cracker shape
                         ctx.save();
                         ctx.translate(fish.x + 6, fish.y + 5);
                         ctx.rotate(Math.sin(Date.now() * 0.002 + fish.x) * 0.1);
-                        
+
                         // Body (oval)
                         ctx.fillStyle = '#FF8C00';
                         ctx.beginPath();
                         ctx.ellipse(0, 0, 6, 4, 0, 0, Math.PI * 2);
                         ctx.fill();
-                        
+
                         // Tail
                         ctx.beginPath();
                         ctx.moveTo(4, 0);
@@ -2414,27 +2867,27 @@
                         ctx.lineTo(8, 2);
                         ctx.closePath();
                         ctx.fill();
-                        
+
                         // Eye
                         ctx.fillStyle = '#000';
                         ctx.fillRect(-3, -1, 2, 2);
-                        
+
                         // Smile
                         ctx.strokeStyle = '#000';
                         ctx.lineWidth = 0.5;
                         ctx.beginPath();
                         ctx.arc(-1, 0, 2, 0.2, Math.PI - 0.2, false);
                         ctx.stroke();
-                        
+
                         ctx.restore();
                     }
                 });
-                
+
                 // Goal bed for levels 1, 3, and 4
                 if (this.currentLevel === 1 || this.currentLevel === 3 || this.currentLevel === 4) {
                     this.drawBed(750, 350);
                 }
-                
+
                 // Draw mice for level 1 (mystery mouse) and level 2
                 if (this.currentLevel === 1 || this.currentLevel === 2) {
                     this.mice.forEach(mouse => mouse.draw(ctx));
@@ -2447,29 +2900,29 @@
                         ctx.fillText(`Mice: ${uncaughtMice}/${this.mice.length}`, 10, 30);
                     }
                 }
-                
+
                 // Draw speed boost indicator
                 if (this.speedBoost > 1) {
                     ctx.fillStyle = `rgba(255, 255, 0, ${0.3 + Math.sin(Date.now() * 0.01) * 0.2})`;
                     ctx.beginPath();
-                    ctx.arc(this.player.x + this.player.width/2, this.player.y + this.player.height/2, 
-                            20 + Math.sin(Date.now() * 0.01) * 5, 0, Math.PI * 2);
+                    ctx.arc(this.player.x + this.player.width / 2, this.player.y + this.player.height / 2,
+                        20 + Math.sin(Date.now() * 0.01) * 5, 0, Math.PI * 2);
                     ctx.fill();
                 }
-                
+
                 this.particles.forEach(p => p.draw(ctx));
                 this.fireballs.forEach(f => f.draw(ctx));
-                
+
                 // Draw dog for level 4
                 if (this.currentLevel === 4 && this.dog) {
                     this.dog.draw(ctx);
                 }
-                
+
                 this.player.draw(ctx);
-                
+
                 ctx.restore();
             }
-            
+
             drawParallax() {
                 ctx.fillStyle = 'rgba(100, 100, 150, 0.3)';
                 for (let i = 0; i < 5; i++) {
@@ -2477,7 +2930,7 @@
                     const y = 100 + Math.sin(i) * 20;
                     ctx.fillRect(x, y, 150, 80);
                 }
-                
+
                 ctx.fillStyle = 'rgba(80, 120, 80, 0.4)';
                 for (let i = 0; i < 8; i++) {
                     const x = (i * 150 - this.camera.x * 0.5) % 1000;
@@ -2485,7 +2938,7 @@
                     ctx.fillRect(x, y, 100, 100);
                 }
             }
-            
+
             drawLevel() {
                 for (let y = 0; y < this.level.length; y++) {
                     for (let x = 0; x < this.level[y].length; x++) {
@@ -2515,8 +2968,8 @@
                             } else {
                                 // Red couch trampoline (2x2 tiles - only draw from top-left)
                                 // Check if this is the top-left corner of the couch
-                                const isTopRow = !this.level[y-1] || this.level[y-1][x] !== 3;
-                                const isLeftCol = !this.level[y][x-1] || this.level[y][x-1] !== 3;
+                                const isTopRow = !this.level[y - 1] || this.level[y - 1][x] !== 3;
+                                const isLeftCol = !this.level[y][x - 1] || this.level[y][x - 1] !== 3;
                                 if (isTopRow && isLeftCol) {
                                     this.drawCouch(x * 16, y * 16);
                                 }
@@ -2537,17 +2990,17 @@
                         }
                     }
                 }
-                
+
                 // Draw water bowl and food plate in level 5
                 if (this.currentLevel === 5) {
                     // Draw water bowl
                     this.drawWaterBowl(this.waterBowl.x, this.waterBowl.y, !this.catHasDrunk);
-                    
+
                     // Draw food bowl
                     this.drawFoodBowl(this.foodPlate.x, this.foodPlate.y, !this.catHasEaten);
                 }
             }
-            
+
             drawCouch(x, y) {
                 // 32x32 pixel couch (2x2 tiles)
                 // Couch base (dark red)
@@ -2576,7 +3029,7 @@
                 ctx.fillRect(x + 4, y + 28, 4, 4);
                 ctx.fillRect(x + 24, y + 28, 4, 4);
             }
-            
+
             drawFoodBowl(x, y, isFull) {
                 if (this.foodBowlImg && this.foodBowlImg.complete) {
                     // The image is 1024x1024 with two bowls side by side
@@ -2585,7 +3038,7 @@
                     const sourceY = 0;
                     const sourceWidth = 512;  // Half the image width
                     const sourceHeight = 1024; // Full image height
-                    
+
                     // Draw the appropriate bowl state, scaled down to fit game
                     // Fix: not stretched, 1/4 cat size, adjust height
                     ctx.drawImage(
@@ -2609,19 +3062,19 @@
                     }
                 }
             }
-            
+
             drawWaterBowl(x, y, isFull) {
                 if (this.waterBowlImg && this.waterBowlImg.complete) {
                     // Debug: log the state to verify
                     console.log('Water bowl - isFull:', isFull, 'catHasDrunk:', this.catHasDrunk);
-                    
+
                     // The image is 1024x1024 with two bowls side by side
                     // Based on visual inspection: Full bowl on left (0-512), empty bowl on right (512-1024)
                     const sourceX = isFull ? 0 : 512; // Full bowl on left, empty on right
                     const sourceY = 0;
                     const sourceWidth = 512;  // Half the image width
                     const sourceHeight = 1024; // Full image height
-                    
+
                     // Draw the appropriate bowl state, same sizing as food bowl
                     ctx.drawImage(
                         this.waterBowlImg,
@@ -2638,18 +3091,18 @@
                     }
                 }
             }
-            
+
             drawCatTree(x, y) {
                 // Tree trunk texture
                 ctx.fillStyle = '#8B7355';
                 ctx.fillRect(x, y, 16, 16);
-                
+
                 // Carpet texture
                 ctx.fillStyle = '#D2B48C';
                 for (let i = 0; i < 4; i++) {
                     ctx.fillRect(x + 2, y + i * 4, 12, 2);
                 }
-                
+
                 // Scratching post lines
                 ctx.strokeStyle = '#654321';
                 ctx.lineWidth = 1;
@@ -2660,25 +3113,25 @@
                 ctx.lineTo(x + 12, y + 16);
                 ctx.stroke();
             }
-            
+
             drawBed(x, y) {
                 // Bed base
                 ctx.fillStyle = '#8B4513';
                 ctx.fillRect(x, y + 20, 40, 10);
-                
+
                 // Mattress
                 ctx.fillStyle = '#F5DEB3';
                 ctx.fillRect(x + 2, y + 15, 36, 12);
-                
+
                 // Pillow
                 ctx.fillStyle = '#FFB6C1';
                 ctx.fillRect(x + 5, y + 12, 12, 8);
                 ctx.fillRect(x + 23, y + 12, 12, 8);
-                
+
                 // Blanket
                 ctx.fillStyle = '#DEB887';
                 ctx.fillRect(x + 3, y + 18, 34, 8);
-                
+
                 // Z's for sleeping (animated)
                 if (Date.now() % 2000 < 1000) {
                     ctx.fillStyle = '#4169E1';
@@ -2688,7 +3141,7 @@
                     ctx.fillText('Z', x + 30, y + 3 - (Date.now() % 1000) / 45);
                 }
             }
-            
+
             createParticles(x, y, count) {
                 for (let i = 0; i < count; i++) {
                     this.particles.push(new Particle(x, y));
@@ -2711,15 +3164,15 @@
 
             playSound(type) {
                 if (muted) return;
-                
+
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 const oscillator = audioContext.createOscillator();
                 const gainNode = audioContext.createGain();
-                
+
                 oscillator.connect(gainNode);
                 gainNode.connect(audioContext.destination);
-                
-                switch(type) {
+
+                switch (type) {
                     case 'jump':
                         oscillator.frequency.value = 400;
                         oscillator.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.1);
@@ -2733,14 +3186,14 @@
                         oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.2);
                         break;
                 }
-                
+
                 gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
                 gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-                
+
                 oscillator.start(audioContext.currentTime);
                 oscillator.stop(audioContext.currentTime + 0.2);
             }
-            
+
             restart() {
                 this.player = new Player();
                 this.particles = [];
@@ -2761,7 +3214,7 @@
                 this.initLevel();
                 hideWinScreen();
             }
-            
+
             showWinScreen() {
                 const time = Math.floor((Date.now() - this.startTime) / 1000);
                 document.getElementById('winTime').textContent = time;
@@ -2770,7 +3223,7 @@
                 document.getElementById('winOverlay').style.display = 'block';
             }
         }
-        
+
         let game = null;
         let animationId = null;
         let introComplete = false;
@@ -2934,34 +3387,34 @@
             const now = Date.now();
             const dt = Math.min(now - game.lastTime, 100);
             game.lastTime = now;
-            
+
             game.update(dt);
             game.draw();
-            
+
             updateHUD();
-            
+
             if (debugMode) {
                 updateDebugOverlay();
             }
-            
+
             animationId = requestAnimationFrame(gameLoop);
         }
-        
+
         function startGame() {
             if (animationId) {
                 cancelAnimationFrame(animationId);
             }
-            
+
             game = new Game();
             game.lastTime = Date.now();
             gameLoop();
         }
-        
+
         function updateHUD() {
             document.getElementById('score').textContent = game.score;
             document.getElementById('lives').textContent = game.lives;
             document.getElementById('time').textContent = Math.floor((Date.now() - game.startTime) / 1000);
-            
+
             // Show level and speed boost
             const hudExtra = document.getElementById('hudExtra');
             if (!hudExtra) {
@@ -2976,33 +3429,33 @@
                 ${game.currentLevel === 2 ? `<div>Treats: ${game.treatsCollected}</div>` : ''}
             `;
         }
-        
+
         function updateDebugOverlay() {
             document.getElementById('fps').textContent = game.fps;
-            document.getElementById('playerPos').textContent = 
+            document.getElementById('playerPos').textContent =
                 `${Math.floor(game.player.x)},${Math.floor(game.player.y)}`;
-            document.getElementById('playerVel').textContent = 
+            document.getElementById('playerVel').textContent =
                 `${Math.floor(game.player.vx)},${Math.floor(game.player.vy)}`;
             document.getElementById('playerState').textContent = game.player.state;
         }
-        
+
         function hideWinScreen() {
             document.getElementById('winOverlay').style.display = 'none';
         }
-        
+
         function restartLevel() {
             game.restart();
             hideWinScreen();
         }
-        
+
         // Mobile detection and orientation handling
         let currentOrientation = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
-        
+
         function detectMobile() {
-            isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
-                      || ('ontouchstart' in window)
-                      || (navigator.maxTouchPoints > 0);
-            
+            isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+                || ('ontouchstart' in window)
+                || (navigator.maxTouchPoints > 0);
+
             if (isMobile) {
                 document.getElementById('mobileControls').style.display = 'block';
                 document.getElementById('leftPanel').classList.add('hidden');
@@ -3011,51 +3464,51 @@
                 handleOrientationChange();
             }
         }
-        
+
         // Auto-fullscreen for mobile
         function autoFullscreenMobile() {
             if (isMobile) {
                 // Try to go fullscreen automatically on first user interaction
                 const tryFullscreen = () => {
                     const container = document.getElementById('gameContainer');
-                    
+
                     // Request fullscreen
                     if (container.requestFullscreen) {
-                        container.requestFullscreen().catch(() => {});
+                        container.requestFullscreen().catch(() => { });
                     } else if (container.webkitRequestFullscreen) {
                         container.webkitRequestFullscreen();
                     } else if (container.webkitRequestFullScreen) {
                         container.webkitRequestFullScreen();
                     }
-                    
+
                     // Remove listener after first attempt
                     document.removeEventListener('touchstart', tryFullscreen);
                     document.removeEventListener('click', tryFullscreen);
                 };
-                
+
                 // Add listeners for first user interaction
                 document.addEventListener('touchstart', tryFullscreen, { once: true });
                 document.addEventListener('click', tryFullscreen, { once: true });
             }
         }
-        
+
         // Handle orientation changes
         function handleOrientationChange() {
             const newOrientation = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
-            
+
             if (newOrientation !== currentOrientation) {
                 currentOrientation = newOrientation;
                 updateMobileControlsLayout();
             }
-            
+
             resizeCanvas();
         }
-        
+
         // Update mobile controls based on orientation
         function updateMobileControlsLayout() {
             const dpad = document.getElementById('dpad');
             const actionButtons = document.getElementById('actionButtons');
-            
+
             if (currentOrientation === 'portrait') {
                 // Portrait: controls at bottom with more spacing
                 if (dpad) {
@@ -3078,19 +3531,19 @@
                 }
             }
         }
-        
+
         // Fullscreen toggle with better Safari support
         function toggleFullscreen() {
             const container = document.getElementById('gameContainer');
             const doc = document;
-            
+
             // Check if currently in fullscreen
-            const isInFullscreen = doc.fullscreenElement || 
-                                  doc.mozFullScreenElement || 
-                                  doc.webkitFullscreenElement || 
-                                  doc.msFullscreenElement ||
-                                  doc.webkitCurrentFullScreenElement; // Safari specific
-            
+            const isInFullscreen = doc.fullscreenElement ||
+                doc.mozFullScreenElement ||
+                doc.webkitFullscreenElement ||
+                doc.msFullscreenElement ||
+                doc.webkitCurrentFullScreenElement; // Safari specific
+
             if (!isInFullscreen) {
                 // Enter fullscreen
                 if (container.requestFullscreen) {
@@ -3130,45 +3583,45 @@
                 resizeCanvas();
             }
         }
-        
+
         // Setup touch controls
         function setupTouchControls() {
             const touchButtons = document.querySelectorAll('.touch-button, .dpad-button');
-            
+
             touchButtons.forEach(button => {
                 const key = button.getAttribute('data-key');
-                
+
                 button.addEventListener('touchstart', (e) => {
                     e.preventDefault();
                     button.classList.add('pressed');
                     keys[key] = true;
-                    
+
                     // Haptic feedback if available
                     if (navigator.vibrate) {
                         navigator.vibrate(10);
                     }
                 });
-                
+
                 button.addEventListener('touchend', (e) => {
                     e.preventDefault();
                     button.classList.remove('pressed');
                     keys[key] = false;
                 });
-                
+
                 button.addEventListener('touchcancel', (e) => {
                     e.preventDefault();
                     button.classList.remove('pressed');
                     keys[key] = false;
                 });
             });
-            
+
             // Prevent scrolling and zooming on mobile
             document.addEventListener('touchmove', (e) => {
                 if (e.target.closest('#gameArea')) {
                     e.preventDefault();
                 }
             }, { passive: false });
-            
+
             // Prevent double-tap zoom
             let lastTouchEnd = 0;
             document.addEventListener('touchend', (e) => {
@@ -3179,22 +3632,22 @@
                 lastTouchEnd = now;
             }, false);
         }
-        
+
         window.addEventListener('keydown', (e) => {
             keys[e.key] = true;
-            
+
             if (e.key === 'Tab') {
                 e.preventDefault();
                 if (debugMode) {
                     toggleMode();
                 }
             }
-            
+
             if (e.key === '`') {
                 debugMode = !debugMode;
-                document.getElementById('debugOverlay').style.display = 
+                document.getElementById('debugOverlay').style.display =
                     debugMode ? 'block' : 'none';
-                
+
                 // Show/hide editor panel in debug mode
                 if (debugMode) {
                     document.getElementById('leftPanel').classList.remove('hidden');
@@ -3202,28 +3655,28 @@
                     document.getElementById('leftPanel').classList.add('hidden');
                 }
             }
-            
+
             // Ctrl+E to toggle editor in debug mode
             if (e.ctrlKey && e.key === 'e' && debugMode) {
                 e.preventDefault();
                 const panel = document.getElementById('leftPanel');
                 panel.classList.toggle('hidden');
             }
-            
+
             // F11 for fullscreen
             if (e.key === 'F11') {
                 e.preventDefault();
                 toggleFullscreen();
             }
-            
+
             if (isKeyPressed('restart') && game) {
                 game.restart();
             }
-            
+
             if (isKeyPressed('mute')) {
                 muted = !muted;
             }
-            
+
             // Dev shortcut: Press 4 to jump to level 4
             if (e.key === '4' && debugMode) {
                 game.currentLevel = 4;
@@ -3234,7 +3687,7 @@
                 game.initLevel();
                 game.goalReached = false;
             }
-            
+
             // Dev shortcut: Press 5 to jump to level 5
             if (e.key === '5' && debugMode) {
                 game.currentLevel = 5;
@@ -3246,15 +3699,15 @@
                 game.goalReached = false;
             }
         });
-        
+
         window.addEventListener('keyup', (e) => {
             keys[e.key] = false;
         });
-        
+
         function isKeyPressed(action) {
             return keyMap[action].some(key => keys[key]);
         }
-        
+
         function switchTab(tab) {
             document.querySelectorAll('.tab-button').forEach(btn => {
                 btn.classList.remove('active');
@@ -3262,7 +3715,7 @@
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
-            
+
             if (tab === 'editor') {
                 document.querySelector('.tab-button:first-child').classList.add('active');
                 document.getElementById('editorTab').classList.add('active');
@@ -3276,7 +3729,7 @@
                 }
             }
         }
-        
+
         function toggleMode() {
             if (currentMode === 'editor') {
                 switchTab('play');
@@ -3284,28 +3737,28 @@
                 switchTab('editor');
             }
         }
-        
+
         function toggleCollapse(element) {
             element.classList.toggle('collapsed');
         }
-        
+
         document.getElementById('sheetA').addEventListener('change', (e) => {
             loadSheet('A', e.target.files[0]);
         });
-        
+
         document.getElementById('sheetB').addEventListener('change', (e) => {
             loadSheet('B', e.target.files[0]);
         });
-        
+
         function loadSheet(sheetId, file) {
             if (!file) return;
-            
+
             const reader = new FileReader();
             reader.onload = (e) => {
                 const img = new Image();
                 img.onload = () => {
                     sheets[sheetId].img = img;
-                    
+
                     const thumbContainer = document.getElementById(`sheet${sheetId}Thumb`);
                     thumbContainer.innerHTML = '';
                     const thumbCanvas = document.createElement('canvas');
@@ -3315,30 +3768,30 @@
                     thumbCtx.imageSmoothingEnabled = false;
                     thumbCtx.drawImage(img, 0, 0, 96, 96);
                     thumbContainer.appendChild(thumbCanvas);
-                    
+
                     if (sheetId === 'A') {
                         analyzeAndSetupGrid(img, sheetId);
                     }
-                    
+
                     updateAnimationPreviews();
                 };
                 img.src = e.target.result;
             };
             reader.readAsDataURL(file);
         }
-        
+
         function analyzeAndSetupGrid(img, sheetId) {
             const cellWidth = img.width / 3;
             const cellHeight = img.height / 3;
-            
+
             currentMapping.cells = [];
-            
+
             const assignments = [
                 'dodge_roll', 'run_1', 'idle_sit',
                 'run_2', 'run_3', 'idle_sit_front',
                 'crouch', 'jump_up', 'fall_down'
             ];
-            
+
             for (let r = 0; r < 3; r++) {
                 for (let c = 0; c < 3; c++) {
                     const idx = r * 3 + c;
@@ -3357,7 +3810,7 @@
                     });
                 }
             }
-            
+
             if (img.width > img.height) {
                 const fireballX = Math.floor(cellWidth * 2.3);
                 const fireballY = Math.floor(cellHeight * 0.3);
@@ -3368,20 +3821,20 @@
                     crop: [fireballX, fireballY, 16, 16]
                 };
             }
-            
+
             renderGridEditor();
             saveToLocalStorage();
         }
-        
+
         function renderGridEditor() {
             const container = document.getElementById('gridEditor');
             container.innerHTML = '';
-            
+
             if (!sheets[currentMapping.sheet].img) {
                 container.innerHTML = '<p>Load a sprite sheet first</p>';
                 return;
             }
-            
+
             currentMapping.cells.forEach((cell, idx) => {
                 const cellDiv = document.createElement('div');
                 cellDiv.className = 'grid-cell';
@@ -3415,44 +3868,44 @@
                 container.appendChild(cellDiv);
             });
         }
-        
+
         function updateCellAssignment(idx, value) {
             currentMapping.cells[idx].assign = value;
             updateAnimationPreviews();
             saveToLocalStorage();
         }
-        
+
         function updateCellCrop(idx, cropIdx, value) {
             currentMapping.cells[idx].crop[cropIdx] = parseInt(value);
             updateAnimationPreviews();
             saveToLocalStorage();
         }
-        
+
         function updateCellFlip(idx, value) {
             currentMapping.cells[idx].flipX = value;
             updateAnimationPreviews();
             saveToLocalStorage();
         }
-        
+
         function autoTrimCell(idx) {
             const cell = currentMapping.cells[idx];
             const img = sheets[currentMapping.sheet].img;
             if (!img) return;
-            
+
             const canvas = document.createElement('canvas');
             canvas.width = img.width;
             canvas.height = img.height;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0);
-            
+
             const imageData = ctx.getImageData(0, 0, img.width, img.height);
             const pixels = imageData.data;
-            
+
             let minX = cell.crop[0] + cell.crop[2];
             let minY = cell.crop[1] + cell.crop[3];
             let maxX = cell.crop[0];
             let maxY = cell.crop[1];
-            
+
             for (let y = cell.crop[1]; y < cell.crop[1] + cell.crop[3]; y++) {
                 for (let x = cell.crop[0]; x < cell.crop[0] + cell.crop[2]; x++) {
                     const idx = (y * img.width + x) * 4;
@@ -3464,7 +3917,7 @@
                     }
                 }
             }
-            
+
             if (maxX > minX && maxY > minY) {
                 cell.crop = [minX, minY, maxX - minX + 1, maxY - minY + 1];
                 renderGridEditor();
@@ -3472,28 +3925,28 @@
                 saveToLocalStorage();
             }
         }
-        
+
         function updateAnimationPreviews() {
             const container = document.getElementById('animationPreview');
             container.innerHTML = '';
-            
+
             const states = ['idle_sit', 'run', 'jump_up', 'fall_down', 'crouch', 'dodge_roll'];
             const scales = [1, 2, 4];
-            
+
             states.forEach(state => {
                 const frames = getFramesForState(state);
                 if (frames.length === 0) return;
-                
+
                 scales.forEach(s => {
                     const item = document.createElement('div');
                     item.className = 'anim-preview-item';
-                    
+
                     const canvas = document.createElement('canvas');
                     canvas.width = 32 * s;
                     canvas.height = 32 * s;
                     const ctx = canvas.getContext('2d');
                     ctx.imageSmoothingEnabled = false;
-                    
+
                     let frameIdx = 0;
                     const animate = () => {
                         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -3507,20 +3960,20 @@
                         }
                         frameIdx++;
                     };
-                    
+
                     animate();
                     setInterval(animate, 200);
-                    
+
                     const label = document.createElement('label');
                     label.textContent = `${state} ${s}x`;
-                    
+
                     item.appendChild(canvas);
                     item.appendChild(label);
                     container.appendChild(item);
                 });
             });
         }
-        
+
         function getFramesForState(state) {
             if (state === 'run') {
                 return ['run_1', 'run_2', 'run_3']
@@ -3529,7 +3982,7 @@
             }
             return currentMapping.cells.filter(c => c.assign === state);
         }
-        
+
         function exportSettings() {
             const data = JSON.stringify(currentMapping, null, 2);
             const textarea = document.getElementById('jsonData');
@@ -3539,14 +3992,14 @@
             document.execCommand('copy');
             alert('Settings copied to clipboard!');
         }
-        
+
         function importSettings() {
             const textarea = document.getElementById('jsonData');
             textarea.style.display = 'block';
             textarea.value = '';
             textarea.placeholder = 'Paste JSON here and press Enter';
             textarea.focus();
-            
+
             textarea.onkeydown = (e) => {
                 if (e.key === 'Enter') {
                     try {
@@ -3563,14 +4016,14 @@
                 }
             };
         }
-        
+
         function resetDefaults() {
             currentMapping = JSON.parse(JSON.stringify(defaultMapping));
             renderGridEditor();
             updateAnimationPreviews();
             saveToLocalStorage();
         }
-        
+
         function saveToLocalStorage() {
             localStorage.setItem('catPlatformerSettings', JSON.stringify({
                 mapping: currentMapping,
@@ -3579,7 +4032,7 @@
                 scale: scale
             }));
         }
-        
+
         function loadFromLocalStorage() {
             const saved = localStorage.getItem('catPlatformerSettings');
             if (saved) {
@@ -3594,7 +4047,7 @@
                 }
             }
         }
-        
+
         function openKeyRemapping() {
             const modal = document.createElement('div');
             modal.style.cssText = `
@@ -3607,94 +4060,94 @@
                 border: 2px solid #0f3460;
                 z-index: 1000;
             `;
-            
+
             modal.innerHTML = '<h3>Press a key for each action:</h3>';
-            
+
             const actions = Object.keys(keyMap);
             let currentAction = 0;
-            
+
             const updateModal = () => {
                 if (currentAction >= actions.length) {
                     document.body.removeChild(modal);
                     saveToLocalStorage();
                     return;
                 }
-                
+
                 modal.innerHTML = `
                     <h3>Press a key for: ${actions[currentAction]}</h3>
                     <p>Current: ${keyMap[actions[currentAction]].join(', ')}</p>
                 `;
             };
-            
+
             updateModal();
-            
+
             const handleKey = (e) => {
                 e.preventDefault();
                 keyMap[actions[currentAction]] = [e.key];
                 currentAction++;
                 updateModal();
-                
+
                 if (currentAction >= actions.length) {
                     window.removeEventListener('keydown', handleKey);
                 }
             };
-            
+
             window.addEventListener('keydown', handleKey);
             document.body.appendChild(modal);
         }
-        
+
         document.getElementById('gravity').addEventListener('input', (e) => {
             physics.gravity = parseFloat(e.target.value);
             document.getElementById('gravityVal').textContent = e.target.value;
             saveToLocalStorage();
         });
-        
+
         document.getElementById('jumpForce').addEventListener('input', (e) => {
             physics.jumpForce = parseFloat(e.target.value);
             document.getElementById('jumpForceVal').textContent = e.target.value;
             saveToLocalStorage();
         });
-        
+
         document.getElementById('moveSpeed').addEventListener('input', (e) => {
             physics.moveSpeed = parseFloat(e.target.value);
             document.getElementById('moveSpeedVal').textContent = e.target.value;
             saveToLocalStorage();
         });
-        
+
         document.getElementById('friction').addEventListener('input', (e) => {
             physics.friction = parseFloat(e.target.value);
             document.getElementById('frictionVal').textContent = e.target.value;
             saveToLocalStorage();
         });
-        
+
         document.getElementById('coyoteTime').addEventListener('input', (e) => {
             physics.coyoteTime = parseFloat(e.target.value);
             document.getElementById('coyoteVal').textContent = e.target.value;
             saveToLocalStorage();
         });
-        
+
         document.getElementById('jumpBuffer').addEventListener('input', (e) => {
             physics.jumpBuffer = parseFloat(e.target.value);
             document.getElementById('jumpBufferVal').textContent = e.target.value;
             saveToLocalStorage();
         });
-        
+
         document.getElementById('uiScale').addEventListener('input', (e) => {
             scale = parseInt(e.target.value);
             document.getElementById('scaleVal').textContent = scale;
             resizeCanvas();
             saveToLocalStorage();
         });
-        
+
         document.getElementById('highContrast').addEventListener('change', (e) => {
             highContrast = e.target.checked;
             document.body.classList.toggle('high-contrast', highContrast);
         });
-        
+
         document.getElementById('reducedMotion').addEventListener('change', (e) => {
             reducedMotion = e.target.checked;
         });
-        
+
         function resizeCanvas() {
             // Desktop/Mobile Unified Sizing Logic
             const leftPanelWidth = document.getElementById('leftPanel').classList.contains('hidden') ? 0 : 370;
@@ -3739,7 +4192,7 @@
             // Update global scale
             scale = fitScale;
         }
-        
+
         window.addEventListener('resize', () => {
             if (isMobile) {
                 handleOrientationChange();
@@ -3747,28 +4200,28 @@
                 resizeCanvas();
             }
         });
-        
+
         // Add orientation change listener
         window.addEventListener('orientationchange', handleOrientationChange);
-        
+
         loadFromLocalStorage();
         detectMobile();
         resizeCanvas();
         renderGridEditor();
-        
+
         // Handle fullscreen change events (for ESC key, etc.)
         document.addEventListener('fullscreenchange', handleFullscreenChange);
         document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
         document.addEventListener('mozfullscreenchange', handleFullscreenChange);
         document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-        
+
         function handleFullscreenChange() {
-            const isInFullscreen = document.fullscreenElement || 
-                                  document.webkitFullscreenElement || 
-                                  document.mozFullScreenElement ||
-                                  document.msFullscreenElement ||
-                                  document.webkitCurrentFullScreenElement;
-            
+            const isInFullscreen = document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                document.mozFullScreenElement ||
+                document.msFullscreenElement ||
+                document.webkitCurrentFullScreenElement;
+
             if (!isInFullscreen) {
                 document.getElementById('gameContainer').classList.remove('fullscreen');
                 isFullscreen = false;
@@ -3777,10 +4230,11 @@
                 resizeCanvas();
             }
         }
-        
+
         // Start game with intro sequence after config loads
-        configReady.then(() => {
-            if (currentMode === 'play' && !game) {
+        // Start game with intro sequence after config loads
+        configReady.then((config) => {
+            if (config && currentMode === 'play' && !game) {
                 initWithIntro();
             }
         });
@@ -3850,8 +4304,8 @@
             // Load dog/companion sprite sheet (optional - for NPC companion)
             // Try items.companion first, then sprites.dog, then default path
             const dogSpritePath = (GAME_CONFIG.items && GAME_CONFIG.items.companion) ||
-                                  (GAME_CONFIG.sprites && GAME_CONFIG.sprites.dog) ||
-                                  '/assets/pets/bonbon/sprite_3x3.png'
+                (GAME_CONFIG.sprites && GAME_CONFIG.sprites.dog) ||
+                '/assets/pets/bonbon/sprite_3x3.png'
             if (dogSpritePath) {
                 loadImage(dogSpritePath)
                     .then(img => {
@@ -3879,56 +4333,49 @@
                     });
             }
         }
-        
+
         // Animate dog run preview
         function animateDogRunPreview() {
             const canvas = document.getElementById('dogRunPreview');
             if (!canvas || !sheets.dog.img) return;
-            
+
             const ctx = canvas.getContext('2d');
             ctx.imageSmoothingEnabled = false;
-            
+
             let frame = 0;
             const cellSize = sheets.dog.img.width / 3;
-            
+
             // Run frames are in row 2, columns 1-3
+
             const runFrames = [
-                {r: 2, c: 1},
-                {r: 2, c: 2},
-                {r: 2, c: 3}
+                { r: 2, c: 1 },
+                { r: 2, c: 2 },
+                { r: 2, c: 3 }
             ];
-            
+
             function animate() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
+
                 // Draw current frame
                 const currentFrame = runFrames[frame % runFrames.length];
                 const sx = (currentFrame.c - 1) * cellSize;
                 const sy = (currentFrame.r - 1) * cellSize;
-                
+
                 // Draw 3 frames side by side to show animation
                 for (let i = 0; i < 3; i++) {
-                    const f = runFrames[(frame + i) % runFrames.length];
-                    const fsx = (f.c - 1) * cellSize;
-                    const fsy = (f.r - 1) * cellSize;
-                    ctx.drawImage(
-                        sheets.dog.img,
-                        fsx, fsy, cellSize, cellSize,
-                        i * 40, 0, 40, 40
+                    const f = runFrames[(frame + i) % runFrames.length]; const fsx = (f.c - 1) * cellSize;
+                    const fsy = (f.r - 1) * cellSize; ctx.drawImage(sheets.dog.img, fsx, fsy, cellSize, cellSize, i * 40, 0, 40, 40
                     );
-                }
-                
-                frame++;
-                setTimeout(() => {
+                } frame++; setTimeout(() => {
                     if (sheets.dog.img) {
                         requestAnimationFrame(animate);
                     }
                 }, 200);
             }
-            
+
             animate();
         }
-        
+
         function updateSheetThumbnail(sheetId, img) {
             const thumbContainer = document.getElementById(`sheet${sheetId}Thumb`);
             thumbContainer.innerHTML = '';
@@ -3940,10 +4387,11 @@
             thumbCtx.drawImage(img, 0, 0, 96, 96);
             thumbContainer.appendChild(thumbCanvas);
         }
-        
+
         function loadEmbeddedDefault() {
-            const defaultSheetData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAB1BJREFUeF7tnT1sVUcQhR+JEEIgIYRAQkghpXtKp6RLSZeO0l06SneUlE5Jl5IuHaW7lJTu0qWkS0mXEiEQAglBBBICCQQS4vvm7F35+fl57+7szOy9u3ekI9vPz3fuzJm9e/funZ37zszMzMzMzFbBNTiCN/AZfsBv+BN/4Rf8iG/wEZ7BMVyz/6kGbuI5fIXfkfs6xnt4CHs70fC7eIFLKHvxpbF8jOv2VTc5iNdYxuJL4yni1n111RLNvoC6Fl8azxO4Zl9dlaQJR5AqniqG1+yrqooc/HeYLp7ahlftr6osn7GuL3+ZWOzrqvATTO/1JNjPViEp5xGM8xnOmu2iZxibyiQFbWMKYtzI6NcJ/0I6YZSPbXuDl/B3+BzMsjJBOOEJJFz1DGRwANI5uyGv4cjGtkPIsIBXaA+iAZ/gHlyEzA+sQj7DzQxn7YUPMHQzDvEawqTGZ7jb0dZN5OiJ+RLHcRSSCfEy7PUE8g6K5gK24TjchRwD5WDfwzGfQQ5fOgdNJBOQxXGQLMJFcDg5irxBjiHEGORQIoerj5BJ0F1Ir2w6sjqUF5BJ0Lfo0OQ2LCCTYCEJvJGk24cwQ0mjuItsA3kNsQo8jvdRdSJdJO5CMOcge3I2Hblo6DQntyF4ZkVyGRU3sALvZP7chhC4KoqiE1o6QzbiKqiCYsOT2xDE9IqhCxs2pCdtMkYnCJ+2RCcI5UQGBdgywVE4fRaUW8QQOm2Qb5i8EJw+CwqEz4LOC8g8CcJMz8SQbkdMzxQIgdNG+ZQlG7EENUQnvdGJPJPgvJjNF4RTRCdt1pV9CCZVKy8o79wQLpoTN/M5CnuQ3EYMgac5OU0LJ1a0F8JnP0nQCHKakE5bQs6BZAW6MJ9hISlqTvhJUBRu4lkT2Fvdxcu2gUyCLszrBEnIOLYJzoNswdkJvFfRCU46r7K+mZf9KEAayJOUO5E8TuiJqBRMOj+zD5Cf0cQcQKA5yI6YYQEfQCa5CZ/VpJxOkGQkBW3Hb1u2DPTDV6nKGJLTMN+JdQ12MKvQJJxykRnRJUi8C4BDEi+eoiEXnJJOgtx9QDQX4LYKFkGUlxCYFESTYJ8aJfhKH/cgzlvJOyUTJp8qC3AO0lGeSMlZzBKkc9iBQLpJL4Z0QNcSIq8TepKwhyC+Ybj8GJZ3jTJJVdCNQkkHdNk2kJcUksQQ7SJBgzCRcgrioJZcOQRFCy+WnNiB+EIl8BLMi/LuHE7CBP4Kx7sjvuHxMCyJtJy3wN9D8lBCkHKaH7TnNvgfhg8hHRgS05gWaBLGzJf8SRnGbp05N/IG4TgPJl8Ax8/OlkRh7Eb79vQJ8oGqxnBJJfhJEGiFlRZ8knCJsQQ/TggVT6iTdJaAFwklKjvNHjvfQd5KFdK5bklI2DhxQvhJzJNrNilOlGLvQBYiJTm8VCDXMqWJ1QVUo5cRJKJqQqBVeSHy0oeqHkbdJoXvCyKBJrwMu8gK+SkxJOkUJ9KhLhgjGlTyFEMQJ9AzIgqg4aMOiSSd4r2nEyWJtIBgC3A0QJNCkkR4CtHy3xHJsC8hdBQFbQTf1fBdJJ1ikNMu0smwb9qnJRnrBOJOQRU38ySRJlnVrHBdJHNyfyQgqz8SQQNyOsGxAUcBMw+qRlqA+xJyOqFyA7jf8n5VGzNu3Ln5p1aSDQCsQzrBnZzQhQF1cQJxhNg3qpMqJAekdT1eQo8kCOfNvOwryNsOhpJ5IaRzKpoQfwTxqOcD+pD5kQnOPcmKcGJFcQH+kJdCJj7D0Y9hCGfxTFSqBdY/I2nMhqScTqhkQnQCcdPuTZmQP7kROoqC5qOLjhgHqRJJP+EpRFWrITKROoG4x88dCHY+YuznQ+gE4TIJnBG9gy4NIH8ZhTKxXMLWYpGcuXTOSTCJlqfBNahvRtRmU6ZuZkT4SRAmkyAq0sSNOAr6HH52JY1bIRkD8Yq4Y5CJAa2SvlLyJiGQbJMAM++Rb7yHOAW9QBdJX5HgqGjBxRCXCGK1F3zZiCr2GzRTRIBn8oOQRU3iyMsm1kNqxkCOxuxNNhGSrGNLI7qx9M0JBzN6TRTqLETQlqLMLUoSvW8cJYM6yEEdhLwQ+QJydBJPhyfJJmXKPFu5oGxlAbmGLIsw1RPnI29QJIdXJcTD5PUy8xDEVDOioQxXNz4j6wRiaIuTz5Ad9iEfzOQKmOtZaExQBu1D5AuaKBLDJdxB8mCZ5HRfznLJbkKhG2MvoyB3pJ9tQ6Hfz7Cd4CxkEDYJ/Rt5+TtQ7jBCdRCRl9WXiQxOlUIXtC9B3O8/R/5g3qCKCUFO6vY9lJPcnhTyKZKi+zMsT7KECZORYTRlZhJOcrwrD7NJK3JENAcQdJJjQgR5KN+YOa0Mk0HV3rz7+y2TNRwXyKUAAAAASUVORK5CYII=';
-            
+            const defaultSheetData =
+                'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAB1BJREFUeF7tnT1sVUcQhR+JEEIgIYRAQkghpXtKp6RLSZeO0l06SneUlE5Jl5IuHaW7lJTu0qWkS0mXEiEQAglBBBICCQQS4vvm7F35+fl57+7szOy9u3ekI9vPz3fuzJm9e/funZ37zszMzMzMzFbBNTiCN/AZfsBv+BN/4Rf8iG/wEZ7BMVyz/6kGbuI5fIXfkfs6xnt4CHs70fC7eIFLKHvxpbF8jOv2VTc5iNdYxuJL4yni1n111RLNvoC6Fl8azxO4Zl9dlaQJR5AqniqG1+yrqooc/HeYLp7ahlftr6osn7GuL3+ZWOzrqvATTO/1JNjPViEp5xGM8xnOmu2iZxibyiQFbWMKYtzI6NcJ/0I6YZSPbXuDl/B3+BzMsjJBOOEJJFz1DGRwANI5uyGv4cjGtkPIsIBXaA+iAZ/gHlyEzA+sQj7DzQxn7YUPMHQzDvEawqTGZ7jb0dZN5OiJ+RLHcRSSCfEy7PUE8g6K5gK24TjchRwD5WDfwzGfQQ5fOgdNJBOQxXGQLMJFcDg5irxBjiHEGORQIoerj5BJ0F1Ir2w6sjqUF5BJ0Lfo0OQ2LCCTYCEJvJGk24cwQ0mjuItsA3kNsQo8jvdRdSJdJO5CMOcge3I2Hblo6DQntyF4ZkVyGRU3sALvZP7chhC4KoqiE1o6QzbiKqiCYsOT2xDE9IqhCxs2pCdtMkYnCJ+2RCcI5UQGBdgywVE4fRaUW8QQOm2Qb5i8EJw+CwqEz4LOC8g8CcJMz8SQbkdMzxQIgdNG+ZQlG7EENUQnvdGJPJPgvJjNF4RTRCdt1pV9CCZVKy8o79wQLpoTN/M5CnuQ3EYMgac5OU0LJ1a0F8JnP0nQCHKakE5bQs6BZAW6MJ9hISlqTvhJUBRu4lkT2Fvdxcu2gUyCLszrBEnIOLYJzoNswdkJvFfRCU46r7K+mZf9KEAayJOUO5E8TuiJqBRMOj+zD5Cf0cQcQKA5yI6YYQEfQCa5CZ/VpJxOkGQkBW3Hb1u2DPTDV6nKGJLTMN+JdQ12MKvQJJxykRnRJUi8C4BDEi+eoiEXnJJOgtx9QDQX4LYKFkGUlxCYFESTYJ8aJfhKH/cgzlvJOyUTJp8qC3AO0lGeSMlZzBKkc9iBQLpJL4Z0QNcSIq8TepKwhyC+Ybj8GJZ3jTJJVdCNQkkHdNk2kJcUksQQ7SJBgzCRcgrioJZcOQRFCy+WnNiB+EIl8BLMi/LuHE7CBP4Kx7sjvuHxMCyJtJy3wN9D8lBCkHKaH7TnNvgfhg8hHRgS05gWaBLGzJf8SRnGbp05N/IG4TgPJl8Ax8/OlkRh7Eb79vQJ8oGqxnBJJfhJEGiFlRZ8knCJsQQ/TggVT6iTdJaAFwklKjvNHjvfQd5KFdK5bklI2DhxQvhJzJNrNilOlGLvQBYiJTm8VCDXMqWJ1QVUo5cRJKJqQqBVeSHy0oeqHkbdJoXvCyKBJrwMu8gK+SkxJOkUJ9KhLhgjGlTyFEMQJ9AzIgqg4aMOiSSd4r2nEyWJtIBgC3A0QJNCkkR4CtHy3xHJsC8hdBQFbQTf1fBdJJ1ikNMu0smwb9qnJRnrBOJOQRU38ySRJlnVrHBdJHNyfyQgqz8SQQNyOsGxAUcBMw+qRlqA+xJyOqFyA7jf8n5VGzNu3Ln5p1aSDQCsQzrBnZzQhQF1cQJxhNg3qpMqJAekdT1eQo8kCOfNvOwryNsOhpJ5IaRzKpoQfwTxqOcD+pD5kQnOPcmKcGJFcQH+kJdCJj7D0Y9hCGfxTFSqBdY/I2nMhqScTqhkQnQCcdPuTZmQP7kROoqC5qOLjhgHqRJJP+EpRFWrITKROoG4x88dCHY+YuznQ+gE4TIJnBG9gy4NIH8ZhTKxXMLWYpGcuXTOSTCJlqfBNahvRtRmU6ZuZkT4SRAmkyAq0sSNOAr6HH52JY1bIRkD8Yq4Y5CJAa2SvlLyJiGQbJMAM++Rb7yHOAW9QBdJX5HgqGjBxRCXCGK1F3zZiCr2GzRTRIBn8oOQRU3iyMsm1kNqxkCOxuxNNhGSrGNLI7qx9M0JBzN6TRTqLETQlqLMLUoSvW8cJYM6yEEdhLwQ+QJydBJPhyfJJmXKPFu5oGxlAbmGLIsw1RPnI29QJIdXJcTD5PUy8xDEVDOioQxXNz4j6wRiaIuTz5Ad9iEfzOQKmOtZaExQBu1D5AuaKBLDJdxB8mCZ5HRfznLJbkKhG2MvoyB3pJ9tQ6Hfz7Cd4CxkEDYJ/Rt5+TtQ7jBCdRCRl9WXiQxOlUIXtC9B3O8/R/5g3qCKCUFO6vY9lJPcnhTyKZKi+zMsT7KECZORYTRlZhJOcrwrD7NJK3JENAcQdJJjQgR5KN+YOa0Mk0HV3rz7+y2TNRwXyKUAAAAASUVORK5CYII=';
+
             const img = new Image();
             img.onload = () => {
                 sheets.A.img = img;
@@ -3954,6 +4402,21 @@
         }
 
         // Note: loadDefaultSheets() is called by initWithIntro() in parallel with intro
+        // Safety check to force landing page if on root
+        window.addEventListener('load', () => {
+            if (!window.location.search || window.location.search === '?') {
+                const landing = document.getElementById('landingPage');
+                const intro = document.getElementById('introOverlay');
+                if (landing) landing.style.display = 'flex';
+                if (intro) intro.style.display = 'none';
+                // Ensure preview is running
+                if (typeof startLandingPreview === 'function') {
+                    // Slight delay to ensure canvas is ready
+                    setTimeout(startLandingPreview, 100);
+                }
+            }
+        });
     </script>
 </body>
+
 </html>
