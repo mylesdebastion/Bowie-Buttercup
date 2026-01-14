@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git worktree:*)"
+      "Bash(git worktree:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nRedesign landing page typography and polish UI\n\n- Replace VT323 with Press Start 2P for authentic pixel font\n- Improve tagline: new copy, bordered style with subtle background\n- Refine button size \\(18px\\) and feature card typography\n- Fix layout centering with proper hero-section flexbox\n- Remove canvas ground bar and fix cat animation clipping\n- Increase logo size to 400px max-width\n- Update Etsy link in sub-CTA\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit --no-verify -m \"$\\(cat <<''EOF''\nRedesign landing page typography and polish UI\n\n- Replace VT323 with Press Start 2P for authentic pixel font\n- Improve tagline: new copy, bordered style with subtle background\n- Refine button size \\(18px\\) and feature card typography\n- Fix layout centering with proper hero-section flexbox\n- Remove canvas ground bar and fix cat animation clipping\n- Increase logo size to 400px max-width\n- Update Etsy link in sub-CTA\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }

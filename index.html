@@ -9,6 +9,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     <title>Cat Platformer - QUEEN Branch Test</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Press+Start+2P&display=swap"
+        rel="stylesheet">
     <script>
         // GAME_CONFIG - Loaded dynamically based on URL
         // URL pattern: /petname/ or ?pet=petname
@@ -144,7 +147,7 @@
                     y: 0,           // Vertical position (0 = ground, negative = up)
                     vy: 0,          // Vertical velocity
                     gravity: 1500,  // Gravity strength
-                    jumpForce: 600, // Jump strength
+                    jumpForce: 440, // Jump strength (Reduced to prevent clipping)
                     grounded: true,
                     state: 'idle',   // idle, jump, fall, land
                     timer: 0
@@ -198,12 +201,9 @@
                     // Transparent bg
                     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-                    // Draw ground
+                    // Ground position (invisible, just for positioning)
                     const groundHeight = 20;
                     const groundY = canvas.height - groundHeight;
-
-                    ctx.fillStyle = '#59405C'
-                    ctx.fillRect(0, groundY, canvas.width, groundHeight)
 
                     // Determine Frame based on State
                     // Grid is 3x3. 
@@ -236,7 +236,9 @@
 
                     // Vertical position with physics offset
                     // physics.y is negative (up), so we ADD it to the ground position
-                    const y = (groundY - destH) + physics.y
+                    // yOffset pushes cat down to prevent head clipping at top
+                    const yOffset = 40;
+                    const y = (groundY - destH) + physics.y + yOffset
 
                     ctx.drawImage(
                         img,
@@ -831,7 +833,8 @@
             align-items: center;
             justify-content: center;
             /* Center vertically */
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Poppins', sans-serif;
+            color: #2D1B36;
         }
 
         .landing-content {
@@ -839,20 +842,31 @@
             width: 100%;
             padding: 20px;
             text-align: center;
-            margin-top: 40px;
+        }
+
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .landing-logo {
-            max-width: 300px;
+            max-width: 400px;
             margin-bottom: 10px;
         }
 
         .tagline {
-            font-size: 18px;
-            color: #e94560;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 16px;
+            color: #C02F5D;
             margin-bottom: 40px;
             letter-spacing: 1px;
-            text-transform: uppercase;
+            line-height: 1.6;
+            background: rgba(255, 255, 255, 0.25);
+            border-top: 2px solid rgba(192, 47, 93, 0.3);
+            border-bottom: 2px solid rgba(192, 47, 93, 0.3);
+            padding: 12px 24px;
+            display: inline-block;
         }
 
         .comparison-container {
@@ -900,9 +914,9 @@
 
         .game-frame {
             background: transparent;
-            border: 4px solid #fff;
-            box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+            border: none;
+            box-shadow: none;
+            overflow: visible;
         }
 
         .pet-photo {
@@ -913,6 +927,8 @@
 
         .game-frame canvas {
             image-rendering: pixelated;
+            border: none;
+            outline: none;
         }
 
         .arrow {
@@ -937,43 +953,53 @@
         }
 
         .label {
-            font-size: 14px;
-            color: #aaa;
-            font-weight: bold;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 10px;
+            color: #59405C;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 14px;
         }
 
         .play-demo-btn {
-            padding: 15px 40px;
-            font-size: 24px;
-            background: #FF6B9D;
+            padding: 16px 40px;
+            font-size: 18px;
+            background: #FF477E;
             color: white;
-            border: 4px solid #fff;
-            border-radius: 0;
-            /* Boxy retro look */
+            border: none;
+            border-radius: 12px;
             cursor: pointer;
-            transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-transform: uppercase;
-            font-weight: bold;
-            font-family: 'Courier New', Courier, monospace;
-            box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.15);
-            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0.5px;
+            box-shadow: 0 8px 24px rgba(255, 71, 126, 0.35);
         }
 
         .play-demo-btn:hover {
-            background: #FF8BAE;
-            transform: translateY(-2px);
-            box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.15);
+            background: #FF2E6C;
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(255, 71, 126, 0.5);
         }
 
         .sub-cta {
-            margin-top: 15px;
-            font-size: 14px;
-            color: #888;
+            margin-top: 16px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            color: #59405C;
+            font-weight: 400;
         }
 
         .sub-cta a {
-            color: #f39c12;
+            color: #C02F5D;
             text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .sub-cta a:hover {
+            color: #FF477E;
         }
 
         .features-section {
@@ -985,34 +1011,37 @@
         }
 
         .feature {
-            background: rgba(255, 255, 255, 0.6);
-            padding: 20px;
-            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 24px 20px;
+            border-radius: 16px;
             flex: 1;
             min-width: 200px;
             max-width: 250px;
-            border: 2px solid #fff;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 20px rgba(89, 64, 92, 0.1);
             text-align: center;
         }
 
         .feature h3 {
-            color: #D95284;
-            margin-bottom: 10px;
-            font-size: 18px;
-            font-weight: bold;
+            font-family: 'Poppins', sans-serif;
+            color: #C02F5D;
+            margin-bottom: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
         }
 
         .feature p {
-            font-size: 14px;
-            line-height: 1.4;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            line-height: 1.5;
             color: #59405C;
+            font-weight: 400;
         }
 
         @media (max-width: 600px) {
             .landing-content {
                 padding: 10px;
-                margin-top: 20px;
             }
 
             .landing-logo {
@@ -1020,8 +1049,9 @@
             }
 
             .tagline {
-                font-size: 16px;
-                margin-bottom: 20px;
+                font-size: 12px;
+                margin-bottom: 24px;
+                line-height: 1.8;
             }
 
             .comparison-container {
@@ -1057,7 +1087,7 @@
         <div class="landing-content">
             <div class="hero-section">
                 <img src="logo_sparkleclassic.png" alt="Sparkle Classic" class="landing-logo">
-                <p class="tagline">Your Pet in a Platformer</p>
+                <p class="tagline">Make Your Pet the Star</p>
 
                 <div class="comparison-container">
                     <div class="comparison-item">
@@ -1066,36 +1096,37 @@
                             <img src="assets/pets/bowie/bowie-transparent-bg.png"
                                 onerror="this.src='assets/pets/bowie/sprite_3x3.png'; this.style.imageRendering='pixelated'"
                                 alt="Real Life Bowie" class="pet-photo">
-                            <span class="label">Real Life</span>
                         </div>
+                        <span class="label">Real Life</span>
                     </div>
                     <div class="arrow">→</div>
                     <div class="comparison-item">
                         <div class="game-frame">
-                            <canvas id="landingPreviewCanvas" width="150" height="150"></canvas>
-                            <span class="label">In Game</span>
+                            <!-- Increased size for jumping room -->
+                            <canvas id="landingPreviewCanvas" width="200" height="200"></canvas>
                         </div>
+                        <span class="label">In Game</span>
                     </div>
                 </div>
 
                 <div class="cta-container">
-                    <button class="play-demo-btn" onclick="window.location.href='/bowie/'">Play Demo (Bowie)</button>
-                    <p class="sub-cta">or <a href="#" onclick="alert('Coming Soon!')">Create Your Own</a></p>
+                    <button class="play-demo-btn" onclick="window.location.href='/bowie/'">Play Demo</button>
+                    <p class="sub-cta">Custom games available on <a href="https://www.etsy.com/shop/SparkleClassic" target="_blank">Etsy</a></p>
                 </div>
             </div>
 
             <div class="features-section">
                 <div class="feature">
-                    <h3>100% Personalized</h3>
-                    <p>Turn your pet into the star of their own video game.</p>
+                    <h3>Your Pet, Pixelated</h3>
+                    <p>We hand-craft a custom sprite from your pet's photo.</p>
                 </div>
                 <div class="feature">
-                    <h3>Classic Platforming</h3>
-                    <p>Run, jump, and collect treats in a retro-style adventure.</p>
+                    <h3>5 Levels of Fun</h3>
+                    <p>Chase mice, dodge dogs, and bounce on furniture.</p>
                 </div>
                 <div class="feature">
-                    <h3>Shareable</h3>
-                    <p>Send your custom game link to friends and family.</p>
+                    <h3>A Link They'll Love</h3>
+                    <p>Share sparkleclassic.com/fluffy with everyone.</p>
                 </div>
             </div>
         </div>
