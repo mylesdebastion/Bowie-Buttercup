@@ -2549,48 +2549,51 @@
             }
             
             drawCouch(x, y) {
-                // 32x32 pixel couch (2x2 tiles) - realistic sofa style
+                // Larger couch (40x36 pixels) - reddish pink sofa style
+                // Offset to center the larger couch on the 2x2 tile area
+                const ox = x - 4;  // Extend 4px left
+                const oy = y - 4;  // Extend 4px up
                 
-                // Couch frame/base (dark brown wood)
-                ctx.fillStyle = '#5D3A1A';
-                ctx.fillRect(x + 2, y + 26, 28, 6);
+                // Couch frame/base (dark wood)
+                ctx.fillStyle = '#4A3020';
+                ctx.fillRect(ox + 2, oy + 30, 36, 6);
                 
-                // Couch body (burgundy fabric)
-                ctx.fillStyle = '#722F37';
-                ctx.fillRect(x + 1, y + 8, 30, 20);
+                // Couch body (reddish pink fabric)
+                ctx.fillStyle = '#E75480';
+                ctx.fillRect(ox, oy + 8, 40, 24);
                 
-                // Backrest (slightly darker burgundy)
-                ctx.fillStyle = '#5C252C';
-                ctx.fillRect(x + 3, y + 2, 26, 10);
+                // Backrest (darker reddish pink)
+                ctx.fillStyle = '#C44569';
+                ctx.fillRect(ox + 2, oy, 36, 12);
                 
-                // Seat cushions (warm red fabric)
-                ctx.fillStyle = '#A0522D';
-                ctx.fillRect(x + 4, y + 12, 11, 10); // Left cushion
-                ctx.fillRect(x + 17, y + 12, 11, 10); // Right cushion
+                // Seat cushions (lighter pink)
+                ctx.fillStyle = '#F8A5C2';
+                ctx.fillRect(ox + 5, oy + 14, 13, 12); // Left cushion
+                ctx.fillRect(ox + 22, oy + 14, 13, 12); // Right cushion
                 
-                // Cushion highlights
-                ctx.fillStyle = '#B8736C';
-                ctx.fillRect(x + 5, y + 13, 9, 3); // Left highlight
-                ctx.fillRect(x + 18, y + 13, 9, 3); // Right highlight
+                // Cushion highlights (soft pink)
+                ctx.fillStyle = '#FDCBDF';
+                ctx.fillRect(ox + 6, oy + 15, 11, 4); // Left highlight
+                ctx.fillRect(ox + 23, oy + 15, 11, 4); // Right highlight
                 
                 // Cushion divider line
-                ctx.fillStyle = '#4A2020';
-                ctx.fillRect(x + 15, y + 12, 2, 10);
+                ctx.fillStyle = '#A53860';
+                ctx.fillRect(ox + 19, oy + 14, 2, 12);
                 
-                // Armrests (rounded look)
-                ctx.fillStyle = '#722F37';
-                ctx.fillRect(x, y + 6, 5, 18);
-                ctx.fillRect(x + 27, y + 6, 5, 18);
+                // Armrests (reddish pink)
+                ctx.fillStyle = '#E75480';
+                ctx.fillRect(ox - 2, oy + 4, 6, 24);
+                ctx.fillRect(ox + 36, oy + 4, 6, 24);
                 
                 // Armrest tops (lighter)
-                ctx.fillStyle = '#8B4545';
-                ctx.fillRect(x + 1, y + 6, 3, 4);
-                ctx.fillRect(x + 28, y + 6, 3, 4);
+                ctx.fillStyle = '#F8A5C2';
+                ctx.fillRect(ox - 1, oy + 4, 4, 5);
+                ctx.fillRect(ox + 37, oy + 4, 4, 5);
                 
                 // Wooden legs
                 ctx.fillStyle = '#3D2510';
-                ctx.fillRect(x + 4, y + 28, 3, 4);
-                ctx.fillRect(x + 25, y + 28, 3, 4);
+                ctx.fillRect(ox + 5, oy + 34, 4, 4);
+                ctx.fillRect(ox + 31, oy + 34, 4, 4);
             }
             
             drawFoodBowl(x, y, isFull) {
