@@ -62,10 +62,10 @@ export class Level3 extends Level {
                     level[y][x] = 1; // Floating platform over first pit
                 } else if (y === 19 && x >= 20 && x <= 22) {
                     level[y][x] = 1; // Floating platform over second pit
-                } else if (y === 17 && x >= 26 && x <= 28) {
-                    level[y][x] = 1; // Higher platform
-                } else if (y === 21 && x >= 32 && x <= 34) {
-                    level[y][x] = 1; // Platform over third pit
+                } else if (y === 20 && x >= 26 && x <= 28) {
+                    level[y][x] = 1; // Higher platform (lowered for easier jumping)
+                } else if (y === 23 && x >= 32 && x <= 34) {
+                    level[y][x] = 1; // Platform over third pit (lowered for easier jumping)
                 } else if (y === 15 && x >= 15 && x <= 17) {
                     level[y][x] = 1; // High challenge platform
                 } else if (y === 23 && x === 25) {
