@@ -3718,8 +3718,15 @@
             const availableHeight = window.innerHeight;
 
             // Base game dimensions
-            const baseWidth = 400;
-            const baseHeight = 240;
+            let baseWidth = 400;
+            let baseHeight = 240;
+            
+            // Zoom out more in portrait mode to show more of the game
+            const isPortrait = window.innerWidth < window.innerHeight;
+            if (isPortrait) {
+                baseWidth = 500;  // Show more horizontal area
+                baseHeight = 300; // Show more vertical area
+            }
 
             // Calculate scale to fit screen WIDTH (Cover Width)
             // This ensures the game fills the full width of the screen, potentially cropping height
