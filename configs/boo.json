@@ -1,0 +1,15 @@
+{
+  "petName": "boo",
+  "petDisplayName": "Boo",
+  "petType": "dog",
+  "sprite": "/assets/pets/boo/sprite_3x3.png",
+  "items": {
+    "foodBowl": "/assets/shared/bowls/food_bowl.png",
+    "waterBowl": "/assets/shared/bowls/water_bowl.png",
+    "furniture": ["/assets/shared/furniture/cat_tree.png"]
+  },
+  "gameTitle": "Boo's Adventure",
+  "theme": {
+    "primaryColor": "#D4915C"
+  }
+}
