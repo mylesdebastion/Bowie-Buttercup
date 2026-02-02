@@ -1925,6 +1925,10 @@
             }
             
             initLevel() {
+                // Reset camera to start of level
+                this.camera.x = 0;
+                this.camera.y = 0;
+                
                 if (this.currentLevel === 1) {
                     this.initFireballs();
                     this.dog = null;
@@ -2357,6 +2361,13 @@
                 const viewportWidth = canvas.width / scale;
                 const viewportHeight = canvas.height / scale;
                 
+                // If viewport is as wide or wider than level, lock camera at 0
+                if (viewportWidth >= 800) {
+                    this.camera.x = 0;
+                    this.camera.y = 0;
+                    return;
+                }
+                
                 // Try to center player in viewport
                 const targetX = this.player.x - viewportWidth / 2;
                 const targetY = this.player.y - viewportHeight / 2;
@@ -2366,7 +2377,6 @@
                 this.camera.y += (targetY - this.camera.y) * 0.1;
                 
                 // Clamp camera to level bounds (800x480)
-                // Allow camera to show left edge when viewport is wider than level
                 const maxCameraX = Math.max(0, 800 - viewportWidth);
                 const maxCameraY = Math.max(0, 480 - viewportHeight);
                 
