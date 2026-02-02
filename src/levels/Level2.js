@@ -129,8 +129,6 @@ export class Level2 extends Level {
                     level[y][x] = 1; // Small platform right
                 } else if (y === 18 && x >= 38 && x <= 42) {
                     level[y][x] = 1; // High platform
-                } else if (y === 24 && x >= 15 && x <= 16) {
-                    level[y][x] = 3; // Red couch
                 } else {
                     level[y][x] = 0;
                 }
