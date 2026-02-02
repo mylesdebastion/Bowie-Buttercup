@@ -2353,14 +2353,25 @@
             }
             
             updateCamera() {
-                const targetX = this.player.x - canvas.width / 2 / scale;
-                const targetY = this.player.y - canvas.height / 2 / scale;
+                // Get viewport dimensions in game coordinates
+                const viewportWidth = canvas.width / scale;
+                const viewportHeight = canvas.height / scale;
                 
+                // Try to center player in viewport
+                const targetX = this.player.x - viewportWidth / 2;
+                const targetY = this.player.y - viewportHeight / 2;
+                
+                // Smooth camera follow
                 this.camera.x += (targetX - this.camera.x) * 0.1;
                 this.camera.y += (targetY - this.camera.y) * 0.1;
                 
-                this.camera.x = Math.max(0, Math.min(this.camera.x, 800 - canvas.width / scale));
-                this.camera.y = Math.max(0, Math.min(this.camera.y, 480 - canvas.height / scale));
+                // Clamp camera to level bounds (800x480)
+                // Allow camera to show left edge when viewport is wider than level
+                const maxCameraX = Math.max(0, 800 - viewportWidth);
+                const maxCameraY = Math.max(0, 480 - viewportHeight);
+                
+                this.camera.x = Math.max(0, Math.min(this.camera.x, maxCameraX));
+                this.camera.y = Math.max(0, Math.min(this.camera.y, maxCameraY));
             }
             
             draw() {
